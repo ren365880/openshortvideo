@@ -5,13 +5,6 @@
 ## 📖 项目概述
 
 **OpenShortVideo** 是一个基于AI的短视频智能制作平台，集成了剧本创作、角色管理、场景生成、镜头制作等完整的工作流，帮助创作者快速生成高质量的短视频内容。
-## demo
-[openshortvideo.mp4](assert/openshortvideo.mp4)
-<div align="center">
-  <video src="assert/openshortvideo.mp4" controls width="80%" style="max-width: 100%; height: auto;">
-    您的浏览器不支持 HTML5 视频播放，请 <a href="assert/openshortvideo.mp4">点击下载</a>。
-  </video>
-</div>
 
 ## ✨ 核心功能
 
@@ -273,7 +266,7 @@ MAX_CONTENT_LENGTH = 16 * 1024 * 1024  # 16MB
 
 - **邮箱**: 854197093@qq.com
 - **技术交流群**: 1029629549
-- ![QQ群](assert/QQ.png)
+- <img src="assert/QQ.png" alt="QQ群" style="width: 50%; max-width: 400px;">
 
 ## 🙏 致谢
 
