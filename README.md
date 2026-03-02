@@ -12,6 +12,7 @@
     您的浏览器不支持 HTML5 视频播放，请 <a href="assert/openshortvideo.mp4">点击下载</a>。
   </video>
 </div>
+
 ## ✨ 核心功能
 
 ### 🎬 智能视频制作
