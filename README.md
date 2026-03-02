@@ -100,8 +100,8 @@ OpenShortVideo_V3/
 
 1. **克隆项目**
    ```bash
-   git clone <repository-url>
-   cd openshortvideo_v3
+   git clone https://github.com/Shybert-AI/openshortvideo
+   cd openshortvideo
    ```
 
 2. **安装Python依赖**
@@ -267,6 +267,7 @@ MAX_CONTENT_LENGTH = 16 * 1024 * 1024  # 16MB
 
 - **邮箱**: 854197093@qq.com
 - **技术交流群**: 1029629549
+- ![QQ群](assert/QQ.png)
 
 ## 🙏 致谢
 
