@@ -7,6 +7,11 @@
 **OpenShortVideo** 是一个基于AI的短视频智能制作平台，集成了剧本创作、角色管理、场景生成、镜头制作等完整的工作流，帮助创作者快速生成高质量的短视频内容。
 ## demo
 [openshortvideo.mp4](assert/openshortvideo.mp4)
+<div align="center">
+  <video src="assert/openshortvideo.mp4" controls width="80%" style="max-width: 100%; height: auto;">
+    您的浏览器不支持 HTML5 视频播放，请 <a href="assert/openshortvideo.mp4">点击下载</a>。
+  </video>
+</div>
 ## ✨ 核心功能
 
 ### 🎬 智能视频制作
