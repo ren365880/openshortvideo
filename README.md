@@ -175,7 +175,7 @@ deepseek  deepseek: https://www.deepseek.com/
 Qwen3-VL-32B-Instruct 硅基流动： https://cloud.siliconflow.cn/  
 Nanobanana2  速创API： https://api.wuyinkeji.com/  
 veo3.1-fast    速创API： https://api.wuyinkeji.com/  
-image_uploader 建议配置，在 https://app-8u3vvyt9el8h.appmiaoda.com 进行注册，下载上传接口参数
+image_uploader (可选) 在 https://app-8u3vvyt9el8h.appmiaoda.com 进行注册，下载上传接口参数 
 
 ![img.png](assert/img.png)
 
