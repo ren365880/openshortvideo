@@ -121,7 +121,6 @@ openshortvideo_finall/
 3. **配置文件**
    - 复制 `configs/idea2video_deepseek_veo3_fast.yaml.example` 为 `configs/idea2video_deepseek_veo3_fast.yaml`
    - 配置所需的 API 密钥
-## 🔧 配置文件
 
 ### AI服务配置 (configs/idea2video_deepseek_veo3_fast.yaml)
 
