@@ -121,6 +121,64 @@ openshortvideo_finall/
 3. **配置文件**
    - 复制 `configs/idea2video_deepseek_veo3_fast.yaml.example` 为 `configs/idea2video_deepseek_veo3_fast.yaml`
    - 配置所需的 API 密钥
+## 🔧 配置文件
+
+### AI服务配置 (configs/idea2video_deepseek_veo3_fast.yaml)
+
+```yaml
+# 对话模型配置
+chat_model:
+  init_args:
+    model: deepseek-chat
+    api_key: your-api-key
+    base_url: https://api.deepseek.com/v1
+
+# 图像生成配置
+image_generator:
+  class_path: tools.ImageGeneratorNanobananaWuYinAPI
+  init_args:
+    api_key: your-image-api-key
+
+# 视频生成配置
+video_generator:
+  class_path: tools.VideoGeneratorVeoFastAPI
+  init_args:
+    api_key: your-video-api-key
+
+# 图片上传配置
+image_uploader:
+  username: your-username
+  password: your-password
+  supabase_url: https://backend.appmiaoda.com/projects/...
+  supabase_anon_key: your-anon-key
+  bucket_name: your-bucket-name
+```
+
+API前端配置：
+需要在frontend/api_services/deepseek_api.py配置api_key
+```
+class DeepSeekAPI:
+    def __init__(self):
+        self.api_key = ""
+        if not self.api_key:
+            raise ValueError("DEEPSEEK_API_KEY environment variable is not set")
+
+        self.client = OpenAI(
+            api_key=self.api_key,
+            base_url="https://api.deepseek.com"
+        )
+        self.model = "deepseek-chat"
+```
+
+本项目是采用国内的api，无需配置代理就可以访问。详情可见idea2video_deepseek.yaml。api-key需要到各自的网站进行获取。
+######
+deepseek  deepseek: https://www.deepseek.com/  
+Qwen3-VL-32B-Instruct 硅基流动： https://cloud.siliconflow.cn/  
+Nanobanana2  速创API： https://api.wuyinkeji.com/  
+veo3.1-fast    速创API： https://api.wuyinkeji.com/  
+image_uploader 建议配置，在 https://app-8u3vvyt9el8h.appmiaoda.com 进行注册，下载上传接口参数
+
+![img.png](assert/img.png)
 
 4. **启动后端服务**
    ```bash
@@ -211,64 +269,7 @@ python generated_images_demo.py
 python upload_images_demo.py
 ```
 
-## 🔧 配置文件
 
-### AI服务配置 (configs/idea2video_deepseek_veo3_fast.yaml)
-
-```yaml
-# 对话模型配置
-chat_model:
-  init_args:
-    model: deepseek-chat
-    api_key: your-api-key
-    base_url: https://api.deepseek.com/v1
-
-# 图像生成配置
-image_generator:
-  class_path: tools.ImageGeneratorNanobananaWuYinAPI
-  init_args:
-    api_key: your-image-api-key
-
-# 视频生成配置
-video_generator:
-  class_path: tools.VideoGeneratorVeoFastAPI
-  init_args:
-    api_key: your-video-api-key
-
-# 图片上传配置
-image_uploader:
-  username: your-username
-  password: your-password
-  supabase_url: https://backend.appmiaoda.com/projects/...
-  supabase_anon_key: your-anon-key
-  bucket_name: your-bucket-name
-```
-
-API前端配置：
-需要在frontend/api_services/deepseek_api.py配置api_key
-```
-class DeepSeekAPI:
-    def __init__(self):
-        self.api_key = ""
-        if not self.api_key:
-            raise ValueError("DEEPSEEK_API_KEY environment variable is not set")
-
-        self.client = OpenAI(
-            api_key=self.api_key,
-            base_url="https://api.deepseek.com"
-        )
-        self.model = "deepseek-chat"
-```
-
-本项目是采用国内的api，无需配置代理就可以访问。详情可见idea2video_deepseek.yaml。api-key需要到各自的网站进行获取。
-######
-deepseek  deepseek: https://www.deepseek.com/  
-Qwen3-VL-32B-Instruct 硅基流动： https://cloud.siliconflow.cn/  
-Nanobanana2  速创API： https://api.wuyinkeji.com/  
-veo3.1-fast    速创API： https://api.wuyinkeji.com/  
-image_uploader 建议配置，在 https://app-8u3vvyt9el8h.appmiaoda.com 进行注册，下载上传接口参数
-
-![img.png](assert/img.png)
 ### 艺术风格选项
 - 古典、飘逸、东方水墨意境
 - 瑰丽、奇幻、色彩斑斓的童话风格
