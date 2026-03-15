@@ -1,0 +1,591 @@
+<!-- templates/episode_detail.html -->
+{% extends "layout.html" %}
+
+{% block title %}{{ episode.title }} - 灵犀剧能{% endblock %}
+
+{% block content %}
+<div class="episode-detail-container">
+    <!-- 页面标题和操作 -->
+    <div class="page-header">
+        <div class="header-content">
+            <button class="btn btn-outline btn-sm" onclick="location.href='/projects/{{ project.id }}'">
+                <i class="fas fa-arrow-left"></i> 返回项目详情
+            </button>
+            <h1 class="page-title">{{ episode.title }}</h1>
+            <p class="page-subtitle">项目: {{ project.title }} • 第 {{ episode.episode_number }} 集</p>
+        </div>
+        <div class="header-actions">
+            <button class="btn btn-outline" onclick="location.href='/episodes/{{ episode.id }}/edit'">
+                <i class="fas fa-edit"></i> 编辑分集
+            </button>
+        </div>
+    </div>
+
+    <!-- 分集内容 -->
+    <div class="episode-content-section">
+        <div class="video-player-section">
+            {% if episode.video_url %}
+            <div class="video-player">
+                <video controls class="video-element">
+                    <source src="/uploads/videos/{{ episode.video_url }}" type="video/mp4">
+                    您的浏览器不支持视频播放
+                </video>
+            </div>
+            {% else %}
+            <div class="no-video-placeholder">
+                <i class="fas fa-film"></i>
+                <h3>暂无视频</h3>
+                <p>请上传视频文件</p>
+                <button class="btn btn-primary" onclick="showUploadVideoModal()">
+                    <i class="fas fa-upload"></i> 上传视频
+                </button>
+            </div>
+            {% endif %}
+            
+            <div class="video-info">
+                <div class="video-stats">
+                    <div class="stat-item">
+                        <i class="fas fa-eye"></i>
+                        <span>{{ episode.views }} 观看</span>
+                    </div>
+                    <div class="stat-item">
+                        <i class="fas fa-heart"></i>
+                        <span>{{ episode.likes }} 喜欢</span>
+                    </div>
+                    <div class="stat-item">
+                        <i class="fas fa-clock"></i>
+                        <span>{{ episode.duration_formatted if episode.duration_formatted else '0:00' }}</span>
+                    </div>
+                    <div class="stat-item">
+                        <i class="fas fa-calendar"></i>
+                        <span>{{ episode.created_at.strftime('%Y-%m-%d') if episode.created_at else '--' }}</span>
+                    </div>
+                </div>
+                
+                <div class="status-badge" data-status="{{ episode.status }}">
+                    {{ episode.status }}
+                </div>
+            </div>
+        </div>
+        
+        <div class="episode-details-card">
+            <div class="details-section">
+                <h3 class="section-title">分集描述</h3>
+                <div class="description-content">
+                    {{ episode.content if episode.content else '暂无描述' }}
+                </div>
+            </div>
+            
+            <div class="details-section">
+                <h3 class="section-title">缩略图</h3>
+                <div class="thumbnail-section">
+                    {% if episode.thumbnail %}
+                    <img src="/uploads/thumbnails/{{ episode.thumbnail }}" alt="缩略图" class="thumbnail-image">
+                    <button class="btn btn-outline btn-sm" onclick="showUploadThumbnailModal()">
+                        更换缩略图
+                    </button>
+                    {% else %}
+                    <div class="no-thumbnail">
+                        <i class="fas fa-image"></i>
+                        <p>暂无缩略图</p>
+                        <button class="btn btn-outline btn-sm" onclick="showUploadThumbnailModal()">
+                            上传缩略图
+                        </button>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 上传视频模态框 -->
+<div class="modal" id="uploadVideoModal">
+    <div class="modal-content modal-sm">
+        <div class="modal-header">
+            <h3 class="modal-title">上传视频</h3>
+            <button class="modal-close" onclick="closeModal('uploadVideoModal')">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <form id="uploadVideoForm">
+                <div class="form-group">
+                    <label class="form-label">选择视频文件</label>
+                    <div class="upload-area" id="videoUploadArea">
+                        <div class="upload-placeholder">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                            <p>点击或拖拽上传视频</p>
+                            <p class="upload-hint">支持 MP4、MOV、AVI、MKV、WebM 格式</p>
+                        </div>
+                        <input type="file" id="videoFile" name="video" 
+                               class="file-input" accept="video/*" hidden>
+                    </div>
+                    <div class="form-text">视频上传后可能需要处理时间</div>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-outline" onclick="closeModal('uploadVideoModal')">取消</button>
+            <button class="btn btn-primary" onclick="uploadVideo()">上传</button>
+        </div>
+    </div>
+</div>
+
+<!-- 上传缩略图模态框 -->
+<div class="modal" id="uploadThumbnailModal">
+    <div class="modal-content modal-sm">
+        <div class="modal-header">
+            <h3 class="modal-title">上传缩略图</h3>
+            <button class="modal-close" onclick="closeModal('uploadThumbnailModal')">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <form id="uploadThumbnailForm">
+                <div class="form-group">
+                    <label class="form-label">选择图片文件</label>
+                    <div class="upload-area" id="thumbnailUploadArea">
+                        <div class="upload-placeholder">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                            <p>点击或拖拽上传图片</p>
+                            <p class="upload-hint">支持 JPG、PNG 格式</p>
+                        </div>
+                        <input type="file" id="thumbnailFile" name="thumbnail" 
+                               class="file-input" accept="image/*" hidden>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-outline" onclick="closeModal('uploadThumbnailModal')">取消</button>
+            <button class="btn btn-primary" onclick="uploadThumbnail()">上传</button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block styles %}
+<style>
+    .episode-detail-container {
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 30px 20px;
+    }
+
+    .episode-content-section {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 40px;
+        margin-top: 40px;
+    }
+
+    @media (max-width: 992px) {
+        .episode-content-section {
+            grid-template-columns: 1fr;
+            gap: 30px;
+        }
+    }
+
+    .video-player-section {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .video-player {
+        width: 100%;
+        background: #000;
+        border-radius: 8px;
+        overflow: hidden;
+    }
+
+    .video-element {
+        width: 100%;
+        height: auto;
+        max-height: 500px;
+    }
+
+    .no-video-placeholder {
+        background: var(--background-secondary);
+        border-radius: 8px;
+        padding: 60px 20px;
+        text-align: center;
+        color: var(--text-secondary);
+    }
+
+    .no-video-placeholder i {
+        font-size: 64px;
+        margin-bottom: 16px;
+        color: var(--text-tertiary);
+    }
+
+    .video-info {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 16px;
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    }
+
+    .video-stats {
+        display: flex;
+        gap: 24px;
+    }
+
+    .stat-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--text-secondary);
+    }
+
+    .status-badge {
+        display: inline-block;
+        padding: 6px 16px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .status-badge[data-status="draft"] {
+        background-color: var(--warning-light);
+        color: var(--warning);
+    }
+
+    .status-badge[data-status="processing"] {
+        background-color: var(--info-light);
+        color: var(--info);
+    }
+
+    .status-badge[data-status="ready"] {
+        background-color: var(--success-light);
+        color: var(--success);
+    }
+
+    .status-badge[data-status="published"] {
+        background-color: var(--primary-light);
+        color: var(--primary);
+    }
+
+    .episode-details-card {
+        background: white;
+        border-radius: 12px;
+        padding: 30px;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    }
+
+    .details-section {
+        margin-bottom: 30px;
+        padding-bottom: 30px;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .details-section:last-child {
+        margin-bottom: 0;
+        padding-bottom: 0;
+        border-bottom: none;
+    }
+
+    .section-title {
+        font-size: 18px;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-bottom: 16px;
+    }
+
+    .description-content {
+        line-height: 1.6;
+        color: var(--text-secondary);
+        white-space: pre-wrap;
+    }
+
+    .thumbnail-section {
+        text-align: center;
+    }
+
+    .thumbnail-image {
+        width: 100%;
+        max-width: 200px;
+        height: auto;
+        border-radius: 8px;
+        margin-bottom: 16px;
+    }
+
+    .no-thumbnail {
+        padding: 30px 20px;
+        background: var(--background-secondary);
+        border-radius: 8px;
+        color: var(--text-secondary);
+    }
+
+    .no-thumbnail i {
+        font-size: 36px;
+        margin-bottom: 12px;
+        color: var(--text-tertiary);
+    }
+
+    .upload-area {
+        border: 2px dashed var(--border-color);
+        border-radius: 8px;
+        padding: 30px 20px;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        background: var(--background-secondary);
+    }
+
+    .upload-area:hover {
+        border-color: var(--primary);
+        background: rgba(79, 70, 229, 0.05);
+    }
+
+    .upload-placeholder {
+        color: var(--text-secondary);
+    }
+
+    .upload-placeholder i {
+        font-size: 36px;
+        margin-bottom: 12px;
+        color: var(--text-tertiary);
+    }
+
+    .upload-hint {
+        font-size: 14px;
+        color: var(--text-tertiary);
+        margin-top: 8px;
+    }
+
+    .modal-footer {
+        display: flex;
+        justify-content: flex-end;
+        gap: 12px;
+        padding: 20px;
+        border-top: 1px solid var(--border-color);
+    }
+</style>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    let videoUploadFile = null;
+    let thumbnailUploadFile = null;
+
+    document.addEventListener('DOMContentLoaded', function() {
+        // 视频上传处理
+        const videoUploadArea = document.getElementById('videoUploadArea');
+        const videoInput = document.getElementById('videoFile');
+        
+        videoUploadArea.addEventListener('click', function() {
+            videoInput.click();
+        });
+
+        videoInput.addEventListener('change', function(e) {
+            handleFileUpload(e, videoInput, videoUploadArea, 'video');
+        });
+
+        // 缩略图上传处理
+        const thumbnailUploadArea = document.getElementById('thumbnailUploadArea');
+        const thumbnailInput = document.getElementById('thumbnailFile');
+        
+        thumbnailUploadArea.addEventListener('click', function() {
+            thumbnailInput.click();
+        });
+
+        thumbnailInput.addEventListener('change', function(e) {
+            handleFileUpload(e, thumbnailInput, thumbnailUploadArea, 'image');
+        });
+
+        // 拖拽上传
+        setupDragAndDrop(videoUploadArea, videoInput, videoUploadFile, 'video');
+        setupDragAndDrop(thumbnailUploadArea, thumbnailInput, thumbnailUploadFile, 'image');
+    });
+
+    function showUploadVideoModal() {
+        document.getElementById('uploadVideoModal').classList.add('show');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function showUploadThumbnailModal() {
+        document.getElementById('uploadThumbnailModal').classList.add('show');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeModal(modalId) {
+        document.getElementById(modalId).classList.remove('show');
+        document.body.style.overflow = '';
+    }
+
+    function handleFileUpload(e, inputElement, uploadArea, fileType) {
+        if (e.target.files.length > 0) {
+            const file = e.target.files[0];
+            
+            // 验证文件类型
+            if (fileType === 'video') {
+                const videoTypes = ['video/mp4', 'video/mov', 'video/avi', 'video/mkv', 'video/webm'];
+                if (!videoTypes.includes(file.type)) {
+                    showNotification('请选择视频文件（MP4、MOV、AVI、MKV、WebM）', 'error');
+                    return;
+                }
+            } else if (fileType === 'image') {
+                if (!file.type.startsWith('image/')) {
+                    showNotification('请选择图片文件', 'error');
+                    return;
+                }
+            }
+
+            // 显示预览
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                if (fileType === 'video') {
+                    videoUploadFile = file;
+                    uploadArea.innerHTML = `
+                        <div class="preview-container">
+                            <video class="preview-video" style="width: 100%; max-height: 200px;" controls>
+                                <source src="${e.target.result}" type="${file.type}">
+                            </video>
+                            <div style="margin-top: 10px; text-align: center;">
+                                <button type="button" class="btn btn-outline btn-sm" onclick="event.stopPropagation(); uploadArea.innerHTML = document.querySelector('.upload-placeholder').outerHTML; inputElement.value = ''; ${fileType}UploadFile = null;">
+                                    更换文件
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    thumbnailUploadFile = file;
+                    uploadArea.innerHTML = `
+                        <div class="preview-container">
+                            <img src="${e.target.result}" alt="预览" style="width: 100%; max-height: 200px; object-fit: cover; border-radius: 4px;">
+                            <div style="margin-top: 10px; text-align: center;">
+                                <button type="button" class="btn btn-outline btn-sm" onclick="event.stopPropagation(); uploadArea.innerHTML = document.querySelector('.upload-placeholder').outerHTML; inputElement.value = ''; ${fileType}UploadFile = null;">
+                                    更换文件
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                }
+            };
+            reader.readAsDataURL(file);
+        }
+    }
+
+    function setupDragAndDrop(uploadArea, inputElement, fileVariable, fileType) {
+        uploadArea.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            uploadArea.style.borderColor = 'var(--primary)';
+            uploadArea.style.backgroundColor = 'rgba(79, 70, 229, 0.1)';
+        });
+
+        uploadArea.addEventListener('dragleave', function(e) {
+            e.preventDefault();
+            uploadArea.style.borderColor = 'var(--border-color)';
+            uploadArea.style.backgroundColor = 'var(--background-secondary)';
+        });
+
+        uploadArea.addEventListener('drop', function(e) {
+            e.preventDefault();
+            uploadArea.style.borderColor = 'var(--border-color)';
+            uploadArea.style.backgroundColor = 'var(--background-secondary)';
+            
+            if (e.dataTransfer.files.length > 0) {
+                const file = e.dataTransfer.files[0];
+                if (fileType === 'video' && file.type.startsWith('video/')) {
+                    const dataTransfer = new DataTransfer();
+                    dataTransfer.items.add(file);
+                    inputElement.files = dataTransfer.files;
+                    inputElement.dispatchEvent(new Event('change'));
+                } else if (fileType === 'image' && file.type.startsWith('image/')) {
+                    const dataTransfer = new DataTransfer();
+                    dataTransfer.items.add(file);
+                    inputElement.files = dataTransfer.files;
+                    inputElement.dispatchEvent(new Event('change'));
+                } else {
+                    showNotification(`请拖拽${fileType === 'video' ? '视频' : '图片'}文件`, 'error');
+                }
+            }
+        });
+    }
+
+    async function uploadVideo() {
+        if (!videoUploadFile) {
+            showNotification('请选择视频文件', 'error');
+            return;
+        }
+
+        // 显示上传进度通知
+        const progressNotification = showNotification('视频上传中，请稍候...', 'info', 0);
+
+        try {
+            const formData = new FormData();
+            formData.append('video', videoUploadFile);
+
+            const response = await fetch(`/api/episodes/{{ episode.id }}/video`, {
+                method: 'POST',
+                body: formData
+            });
+
+            const result = await response.json();
+
+            // 关闭进度通知
+            closeNotification(progressNotification);
+
+            if (response.ok) {
+                showNotification(result.message, 'success');
+                closeModal('uploadVideoModal');
+                // 刷新页面以更新视频
+                setTimeout(() => location.reload(), 2000);
+            } else {
+                showNotification(result.error || '上传失败', 'error');
+            }
+        } catch (error) {
+            console.error('上传视频失败:', error);
+            // 关闭进度通知
+            if (progressNotification) closeNotification(progressNotification);
+            showNotification('上传失败，请重试', 'error');
+        }
+    }
+
+    async function uploadThumbnail() {
+        if (!thumbnailUploadFile) {
+            showNotification('请选择缩略图文件', 'error');
+            return;
+        }
+
+        // 显示上传进度通知
+        const progressNotification = showNotification('缩略图上传中，请稍候...', 'info', 0);
+
+        try {
+            const formData = new FormData();
+            formData.append('thumbnail', thumbnailUploadFile);
+
+            const response = await fetch(`/api/episodes/{{ episode.id }}/thumbnail`, {
+                method: 'POST',
+                body: formData
+            });
+
+            const result = await response.json();
+
+            // 关闭进度通知
+            closeNotification(progressNotification);
+
+            if (response.ok) {
+                showNotification(result.message, 'success');
+                closeModal('uploadThumbnailModal');
+                // 刷新页面以更新缩略图
+                setTimeout(() => location.reload(), 2000);
+            } else {
+                showNotification(result.error || '上传失败', 'error');
+            }
+        } catch (error) {
+            console.error('上传缩略图失败:', error);
+            // 关闭进度通知
+            if (progressNotification) closeNotification(progressNotification);
+            showNotification('上传失败，请重试', 'error');
+        }
+    }
+</script>
+{% endblock %}

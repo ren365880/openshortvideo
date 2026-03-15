@@ -1,0 +1,1291 @@
+<!-- templates/settings.html -->
+{% extends "layout.html" %}
+
+{% block title %}设置 - 灵犀剧能{% endblock %}
+
+{% block content %}
+<div class="settings-container">
+    <!-- 页面标题 -->
+    <div class="settings-header">
+        <h1 class="page-title">设置</h1>
+        <p class="page-subtitle">管理您的账户设置和API配置</p>
+    </div>
+
+    <!-- 设置导航 (data-tab 属性与内容 id 对应) -->
+    <div class="settings-nav">
+        <button class="settings-tab active" data-tab="api">API密钥</button>
+        <button class="settings-tab" data-tab="api-usage">API使用统计</button>
+        <button class="settings-tab" data-tab="account">账户设置</button>
+        <button class="settings-tab" data-tab="notifications">通知设置</button>
+        <button class="settings-tab" data-tab="billing">账单和订阅</button>
+        <button class="settings-tab" data-tab="billing-history">账单历史</button>
+        <button class="settings-tab" data-tab="advanced">高级设置</button>
+    </div>
+
+    <!-- ==================== API密钥 ==================== -->
+    <div class="tab-content active" id="apiTab">
+        <div class="settings-section">
+            <h3 class="section-title">API密钥管理</h3>
+            <p class="section-description">
+                配置您的AI服务API密钥，用于短剧生成、剧本创作等功能。
+                <a href="#" class="text-link">如何获取API密钥？</a>
+            </p>
+
+            <div class="api-keys-grid">
+                <!-- OpenAI API -->
+                <div class="api-key-card">
+                    <div class="api-key-header">
+                        <div class="api-key-icon"><i class="fab fa-openai"></i></div>
+                        <div class="api-key-info">
+                            <h4>OpenAI GPT</h4>
+                            <span class="api-key-status">
+                                {% if api_keys.openai.api_key %}
+                                <span class="status-badge status-active">已配置</span>
+                                {% else %}
+                                <span class="status-badge status-inactive">未配置</span>
+                                {% endif %}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="api-key-body">
+                        <div class="form-group">
+                            <label for="openai_api_key" class="form-label">API密钥</label>
+                            <div class="input-with-action">
+                                <input type="password" id="openai_api_key" class="form-control api-key-input"
+                                       value="{{ api_keys.openai.api_key }}" data-service="openai">
+                                <button class="btn btn-sm btn-outline toggle-password" type="button"><i class="fas fa-eye"></i></button>
+                            </div>
+                            <small class="form-text">从 <a href="https://platform.openai.com/api-keys" target="_blank">OpenAI平台</a> 获取您的API密钥</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="openai_model" class="form-label">默认模型</label>
+                            <select id="openai_model" class="form-control">
+                                {% for model in api_keys.openai.models %}
+                                <option value="{{ model }}">{{ model }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="api-key-actions">
+                            <button class="btn btn-primary btn-sm save-api-key" data-service="openai">保存配置</button>
+                            <button class="btn btn-outline btn-sm test-api-key" data-service="openai">测试连接</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Stability AI API -->
+                <div class="api-key-card">
+                    <div class="api-key-header">
+                        <div class="api-key-icon"><i class="fas fa-palette"></i></div>
+                        <div class="api-key-info">
+                            <h4>Stability AI</h4>
+                            <span class="api-key-status">
+                                {% if api_keys.stability.api_key %}
+                                <span class="status-badge status-active">已配置</span>
+                                {% else %}
+                                <span class="status-badge status-inactive">未配置</span>
+                                {% endif %}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="api-key-body">
+                        <div class="form-group">
+                            <label for="stability_api_key" class="form-label">API密钥</label>
+                            <div class="input-with-action">
+                                <input type="password" id="stability_api_key" class="form-control api-key-input"
+                                       value="{{ api_keys.stability.api_key }}" data-service="stability">
+                                <button class="btn btn-sm btn-outline toggle-password" type="button"><i class="fas fa-eye"></i></button>
+                            </div>
+                            <small class="form-text">从 <a href="https://platform.stability.ai/account/keys" target="_blank">Stability AI平台</a> 获取API密钥</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="stability_model" class="form-label">默认模型</label>
+                            <select id="stability_model" class="form-control">
+                                {% for model in api_keys.stability.models %}
+                                <option value="{{ model }}">{{ model }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="api-key-actions">
+                            <button class="btn btn-primary btn-sm save-api-key" data-service="stability">保存配置</button>
+                            <button class="btn btn-outline btn-sm test-api-key" data-service="stability">测试连接</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Anthropic API -->
+                <div class="api-key-card">
+                    <div class="api-key-header">
+                        <div class="api-key-icon"><i class="fas fa-robot"></i></div>
+                        <div class="api-key-info">
+                            <h4>Anthropic Claude</h4>
+                            <span class="api-key-status">
+                                {% if api_keys.anthropic.api_key %}
+                                <span class="status-badge status-active">已配置</span>
+                                {% else %}
+                                <span class="status-badge status-inactive">未配置</span>
+                                {% endif %}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="api-key-body">
+                        <div class="form-group">
+                            <label for="anthropic_api_key" class="form-label">API密钥</label>
+                            <div class="input-with-action">
+                                <input type="password" id="anthropic_api_key" class="form-control api-key-input"
+                                       value="{{ api_keys.anthropic.api_key }}" data-service="anthropic">
+                                <button class="btn btn-sm btn-outline toggle-password" type="button"><i class="fas fa-eye"></i></button>
+                            </div>
+                            <small class="form-text">从 <a href="https://console.anthropic.com/account/keys" target="_blank">Anthropic控制台</a> 获取API密钥</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="anthropic_model" class="form-label">默认模型</label>
+                            <select id="anthropic_model" class="form-control">
+                                {% for model in api_keys.anthropic.models %}
+                                <option value="{{ model }}">{{ model }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="api-key-actions">
+                            <button class="btn btn-primary btn-sm save-api-key" data-service="anthropic">保存配置</button>
+                            <button class="btn btn-outline btn-sm test-api-key" data-service="anthropic">测试连接</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- DeepSeek API -->
+                <div class="api-key-card">
+                    <div class="api-key-header">
+                        <div class="api-key-icon"><i class="fas fa-code"></i></div>
+                        <div class="api-key-info">
+                            <h4>DeepSeek</h4>
+                            <span class="api-key-status">
+                                {% if api_keys.deepseek.api_key %}
+                                <span class="status-badge status-active">已配置</span>
+                                {% else %}
+                                <span class="status-badge status-inactive">未配置</span>
+                                {% endif %}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="api-key-body">
+                        <div class="form-group">
+                            <label for="deepseek_api_key" class="form-label">API密钥</label>
+                            <div class="input-with-action">
+                                <input type="password" id="deepseek_api_key" class="form-control api-key-input"
+                                       value="{{ api_keys.deepseek.api_key }}" data-service="deepseek">
+                                <button class="btn btn-sm btn-outline toggle-password" type="button"><i class="fas fa-eye"></i></button>
+                            </div>
+                            <small class="form-text">从 <a href="https://platform.deepseek.com/api_keys" target="_blank">DeepSeek平台</a> 获取API密钥</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="deepseek_model" class="form-label">默认模型</label>
+                            <select id="deepseek_model" class="form-control">
+                                {% for model in api_keys.deepseek.models %}
+                                <option value="{{ model }}">{{ model }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="api-key-actions">
+                            <button class="btn btn-primary btn-sm save-api-key" data-service="deepseek">保存配置</button>
+                            <button class="btn btn-outline btn-sm test-api-key" data-service="deepseek">测试连接</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 本地UnifiedGenerator -->
+                <div class="api-key-card">
+                    <div class="api-key-header">
+                        <div class="api-key-icon"><i class="fas fa-server"></i></div>
+                        <div class="api-key-info">
+                            <h4>本地UnifiedGenerator</h4>
+                            <span class="api-key-status">
+                                {% if api_keys.unified_generator.api_key %}
+                                <span class="status-badge status-active">已配置</span>
+                                {% else %}
+                                <span class="status-badge status-inactive">未配置</span>
+                                {% endif %}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="api-key-body">
+                        <div class="form-group">
+                            <label for="unified_generator_url" class="form-label">服务器地址</label>
+                            <input type="text" id="unified_generator_url" class="form-control"
+                                   value="{{ api_keys.unified_generator.url }}" data-service="unified_generator"
+                                   placeholder="http://192.168.2.15:58888">
+                            <small class="form-text">本地UnifiedGenerator服务器的地址</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="unified_generator_api_key" class="form-label">API密钥</label>
+                            <div class="input-with-action">
+                                <input type="password" id="unified_generator_api_key" class="form-control api-key-input"
+                                       value="{{ api_keys.unified_generator.api_key }}" data-service="unified_generator">
+                                <button class="btn btn-sm btn-outline toggle-password" type="button"><i class="fas fa-eye"></i></button>
+                            </div>
+                            <small class="form-text">本地UnifiedGenerator服务器的API Token</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="unified_generator_model" class="form-label">默认模型</label>
+                            <select id="unified_generator_model" class="form-control">
+                                {% for model in api_keys.unified_generator.models %}
+                                <option value="{{ model }}">{{ model }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="api-key-actions">
+                            <button class="btn btn-primary btn-sm save-api-key" data-service="unified_generator">保存配置</button>
+                            <button class="btn btn-outline btn-sm test-api-key" data-service="unified_generator">测试连接</button>
+                        </div>
+                    </div>
+                </div>
+            </div> <!-- api-keys-grid -->
+        </div> <!-- settings-section -->
+    </div> <!-- apiTab -->
+
+    <!-- ==================== API使用统计 ==================== -->
+    <div class="tab-content" id="apiUsageTab">
+        <div class="settings-section">
+            <h3 class="section-title">API使用统计</h3>
+            <p class="section-description">查看您的API使用情况和消耗统计</p>
+
+            <div class="usage-stats">
+                <div class="usage-card">
+                    <div class="usage-icon"><i class="fas fa-key"></i></div>
+                    <div>
+                        <div class="usage-value">1,234</div>
+                        <div class="usage-label">API调用次数</div>
+                    </div>
+                </div>
+                <div class="usage-card">
+                    <div class="usage-icon"><i class="fas fa-tokens"></i></div>
+                    <div>
+                        <div class="usage-value">50,000</div>
+                        <div class="usage-label">消耗Token数</div>
+                    </div>
+                </div>
+                <div class="usage-card">
+                    <div class="usage-icon"><i class="fas fa-dollar-sign"></i></div>
+                    <div>
+                        <div class="usage-value">¥ 12.50</div>
+                        <div class="usage-label">本月消费</div>
+                    </div>
+                </div>
+                <div class="usage-card">
+                    <div class="usage-icon"><i class="fas fa-clock"></i></div>
+                    <div>
+                        <div class="usage-value">99.5%</div>
+                        <div class="usage-label">API成功率</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="api-usage-breakdown" style="margin-top: 30px;">
+                <h4>按服务分类</h4>
+                <table class="billing-table">
+                    <thead>
+                        <tr><th>服务</th><th>调用次数</th><th>消耗Token</th><th>消费金额</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>OpenAI GPT</td><td>800</td><td>30,000</td><td>¥ 8.00</td></tr>
+                        <tr><td>Anthropic Claude</td><td>300</td><td>15,000</td><td>¥ 3.50</td></tr>
+                        <tr><td>DeepSeek</td><td>134</td><td>5,000</td><td>¥ 1.00</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div> <!-- apiUsageTab -->
+
+    <!-- ==================== 账户设置 ==================== -->
+    <div class="tab-content" id="accountTab">
+        <div class="settings-section">
+            <h3 class="section-title">账户设置</h3>
+            <form id="accountForm" class="settings-form">
+                <div class="form-group">
+                    <label for="username" class="form-label">用户名</label>
+                    <input type="text" id="username" class="form-control" value="{{ current_user.username }}">
+                </div>
+                <div class="form-group">
+                    <label for="email" class="form-label">邮箱地址</label>
+                    <input type="email" id="email" class="form-control" value="{{ current_user.email }}">
+                </div>
+                <div class="form-group">
+                    <label for="bio" class="form-label">个人简介</label>
+                    <textarea id="bio" class="form-control" rows="4">{{ current_user.bio or '' }}</textarea>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">保存更改</button>
+                </div>
+            </form>
+
+            <!-- 密码修改 -->
+            <div class="password-section">
+                <h4 class="section-title">修改密码</h4>
+                <form id="passwordForm" class="settings-form">
+                    <div class="form-group">
+                        <label for="current_password" class="form-label">当前密码</label>
+                        <input type="password" id="current_password" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="new_password" class="form-label">新密码</label>
+                        <input type="password" id="new_password" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="confirm_password" class="form-label">确认新密码</label>
+                        <input type="password" id="confirm_password" class="form-control" required>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">修改密码</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div> <!-- accountTab -->
+
+    <!-- ==================== 通知设置 ==================== -->
+    <div class="tab-content" id="notificationsTab">
+        <div class="settings-section">
+            <h3 class="section-title">通知设置</h3>
+            <div class="notification-settings">
+                <div class="notification-category">
+                    <h4>邮件通知</h4>
+                    <div class="notification-options">
+                        <label class="notification-toggle">
+                            <input type="checkbox" checked>
+                            <span class="toggle-slider"></span>
+                            <span>系统通知</span>
+                            <small>重要更新和系统维护通知</small>
+                        </label>
+                        <label class="notification-toggle">
+                            <input type="checkbox" checked>
+                            <span class="toggle-slider"></span>
+                            <span>项目更新</span>
+                            <small>项目状态变更和审批结果</small>
+                        </label>
+                        <label class="notification-toggle">
+                            <input type="checkbox">
+                            <span class="toggle-slider"></span>
+                            <span>营销资讯</span>
+                            <small>产品更新和促销活动</small>
+                        </label>
+                    </div>
+                </div>
+                <div class="notification-category">
+                    <h4>推送通知</h4>
+                    <div class="notification-options">
+                        <label class="notification-toggle">
+                            <input type="checkbox" checked>
+                            <span class="toggle-slider"></span>
+                            <span>新消息提醒</span>
+                            <small>收到新消息时推送通知</small>
+                        </label>
+                        <label class="notification-toggle">
+                            <input type="checkbox" checked>
+                            <span class="toggle-slider"></span>
+                            <span>评论和点赞</span>
+                            <small>作品被评论或点赞时通知</small>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div> <!-- notificationsTab -->
+
+    <!-- ==================== 账单和订阅 ==================== -->
+    <div class="tab-content" id="billingTab">
+        <div class="settings-section">
+            <h3 class="section-title">账单和订阅</h3>
+            <div class="billing-plan">
+                <div class="plan-card">
+                    <div class="plan-header">
+                        <h4>专业版</h4>
+                        <div class="plan-price">
+                            <span class="price">¥ 99</span>
+                            <span class="period">/月</span>
+                        </div>
+                    </div>
+                    <div class="plan-features">
+                        <ul>
+                            <li>无限短剧项目</li>
+                            <li>高级AI模型访问</li>
+                            <li>4K视频导出</li>
+                            <li>团队协作功能</li>
+                            <li>优先技术支持</li>
+                        </ul>
+                    </div>
+                    <button class="btn btn-primary btn-full">升级到专业版</button>
+                </div>
+            </div>
+        </div>
+    </div> <!-- billingTab -->
+
+    <!-- ==================== 账单历史 ==================== -->
+    <div class="tab-content" id="billingHistoryTab">
+        <div class="settings-section">
+            <h3 class="section-title">账单历史</h3>
+            <table class="billing-table">
+                <thead>
+                    <tr><th>日期</th><th>项目</th><th>金额</th><th>状态</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>2024-01-15</td><td>专业版订阅</td><td>¥ 99.00</td><td><span class="status-badge status-success">已支付</span></td></tr>
+                    <tr><td>2023-12-15</td><td>专业版订阅</td><td>¥ 99.00</td><td><span class="status-badge status-success">已支付</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div> <!-- billingHistoryTab -->
+
+    <!-- ==================== 高级设置 ==================== -->
+    <div class="tab-content" id="advancedTab">
+        <div class="settings-section">
+            <h3 class="section-title">高级设置</h3>
+            <div class="advanced-options">
+                <div class="form-group">
+                    <label for="timezone" class="form-label">时区设置</label>
+                    <select id="timezone" class="form-control">
+                        <option value="Asia/Shanghai" selected>亚洲/上海 (GMT+8)</option>
+                        <option value="Asia/Tokyo">亚洲/东京 (GMT+9)</option>
+                        <option value="America/New_York">美国/纽约 (GMT-5)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">数据管理</label>
+                    <div class="data-actions">
+                        <button class="btn btn-outline" id="exportData">导出数据</button>
+                        <button class="btn btn-outline" id="clearCache">清除缓存</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">危险区域</label>
+                    <div class="danger-zone">
+                        <p>删除账户将永久移除您的所有数据，此操作不可撤销。</p>
+                        <button class="btn btn-danger" id="deleteAccount">删除账户</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div> <!-- advancedTab -->
+
+</div> <!-- settings-container -->
+{% endblock %}
+
+{% block styles %}
+<style>
+    .settings-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+
+    .settings-header {
+        margin-bottom: 30px;
+    }
+
+    .page-title {
+        font-size: 2.2rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        margin-bottom: 8px;
+    }
+
+    .page-subtitle {
+        color: var(--text-secondary);
+        font-size: 1.1rem;
+    }
+
+    .settings-nav {
+        display: flex;
+        gap: 5px;
+        margin-bottom: 30px;
+        border-bottom: 1px solid var(--border-color);
+        padding-bottom: 10px;
+        overflow-x: auto;
+    }
+
+    .settings-tab {
+        padding: 12px 24px;
+        background: none;
+        border: none;
+        border-radius: 8px;
+        color: var(--text-secondary);
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        white-space: nowrap;
+    }
+
+    .settings-tab:hover {
+        background: var(--bg-tertiary);
+        color: var(--text-primary);
+    }
+
+    .settings-tab.active {
+        background: var(--primary);
+        color: white;
+    }
+
+    .settings-container .tab-content {
+        display: none;
+        animation: fadeIn 0.3s ease;
+    }
+
+    .settings-container .tab-content.active {
+        display: block;
+    }
+
+    .settings-section {
+        background: white;
+        border-radius: 12px;
+        padding: 30px;
+        box-shadow: var(--shadow);
+        margin-bottom: 30px;
+    }
+
+    .section-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-bottom: 10px;
+    }
+
+    .section-description {
+        color: var(--text-secondary);
+        margin-bottom: 25px;
+        line-height: 1.6;
+    }
+
+    .text-link {
+        color: var(--primary);
+        text-decoration: none;
+    }
+
+    .text-link:hover {
+        text-decoration: underline;
+    }
+
+    .api-keys-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+        gap: 25px;
+        margin-bottom: 30px;
+    }
+
+    .api-key-card {
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        overflow: hidden;
+        transition: all 0.3s ease;
+    }
+
+    .api-key-card:hover {
+        border-color: var(--primary);
+        box-shadow: var(--shadow);
+    }
+
+    .api-key-header {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        padding: 20px;
+        background: var(--bg-tertiary);
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .api-key-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 8px;
+        background: var(--primary);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+    }
+
+    .api-key-info {
+        flex: 1;
+    }
+
+    .api-key-info h4 {
+        margin: 0 0 5px;
+        font-size: 1.1rem;
+        color: var(--text-primary);
+    }
+
+    .api-key-status {
+        display: inline-block;
+    }
+
+    .status-badge {
+        padding: 4px 10px;
+        border-radius: 15px;
+        font-size: 0.8rem;
+        font-weight: 500;
+    }
+
+    .status-active {
+        background: var(--success-light);
+        color: var(--success);
+    }
+
+    .status-inactive {
+        background: var(--gray-200);
+        color: var(--text-tertiary);
+    }
+
+    .status-success {
+        background: var(--success-light);
+        color: var(--success);
+    }
+
+    .api-key-body {
+        padding: 20px;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-label {
+        display: block;
+        font-weight: 500;
+        margin-bottom: 8px;
+        color: var(--text-primary);
+        font-size: 0.95rem;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 10px 15px;
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        font-size: 0.95rem;
+        transition: all 0.3s ease;
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+    }
+
+    .input-with-action {
+        position: relative;
+        display: flex;
+    }
+
+    .input-with-action .form-control {
+        flex: 1;
+        padding-right: 50px;
+    }
+
+    .input-with-action .toggle-password {
+        position: absolute;
+        right: 5px;
+        top: 50%;
+        transform: translateY(-50%);
+        padding: 5px 10px;
+    }
+
+    .form-text {
+        display: block;
+        margin-top: 6px;
+        font-size: 0.85rem;
+        color: var(--text-tertiary);
+    }
+
+    .form-text a {
+        color: var(--primary);
+        text-decoration: none;
+    }
+
+    .form-text a:hover {
+        text-decoration: underline;
+    }
+
+    .api-key-actions {
+        display: flex;
+        gap: 10px;
+    }
+
+    .btn-sm {
+        padding: 8px 16px;
+        font-size: 0.9rem;
+    }
+
+    .btn-full {
+        width: 100%;
+    }
+
+    .api-usage-section {
+        border-top: 1px solid var(--border-color);
+        padding-top: 25px;
+        margin-top: 25px;
+    }
+
+    .usage-stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+    }
+
+    .usage-card {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        padding: 20px;
+        background: var(--bg-tertiary);
+        border-radius: 10px;
+    }
+
+    .usage-icon {
+        width: 50px;
+        height: 50px;
+        border-radius: 10px;
+        background: var(--primary);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+    }
+
+    .usage-value {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        margin-bottom: 5px;
+    }
+
+    .usage-label {
+        font-size: 0.9rem;
+        color: var(--text-secondary);
+    }
+
+    .settings-form {
+        max-width: 500px;
+    }
+
+    .password-section {
+        margin-top: 30px;
+        padding-top: 30px;
+        border-top: 1px solid var(--border-color);
+    }
+
+    .notification-settings {
+        display: flex;
+        flex-direction: column;
+        gap: 30px;
+    }
+
+    .notification-category h4 {
+        font-size: 1.2rem;
+        margin-bottom: 15px;
+        color: var(--text-primary);
+    }
+
+    .notification-options {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .notification-toggle {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        cursor: pointer;
+        padding: 15px;
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        transition: all 0.3s ease;
+    }
+
+    .notification-toggle:hover {
+        border-color: var(--primary);
+        background: rgba(79, 70, 229, 0.05);
+    }
+
+    .notification-toggle input[type="checkbox"] {
+        display: none;
+    }
+
+    .toggle-slider {
+        position: relative;
+        width: 50px;
+        height: 24px;
+        background: var(--gray-300);
+        border-radius: 12px;
+        transition: all 0.3s ease;
+    }
+
+    .toggle-slider:before {
+        content: '';
+        position: absolute;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background: white;
+        top: 2px;
+        left: 2px;
+        transition: all 0.3s ease;
+    }
+
+    .notification-toggle input:checked + .toggle-slider {
+        background: var(--primary);
+    }
+
+    .notification-toggle input:checked + .toggle-slider:before {
+        transform: translateX(26px);
+    }
+
+    .notification-toggle span:not(.toggle-slider) {
+        font-weight: 500;
+        color: var(--text-primary);
+    }
+
+    .notification-toggle small {
+        display: block;
+        color: var(--text-secondary);
+        font-size: 0.85rem;
+        margin-top: 2px;
+    }
+
+    .billing-plan {
+        max-width: 400px;
+        margin-bottom: 30px;
+    }
+
+    .plan-card {
+        border: 2px solid var(--primary);
+        border-radius: 12px;
+        padding: 25px;
+        text-align: center;
+    }
+
+    .plan-header {
+        margin-bottom: 20px;
+    }
+
+    .plan-header h4 {
+        font-size: 1.3rem;
+        color: var(--text-primary);
+        margin-bottom: 10px;
+    }
+
+    .plan-price {
+        display: flex;
+        align-items: baseline;
+        justify-content: center;
+        gap: 5px;
+    }
+
+    .price {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: var(--primary);
+    }
+
+    .period {
+        color: var(--text-secondary);
+        font-size: 1rem;
+    }
+
+    .plan-features {
+        margin-bottom: 25px;
+        text-align: left;
+    }
+
+    .plan-features ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .plan-features li {
+        padding: 8px 0;
+        color: var(--text-secondary);
+        position: relative;
+        padding-left: 25px;
+    }
+
+    .plan-features li:before {
+        content: '✓';
+        position: absolute;
+        left: 0;
+        color: var(--success);
+        font-weight: bold;
+    }
+
+    .billing-history {
+        margin-top: 30px;
+    }
+
+    .billing-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 15px;
+    }
+
+    .billing-table th,
+    .billing-table td {
+        padding: 12px 15px;
+        text-align: left;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .billing-table th {
+        font-weight: 600;
+        color: var(--text-primary);
+        background: var(--bg-tertiary);
+    }
+
+    .billing-table td {
+        color: var(--text-secondary);
+    }
+
+    .advanced-options {
+        max-width: 500px;
+    }
+
+    .data-actions {
+        display: flex;
+        gap: 15px;
+        margin-top: 10px;
+    }
+
+    .danger-zone {
+        padding: 20px;
+        background: rgba(239, 68, 68, 0.1);
+        border: 1px solid rgba(239, 68, 68, 0.3);
+        border-radius: 8px;
+        margin-top: 10px;
+    }
+
+    .danger-zone p {
+        color: var(--text-secondary);
+        margin-bottom: 15px;
+    }
+
+    .btn-danger {
+        background: var(--danger);
+        color: white;
+        border: none;
+    }
+
+    .btn-danger:hover {
+        background: var(--danger-dark);
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @media (max-width: 768px) {
+        .settings-nav {
+            flex-wrap: nowrap;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .api-keys-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .usage-stats {
+            grid-template-columns: 1fr;
+        }
+
+        .billing-table {
+            display: block;
+            overflow-x: auto;
+        }
+
+        .data-actions {
+            flex-direction: column;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        initSettingsPage();
+    });
+
+    function initSettingsPage() {
+        console.log('Initializing settings page...');
+
+        // 选项卡切换
+        document.querySelectorAll('.settings-tab').forEach(tab => {
+            tab.addEventListener('click', function(e) {
+                e.preventDefault();
+                console.log('Tab clicked:', this.dataset.tab);
+
+                // 移除所有active状态
+                document.querySelectorAll('.settings-tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+
+                // 激活当前选项卡
+                this.classList.add('active');
+                const tabId = this.dataset.tab;
+                // 转换连字符为驼峰并加上'Tab' (例如 api-usage → apiUsageTab)
+                const contentId = tabId.replace(/-([a-z])/g, (m, p1) => p1.toUpperCase()) + 'Tab';
+                console.log('Looking for content:', contentId);
+                const contentEl = document.getElementById(contentId);
+                if (contentEl) {
+                    contentEl.classList.add('active');
+                } else {
+                    console.error('Content not found:', contentId);
+                }
+            });
+        });
+
+        // 显示/隐藏密码
+        document.querySelectorAll('.toggle-password').forEach(button => {
+            button.addEventListener('click', function() {
+                const input = this.parentElement.querySelector('.api-key-input');
+                const icon = this.querySelector('i');
+                if (input.type === 'password') {
+                    input.type = 'text';
+                    icon.classList.remove('fa-eye');
+                    icon.classList.add('fa-eye-slash');
+                } else {
+                    input.type = 'password';
+                    icon.classList.remove('fa-eye-slash');
+                    icon.classList.add('fa-eye');
+                }
+            });
+        });
+
+        // 保存API密钥
+        document.querySelectorAll('.save-api-key').forEach(button => {
+            button.addEventListener('click', function() {
+                const service = this.dataset.service;
+                const input = document.getElementById(`${service}_api_key`);
+                const apiKey = input ? input.value : '';
+                const urlInput = document.getElementById(`${service}_url`);
+                const url = urlInput ? urlInput.value : '';
+                saveApiKey(service, apiKey, url);
+            });
+        });
+
+        // 测试API密钥
+        document.querySelectorAll('.test-api-key').forEach(button => {
+            button.addEventListener('click', function() {
+                const service = this.dataset.service;
+                const input = document.getElementById(`${service}_api_key`);
+                const apiKey = input ? input.value : '';
+                testApiKey(service, apiKey);
+            });
+        });
+
+        // 账户表单提交
+        const accountForm = document.getElementById('accountForm');
+        if (accountForm) {
+            accountForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                saveAccountSettings();
+            });
+        }
+
+        // 密码表单提交
+        const passwordForm = document.getElementById('passwordForm');
+        if (passwordForm) {
+            passwordForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                changePassword();
+            });
+        }
+
+        // 数据导出
+        const exportBtn = document.getElementById('exportData');
+        if (exportBtn) exportBtn.addEventListener('click', exportUserData);
+
+        // 清除缓存
+        const clearCacheBtn = document.getElementById('clearCache');
+        if (clearCacheBtn) clearCacheBtn.addEventListener('click', clearCache);
+
+        // 删除账户
+        const deleteAccountBtn = document.getElementById('deleteAccount');
+        if (deleteAccountBtn) deleteAccountBtn.addEventListener('click', deleteAccount);
+    }
+
+    // 以下为API函数（与您原有代码一致，此处仅作示意，实际需包含完整实现）
+    async function saveApiKey(service, apiKey, url) {
+        try {
+            const payload = { service, api_key: apiKey };
+            if (service === 'unified_generator' && url) payload.url = url;
+            const response = await fetch('/api/settings/update-api-key', {
+                method: 'POST', headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            const result = await response.json();
+            if (result.success) {
+                showNotification('API密钥保存成功', 'success');
+                const statusElement = document.querySelector(`[data-service="${service}"]`).closest('.api-key-card').querySelector('.api-key-status');
+                if (statusElement) statusElement.innerHTML = '<span class="status-badge status-active">已配置</span>';
+            } else {
+                showNotification(result.error || '保存失败', 'error');
+            }
+        } catch (error) {
+            showNotification('保存失败，请检查网络连接', 'error');
+        }
+    }
+
+    async function testApiKey(service, apiKey) {
+        if (!apiKey) { showNotification('请先输入API密钥', 'warning'); return; }
+        const button = event.target.closest('.test-api-key');
+        const originalText = button.textContent;
+        button.textContent = '测试中...'; button.disabled = true;
+        try {
+            const response = await fetch('/api/settings/test-api-key', {
+                method: 'POST', headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ service, api_key: apiKey })
+            });
+            const result = await response.json();
+            if (result.success) {
+                showNotification(result.valid ? 'API密钥验证成功' : 'API密钥验证失败', result.valid ? 'success' : 'error');
+            } else {
+                showNotification(result.error || '测试失败', 'error');
+            }
+        } catch (error) {
+            showNotification('测试失败，请检查网络连接', 'error');
+        } finally {
+            button.textContent = originalText; button.disabled = false;
+        }
+    }
+
+    async function saveAccountSettings() {
+        const username = document.getElementById('username').value;
+        const email = document.getElementById('email').value;
+        const bio = document.getElementById('bio').value;
+        try {
+            const response = await fetch('/api/auth/profile', {
+                method: 'PUT', headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username, email, bio })
+            });
+            const result = await response.json();
+            showNotification(result.success ? '账户设置已保存' : (result.error || '保存失败'), result.success ? 'success' : 'error');
+        } catch (error) {
+            showNotification('保存失败，请重试', 'error');
+        }
+    }
+
+    async function changePassword() {
+        const currentPassword = document.getElementById('current_password').value;
+        const newPassword = document.getElementById('new_password').value;
+        const confirmPassword = document.getElementById('confirm_password').value;
+        if (newPassword !== confirmPassword) {
+            showNotification('两次输入的密码不一致', 'error');
+            return;
+        }
+        try {
+            const response = await fetch('/api/auth/change-password', {
+                method: 'POST', headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ current_password: currentPassword, new_password: newPassword })
+            });
+            const result = await response.json();
+            if (result.success) {
+                showNotification('密码修改成功', 'success');
+                document.getElementById('passwordForm').reset();
+            } else {
+                showNotification(result.error || '密码修改失败', 'error');
+            }
+        } catch (error) {
+            showNotification('密码修改失败，请重试', 'error');
+        }
+    }
+
+    async function exportUserData() {
+        showNotification('正在准备导出数据，请稍候...', 'info');
+        try {
+            const response = await fetch('/api/settings/export-data');
+            if (response.ok) {
+                const blob = await response.blob();
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `灵犀剧能_数据导出_${new Date().toISOString().split('T')[0]}.zip`;
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+                document.body.removeChild(a);
+                showNotification('数据导出成功', 'success');
+            } else {
+                showNotification('数据导出失败', 'error');
+            }
+        } catch (error) {
+            showNotification('数据导出失败，请重试', 'error');
+        }
+    }
+
+    async function clearCache() {
+        if (confirm('确定要清除所有缓存数据吗？')) {
+            localStorage.clear();
+            sessionStorage.clear();
+            showNotification('缓存已清除', 'success');
+            setTimeout(() => location.reload(), 1000);
+        }
+    }
+
+    async function deleteAccount() {
+        if (confirm('确定要永久删除您的账户吗？此操作不可撤销，所有数据将被永久删除。')) {
+            const confirmation = prompt('请输入您的密码以确认删除账户：');
+            if (confirmation) {
+                try {
+                    const response = await fetch('/api/auth/delete-account', {
+                        method: 'POST', headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ password: confirmation })
+                    });
+                    const result = await response.json();
+                    if (result.success) {
+                        showNotification('账户已成功删除', 'success');
+                        setTimeout(() => window.location.href = '/', 2000);
+                    } else {
+                        showNotification(result.error || '删除失败，密码错误', 'error');
+                    }
+                } catch (error) {
+                    showNotification('删除失败，请重试', 'error');
+                }
+            }
+        }
+    }
+
+    // 通知提示函数（与原有样式一致）
+    function showNotification(message, type = 'info') {
+        const existing = document.querySelector('.notification-toast');
+        if (existing) existing.remove();
+        const notification = document.createElement('div');
+        notification.className = `notification-toast notification-${type}`;
+        notification.innerHTML = `
+            <div class="notification-content">
+                <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i>
+                <span>${message}</span>
+            </div>
+            <button class="notification-close">&times;</button>
+        `;
+        document.body.appendChild(notification);
+        setTimeout(() => notification.classList.add('show'), 10);
+        notification.querySelector('.notification-close').addEventListener('click', () => {
+            notification.classList.remove('show');
+            setTimeout(() => notification.remove(), 300);
+        });
+        setTimeout(() => {
+            if (notification.parentNode) {
+                notification.classList.remove('show');
+                setTimeout(() => notification.remove(), 300);
+            }
+        }, 3000);
+    }
+</script>
+{% endblock %}

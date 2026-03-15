@@ -1,0 +1,395 @@
+<!-- templates/episode_preview.html -->
+{% extends "layout.html" %}
+
+{% block title %}视频预览 - {{ episode.title }} - 灵犀剧能{% endblock %}
+
+{% block content %}
+<div class="preview-page">
+    <!-- 头部 -->
+    <div class="preview-header">
+        <button class="btn btn-outline btn-sm" onclick="history.back()">
+            <i class="fas fa-arrow-left"></i> 返回
+        </button>
+        <div class="header-title">
+            <h1>{{ episode.title }}</h1>
+            <span>第 {{ episode.episode_number }} 集</span>
+        </div>
+        <div class="header-status">
+            {% if episode.generation_status == 'completed' %}
+            <span class="badge bg-success">可播放</span>
+            {% else %}
+            <span class="badge bg-warning">生成中</span>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- 视频播放器 -->
+    <div class="video-section">
+        <div class="video-container" id="videoContainer">
+            <video id="previewPlayer" playsinline>
+                <source src="" type="video/mp4">
+            </video>
+            
+            <!-- 加载中 -->
+            <div class="video-loading" id="videoLoading">
+                <div class="loading-spinner">
+                    <div class="spinner"></div>
+                    <span>加载中...</span>
+                </div>
+            </div>
+
+            <!-- 无视频 -->
+            <div class="no-video" id="noVideo" style="display: none;">
+                <i class="fas fa-video-slash"></i>
+                <p>暂无视频</p>
+            </div>
+
+            <!-- 控制栏 -->
+            <div class="video-controls" id="videoControls" style="display: none;">
+                <div class="progress-wrap">
+                    <input type="range" class="progress-bar" id="progressSlider" value="0" min="0" max="100">
+                </div>
+                <div class="controls-row">
+                    <div class="left">
+                        <button class="ctrl-btn" id="playBtn" onclick="togglePlay()">
+                            <i class="fas fa-play"></i>
+                        </button>
+                        <span class="time"><span id="currentTime">00:00</span> / <span id="duration">00:00</span></span>
+                    </div>
+                    <div class="right">
+                        <div class="volume-wrap">
+                            <button class="ctrl-btn" onclick="toggleMute()">
+                                <i class="fas fa-volume-up" id="muteIcon"></i>
+                            </button>
+                            <input type="range" class="volume-slider" id="volumeSlider" min="0" max="100" value="100">
+                        </div>
+                        <button class="ctrl-btn" onclick="downloadVideo()">
+                            <i class="fas fa-download"></i>
+                        </button>
+                        <button class="ctrl-btn" onclick="toggleFullscreen()">
+                            <i class="fas fa-expand"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 信息区域 -->
+    <div class="info-section">
+        <div class="info-card">
+            <h3>视频信息</h3>
+            <div class="info-grid">
+                <div class="info-item">
+                    <span class="label">标题</span>
+                    <span class="value">{{ episode.title }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="label">集数</span>
+                    <span class="value">第 {{ episode.episode_number }} 集</span>
+                </div>
+                <div class="info-item">
+                    <span class="label">状态</span>
+                    <span class="value">
+                        <span class="badge {% if episode.status == 'published' %}bg-success{% elif episode.status == 'ready' %}bg-primary{% else %}bg-secondary{% endif %}">
+                            {{ episode.status_text or episode.status }}
+                        </span>
+                    </span>
+                </div>
+                <div class="info-item">
+                    <span class="label">生成状态</span>
+                    <span class="value">
+                        <span class="badge {% if episode.generation_status == 'completed' %}bg-success{% elif episode.generation_status == 'processing' %}bg-warning{% else %}bg-secondary{% endif %}">
+                            {{ episode.generation_status or '未开始' }}
+                        </span>
+                    </span>
+                </div>
+                <div class="info-item">
+                    <span class="label">创建时间</span>
+                    <span class="value">{{ episode.created_at.strftime('%Y-%m-%d %H:%M') }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="label">更新时间</span>
+                    <span class="value">{{ episode.updated_at.strftime('%Y-%m-%d %H:%M') }}</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="action-bar">
+            <button class="btn btn-outline" onclick="history.back()">
+                <i class="fas fa-arrow-left"></i> 返回
+            </button>
+            <button class="btn btn-primary" onclick="location.href='/episodes/{{ episode.id }}/edit'">
+                <i class="fas fa-edit"></i> 编辑分集
+            </button>
+            <button class="btn btn-success" onclick="checkAndPublish()">
+                <i class="fas fa-paper-plane"></i> 发布
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- 发布确认模态框 -->
+<div class="modal" id="publishModal" style="display: none;">
+    <div class="modal-backdrop" onclick="closePublishModal()"></div>
+    <div class="modal-content">
+        <div class="modal-header">
+            <i class="fas fa-paper-plane"></i>
+            <span>确认发布</span>
+            <button onclick="closePublishModal()"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="modal-body">
+            <div class="publish-icon"><i class="fas fa-globe-americas"></i></div>
+            <h4>确定要发布这个分集吗？</h4>
+            <p>发布后视频将在<strong>发现页面</strong>对所有观众可见</p>
+            <div class="publish-info">
+                <div><span>标题</span><span>{{ episode.title }}</span></div>
+                <div><span>集数</span><span>第 {{ episode.episode_number }} 集</span></div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" onclick="closePublishModal()">取消</button>
+            <button class="btn btn-success" id="confirmPublishBtn" onclick="confirmPublish()">
+                <i class="fas fa-check"></i> 确认发布
+            </button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block styles %}
+<style>
+.preview-page { max-width: 1000px; margin: 0 auto; padding: 20px; }
+
+.preview-header { display: flex; align-items: center; gap: 20px; padding: 20px; background: white; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+
+.header-title { flex: 1; }
+.header-title h1 { margin: 0; font-size: 1.4rem; color: #1a1a2e; }
+.header-title span { color: #6c757d; font-size: 0.9rem; }
+
+.video-section { background: #1a1a2e; border-radius: 16px; overflow: hidden; margin-bottom: 20px; }
+
+.video-container { position: relative; aspect-ratio: 16/9; }
+
+.video-container video { width: 100%; height: 100%; object-fit: contain; }
+
+.video-loading { position: absolute; inset: 0; background: #1a1a2e; display: flex; align-items: center; justify-content: center; }
+
+.loading-spinner { text-align: center; color: white; }
+.loading-spinner .spinner { width: 48px; height: 48px; border: 4px solid rgba(255,255,255,0.1); border-top-color: #4facfe; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 12px; }
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.no-video { position: absolute; inset: 0; background: #1a1a2e; display: flex; flex-direction: column; align-items: center; justify-content: center; color: rgba(255,255,255,0.4); }
+.no-video i { font-size: 3rem; margin-bottom: 12px; }
+
+.video-controls { position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(transparent, rgba(0,0,0,0.8)); padding: 40px 16px 16px; }
+
+.progress-wrap { margin-bottom: 10px; }
+.progress-bar { width: 100%; height: 4px; -webkit-appearance: none; background: rgba(255,255,255,0.3); border-radius: 2px; cursor: pointer; }
+.progress-bar::-webkit-slider-thumb { -webkit-appearance: none; width: 12px; height: 12px; background: #4facfe; border-radius: 50%; cursor: pointer; }
+
+.controls-row { display: flex; justify-content: space-between; align-items: center; }
+
+.ctrl-btn { width: 36px; height: 36px; border-radius: 8px; border: none; background: rgba(255,255,255,0.15); color: white; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+.ctrl-btn:hover { background: rgba(255,255,255,0.25); }
+
+.left, .right { display: flex; align-items: center; gap: 12px; }
+
+.time { color: white; font-size: 0.85rem; }
+
+.volume-wrap { display: flex; align-items: center; gap: 8px; }
+.volume-slider { width: 60px; height: 4px; -webkit-appearance: none; background: rgba(255,255,255,0.3); border-radius: 2px; }
+.volume-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 10px; height: 10px; background: white; border-radius: 50%; cursor: pointer; }
+
+.info-section { background: white; border-radius: 12px; padding: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+
+.info-card h3 { margin: 0 0 20px 0; font-size: 1.1rem; color: #1a1a2e; }
+
+.info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 24px; }
+
+.info-item { display: flex; flex-direction: column; gap: 4px; }
+.info-item .label { font-size: 0.85rem; color: #6c757d; }
+.info-item .value { font-size: 1rem; color: #1a1a2e; font-weight: 500; }
+
+.action-bar { display: flex; justify-content: flex-end; gap: 12px; padding-top: 20px; border-top: 1px solid #e9ecef; }
+.action-bar .btn { padding: 10px 20px; border-radius: 8px; }
+
+/* 发布模态框 */
+.modal { position: fixed; inset: 0; z-index: 1000; display: none; align-items: center; justify-content: center; padding: 20px; }
+.modal.show { display: flex; }
+.modal-backdrop { position: absolute; inset: 0; background: rgba(0,0,0,0.5); }
+.modal-content { position: relative; background: white; border-radius: 16px; max-width: 420px; width: 100%; overflow: hidden; box-shadow: 0 25px 80px rgba(0,0,0,0.3); }
+
+.modal-header { display: flex; align-items: center; gap: 10px; padding: 16px 20px; background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white; }
+.modal-header i { font-size: 1.2rem; }
+.modal-header span { font-size: 1.1rem; font-weight: 600; flex: 1; }
+.modal-header button { width: 28px; height: 28px; border-radius: 6px; border: none; background: rgba(255,255,255,0.2); color: white; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+
+.modal-body { padding: 24px 20px; text-align: center; }
+.publish-icon { width: 64px; height: 64px; border-radius: 50%; background: linear-gradient(135deg, #28a745 0%, #20c997 100%); margin: 0 auto 16px; display: flex; align-items: center; justify-content: center; }
+.publish-icon i { font-size: 1.8rem; color: white; }
+.modal-body h4 { margin: 0 0 8px 0; font-size: 1.1rem; color: #1a1a2e; }
+.modal-body > p { color: #6c757d; font-size: 0.9rem; margin: 0 0 20px 0; }
+.modal-body > p strong { color: #28a745; }
+.publish-info { background: #f8f9fa; border-radius: 10px; padding: 16px; text-align: left; }
+.publish-info div { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #e9ecef; }
+.publish-info div:last-child { border-bottom: none; }
+.publish-info div span:first-child { color: #6c757d; }
+.publish-info div span:last-child { color: #1a1a2e; font-weight: 500; }
+
+.modal-footer { display: flex; gap: 12px; padding: 16px 20px; border-top: 1px solid #e9ecef; }
+.modal-footer .btn { flex: 1; padding: 10px; border-radius: 8px; }
+
+@media (max-width: 576px) {
+    .preview-header { flex-wrap: wrap; }
+    .header-title { width: 100%; order: 2; margin-top: 10px; }
+    .action-bar { flex-wrap: wrap; }
+    .action-bar .btn { flex: 1; }
+}
+</style>
+{% endblock %}
+
+{% block scripts %}
+<script>
+const episodeId = {{ episode.id }};
+let player = null;
+
+document.addEventListener('DOMContentLoaded', function() {
+    player = document.getElementById('previewPlayer');
+    initPlayer();
+});
+
+function initPlayer() {
+    const videoUrl = getVideoUrl();
+    if (videoUrl) {
+        loadVideo(videoUrl);
+    } else {
+        showNoVideo();
+    }
+    bindPlayerEvents();
+}
+
+const uploadedVideoUrl = '{{ episode.video_url or "" }}';
+
+function getVideoUrl() {
+    const cacheBuster = Date.now();
+    return uploadedVideoUrl || `/generation/${episodeId}/final_video.mp4?t=${cacheBuster}`;
+}
+
+function loadVideo(url) {
+    fetch(url, { method: 'HEAD' }).then(r => {
+        if (r.ok) {
+            player.src = url;
+            document.getElementById('videoLoading').style.display = 'none';
+            document.getElementById('videoControls').style.display = 'block';
+        } else {
+            showNoVideo();
+        }
+    }).catch(showNoVideo);
+}
+
+function showNoVideo() {
+    document.getElementById('videoLoading').style.display = 'none';
+    document.getElementById('noVideo').style.display = 'flex';
+}
+
+function bindPlayerEvents() {
+    player.onloadedmetadata = function() {
+        document.getElementById('duration').textContent = formatTime(player.duration);
+    };
+    player.ontimeupdate = function() {
+        const pct = (player.currentTime / player.duration) * 100;
+        document.getElementById('progressSlider').value = pct;
+        document.getElementById('currentTime').textContent = formatTime(player.currentTime);
+    };
+    document.getElementById('progressSlider').oninput = function() {
+        player.currentTime = (this.value / 100) * player.duration;
+    };
+    document.getElementById('volumeSlider').oninput = function() {
+        player.volume = this.value / 100;
+    };
+}
+
+function togglePlay() {
+    if (player.paused) player.play();
+    else player.pause();
+    updatePlayBtn();
+}
+
+function updatePlayBtn() {
+    document.getElementById('playBtn').innerHTML = player.paused ? '<i class="fas fa-play"></i>' : '<i class="fas fa-pause"></i>';
+}
+
+function toggleMute() {
+    player.muted = !player.muted;
+    document.getElementById('muteIcon').className = player.muted ? 'fas fa-volume-mute' : 'fas fa-volume-up';
+}
+
+function toggleFullscreen() {
+    const c = document.getElementById('videoContainer');
+    if (document.fullscreenElement) document.exitFullscreen();
+    else c.requestFullscreen();
+}
+
+function downloadVideo() {
+    const url = getVideoUrl();
+    if (!url) return alert('暂无可下载的视频');
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = '{{ episode.title }}_{{ episode.episode_number }}.mp4';
+    a.click();
+}
+
+function formatTime(s) {
+    const m = Math.floor(s / 60), sec = Math.floor(s % 60);
+    return `${m.toString().padStart(2,'0')}:${sec.toString().padStart(2,'0')}`;
+}
+
+// 发布功能
+function checkAndPublish() {
+    const status = '{{ episode.status }}';
+    if (status === 'published') {
+        alert('该分集已发布！');
+    } else if (status === 'ready') {
+        showPublishModal();
+    } else if (confirm('当前分集尚未就绪，是否前往编辑页面？')) {
+        location.href = `/episodes/${episodeId}/edit`;
+    }
+}
+
+function showPublishModal() {
+    document.getElementById('publishModal').style.display = 'flex';
+}
+
+function closePublishModal() {
+    document.getElementById('publishModal').style.display = 'none';
+}
+
+function confirmPublish() {
+    const btn = document.getElementById('confirmPublishBtn');
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 发布中...';
+    
+    fetch(`/api/episodes/${episodeId}/publish`, { method: 'POST' })
+    .then(r => r.json())
+    .then(data => {
+        closePublishModal();
+        if (data.success) {
+            alert('发布成功！');
+            location.reload();
+        } else {
+            alert(data.error || '发布失败');
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-check"></i> 确认发布';
+        }
+    })
+    .catch(e => {
+        console.error(e);
+        alert('发布失败');
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-check"></i> 确认发布';
+    });
+}
+</script>
+{% endblock %}

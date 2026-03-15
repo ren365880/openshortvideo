@@ -1,0 +1,1300 @@
+<!-- templates/edit_character.html -->
+{% extends "layout.html" %}
+
+{% block title %}编辑角色 - 灵犀剧能{% endblock %}
+
+{% block content %}
+<div class="character-edit-container">
+    <!-- 页面标题 -->
+    <div class="page-header">
+        <div class="header-content">
+            <button class="btn btn-outline btn-sm" onclick="location.href='/projects/{{ project.id }}'">
+                <i class="fas fa-arrow-left"></i> 返回项目详情
+            </button>
+            <h1 class="page-title">编辑角色</h1>
+            <p class="page-subtitle">编辑项目 "{{ project.title }}" 的角色 "{{ character.name }}"</p>
+        </div>
+    </div>
+
+    <!-- 编辑表单 -->
+    <div class="edit-form-container">
+        <form id="editCharacterForm" class="character-form">
+            <input type="hidden" id="projectId" value="{{ project.id }}">
+            <input type="hidden" id="characterId" value="{{ character.id }}">
+
+            <div class="form-section">
+                <h2 class="form-section-title">
+                    <i class="fas fa-user"></i> 基本信息
+                </h2>
+
+                <div class="form-row">
+                    <div class="form-group full-width">
+                        <label for="name" class="form-label">角色名称</label>
+                        <input type="text" id="name" name="name" class="form-control"
+                               value="{{ character.name }}"
+                               placeholder="请输入角色名称" required minlength="2">
+                        <div class="form-text">角色的全名或昵称</div>
+                        <div class="invalid-feedback"></div>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group half-width">
+                        <label for="role" class="form-label">角色类型</label>
+                        <select id="role" name="role" class="form-control">
+                            <option value="主角" {% if character.role == '主角' %}selected{% endif %}>主角</option>
+                            <option value="配角" {% if character.role == '配角' %}selected{% endif %}>配角</option>
+                            <option value="反派" {% if character.role == '反派' %}selected{% endif %}>反派</option>
+                            <option value="群众" {% if character.role == '群众' %}selected{% endif %}>群众</option>
+                            <option value="其他" {% if character.role == '其他' %}selected{% endif %}>其他</option>
+                        </select>
+                        <div class="form-text">角色在故事中的定位</div>
+                    </div>
+
+                    <div class="form-group half-width">
+                        <label for="gender" class="form-label">性别</label>
+                        <select id="gender" name="gender" class="form-control">
+                            <option value="" {% if not character.gender %}selected{% endif %}>未指定</option>
+                            <option value="男" {% if character.gender == '男' %}selected{% endif %}>男</option>
+                            <option value="女" {% if character.gender == '女' %}selected{% endif %}>女</option>
+                            <option value="其他" {% if character.gender == '其他' %}selected{% endif %}>其他</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group half-width">
+                        <label for="age" class="form-label">年龄</label>
+                        <input type="number" id="age" name="age" class="form-control"
+                               value="{{ character.age or '' }}"
+                               min="0" max="200" placeholder="可选">
+                        <div class="form-text">角色的年龄</div>
+                    </div>
+
+                    <div class="form-group half-width">
+                        <label for="color" class="form-label">标识颜色</label>
+                        <input type="color" id="color" name="color" class="form-control color-input"
+                               value="{{ character.color or '#4F46E5' }}">
+                        <div class="form-text">用于在图表中标识角色</div>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group full-width">
+                        <label for="description" class="form-label">角色描述</label>
+                        <textarea id="description" name="description" class="form-control"
+                                  rows="4" placeholder="描述角色的外貌、背景、经历等...">{{ character.description or '' }}</textarea>
+                        <div class="form-text">角色的基本信息和背景故事</div>
+                        <div class="invalid-feedback"></div>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group full-width">
+                        <label for="personality" class="form-label">性格特点</label>
+                        <textarea id="personality" name="personality" class="form-control"
+                                  rows="3" placeholder="描述角色的性格、习惯、特点等...">{{ character.personality or '' }}</textarea>
+                        <div class="form-text">角色的性格特征和行为模式</div>
+                        <div class="invalid-feedback"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h2 class="form-section-title">
+                    <i class="fas fa-images"></i> 角色图像（正面/背面/侧面）
+                </h2>
+                <div class="form-text" style="margin-bottom: 20px;">上传或AI生成角色的正面、背面、侧面图像。背面和侧面可使用正面图像作为参考进行AI编辑。</div>
+
+                <div class="avatar-three-columns">
+                    <!-- 正面 -->
+                    <div class="avatar-column">
+                        <div class="avatar-column-header">
+                            <i class="fas fa-user"></i> 正面
+                        </div>
+                        <div class="avatar-column-content" id="avatarFrontSection">
+                            {% set avatar_url = character.avatar_front or character.avatar %}
+                            {% if avatar_url %}
+                            <div class="current-avatar-container">
+                                <div class="avatar-preview">
+                                    <img src="{{ avatar_url if avatar_url.startswith('http') else '/uploads/characters/' + project.id|string + '/' + character.id|string + '/' + avatar_url }}"
+                                         alt="{{ character.name }}-正面" class="preview-avatar">
+                                </div>
+                                <div class="avatar-actions">
+                                    <button type="button" class="btn btn-outline btn-sm upload-btn" onclick="showUploadSection('front')">
+                                        <i class="fas fa-upload"></i> 上传
+                                    </button>
+                                    <button type="button" class="btn btn-primary btn-sm ai-btn" onclick="generateAvatar('front')">
+                                        <i class="fas fa-robot"></i> AI生成
+                                    </button>
+                                </div>
+                            </div>
+                            {% else %}
+                            <div class="no-avatar-message" id="noAvatarFront">
+                                <i class="fas fa-user-plus"></i>
+                                <p>尚未添加正面图像</p>
+                                <div class="avatar-actions">
+                                    <button type="button" class="btn btn-outline btn-sm upload-btn" onclick="showUploadSection('front')">
+                                        <i class="fas fa-upload"></i> 上传
+                                    </button>
+                                    <button type="button" class="btn btn-primary btn-sm ai-btn" onclick="generateAvatar('front')">
+                                        <i class="fas fa-robot"></i> AI生成
+                                    </button>
+                                </div>
+                            </div>
+                            {% endif %}
+
+                            <!-- 正面上传区域 -->
+                            <div id="avatarFrontUpload" style="display: none; margin-top: 15px;">
+                                <div class="avatar-upload-area" onclick="document.getElementById('avatarFrontFile').click()">
+                                    <div class="upload-placeholder">
+                                        <i class="fas fa-cloud-upload-alt"></i>
+                                        <p>点击上传正面图像</p>
+                                    </div>
+                                    <input type="file" id="avatarFrontFile" class="avatar-input" accept="image/*" hidden>
+                                </div>
+                                <button type="button" class="btn btn-primary btn-sm ai-btn" onclick="generateAvatar('front')" style="margin-top: 10px; width: 100%;">
+                                    <i class="fas fa-robot"></i> 或AI生成
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 背面 -->
+                    <div class="avatar-column">
+                        <div class="avatar-column-header">
+                            <i class="fas fa-user-alt"></i> 背面
+                        </div>
+                        <div class="avatar-column-content" id="avatarBackSection">
+                            {% set avatar_back_url = character.avatar_back %}
+                            {% if avatar_back_url %}
+                            <div class="current-avatar-container">
+                                <div class="avatar-preview">
+                                    <img src="{{ avatar_back_url if avatar_back_url.startswith('http') else '/uploads/characters/' + project.id|string + '/' + character.id|string + '/' + avatar_back_url }}"
+                                         alt="{{ character.name }}-背面" class="preview-avatar">
+                                </div>
+                                <div class="avatar-actions">
+                                    <button type="button" class="btn btn-outline btn-sm upload-btn" onclick="showUploadSection('back')">
+                                        <i class="fas fa-upload"></i> 上传
+                                    </button>
+                                    <button type="button" class="btn btn-primary btn-sm ai-btn" onclick="generateAvatar('back')">
+                                        <i class="fas fa-robot"></i> AI编辑
+                                    </button>
+                                </div>
+                            </div>
+                            {% else %}
+                            <div class="no-avatar-message" id="noAvatarBack">
+                                <i class="fas fa-user-times"></i>
+                                <p>尚未添加背面图像</p>
+                                <div class="avatar-actions">
+                                    <button type="button" class="btn btn-outline btn-sm upload-btn" onclick="showUploadSection('back')">
+                                        <i class="fas fa-upload"></i> 上传
+                                    </button>
+                                    <button type="button" class="btn btn-primary btn-sm ai-btn" onclick="generateAvatar('back')">
+                                        <i class="fas fa-robot"></i> AI编辑
+                                    </button>
+                                </div>
+                            </div>
+                            {% endif %}
+
+                            <!-- 背面上传区域 -->
+                            <div id="avatarBackUpload" style="display: none; margin-top: 15px;">
+                                <div class="avatar-upload-area" onclick="document.getElementById('avatarBackFile').click()">
+                                    <div class="upload-placeholder">
+                                        <i class="fas fa-cloud-upload-alt"></i>
+                                        <p>点击上传背面图像</p>
+                                    </div>
+                                    <input type="file" id="avatarBackFile" class="avatar-input" accept="image/*" hidden>
+                                </div>
+                                <button type="button" class="btn btn-primary btn-sm ai-btn" onclick="generateAvatar('back')" style="margin-top: 10px; width: 100%;">
+                                    <i class="fas fa-robot"></i> 或AI编辑（需正面参考）
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 侧面 -->
+                    <div class="avatar-column">
+                        <div class="avatar-column-header">
+                            <i class="fas fa-id-card-alt"></i> 侧面
+                        </div>
+                        <div class="avatar-column-content" id="avatarSideSection">
+                            {% set avatar_side_url = character.avatar_side %}
+                            {% if avatar_side_url %}
+                            <div class="current-avatar-container">
+                                <div class="avatar-preview">
+                                    <img src="{{ avatar_side_url if avatar_side_url.startswith('http') else '/uploads/characters/' + project.id|string + '/' + character.id|string + '/' + avatar_side_url }}"
+                                         alt="{{ character.name }}-侧面" class="preview-avatar">
+                                </div>
+                                <div class="avatar-actions">
+                                    <button type="button" class="btn btn-outline btn-sm upload-btn" onclick="showUploadSection('side')">
+                                        <i class="fas fa-upload"></i> 上传
+                                    </button>
+                                    <button type="button" class="btn btn-primary btn-sm ai-btn" onclick="generateAvatar('side')">
+                                        <i class="fas fa-robot"></i> AI编辑
+                                    </button>
+                                </div>
+                            </div>
+                            {% else %}
+                            <div class="no-avatar-message" id="noAvatarSide">
+                                <i class="fas fa-id-card"></i>
+                                <p>尚未添加侧面图像</p>
+                                <div class="avatar-actions">
+                                    <button type="button" class="btn btn-outline btn-sm upload-btn" onclick="showUploadSection('side')">
+                                        <i class="fas fa-upload"></i> 上传
+                                    </button>
+                                    <button type="button" class="btn btn-primary btn-sm ai-btn" onclick="generateAvatar('side')">
+                                        <i class="fas fa-robot"></i> AI编辑
+                                    </button>
+                                </div>
+                            </div>
+                            {% endif %}
+
+                            <!-- 侧面上传区域 -->
+                            <div id="avatarSideUpload" style="display: none; margin-top: 15px;">
+                                <div class="avatar-upload-area" onclick="document.getElementById('avatarSideFile').click()">
+                                    <div class="upload-placeholder">
+                                        <i class="fas fa-cloud-upload-alt"></i>
+                                        <p>点击上传侧面图像</p>
+                                    </div>
+                                    <input type="file" id="avatarSideFile" class="avatar-input" accept="image/*" hidden>
+                                </div>
+                                <button type="button" class="btn btn-primary btn-sm ai-btn" onclick="generateAvatar('side')" style="margin-top: 10px; width: 100%;">
+                                    <i class="fas fa-robot"></i> 或AI编辑（需正面参考）
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 隐藏的原始头像字段用于兼容 -->
+                <input type="hidden" id="avatarFront" name="avatar_front" value="{{ character.avatar_front or character.avatar or '' }}">
+                <input type="hidden" id="avatarBack" name="avatar_back" value="{{ character.avatar_back or '' }}">
+                <input type="hidden" id="avatarSide" name="avatar_side" value="{{ character.avatar_side or '' }}">
+            </div>
+
+            <div class="form-actions">
+                <button type="button" class="btn btn-outline" onclick="location.href='/projects/{{ project.id }}'">
+                    取消
+                </button>
+                <button type="submit" class="btn btn-primary btn-lg">
+                    <i class="fas fa-save"></i> 保存更改
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block styles %}
+<style>
+    .character-edit-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 30px 20px;
+    }
+
+    .edit-form-container {
+        background: white;
+        border-radius: 16px;
+        padding: 40px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        margin-top: 30px;
+    }
+
+    .form-section {
+        margin-bottom: 40px;
+        padding-bottom: 40px;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .form-section:last-child {
+        border-bottom: none;
+        margin-bottom: 0;
+        padding-bottom: 0;
+    }
+
+    .form-section-title {
+        font-size: 20px;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-bottom: 24px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .form-section-title i {
+        color: var(--primary);
+    }
+
+    .form-row {
+        display: flex;
+        gap: 24px;
+        margin-bottom: 24px;
+    }
+
+    .form-row:last-child {
+        margin-bottom: 0;
+    }
+
+    .form-group {
+        flex: 1;
+    }
+
+    .form-group.half-width {
+        flex: 0 0 calc(50% - 12px);
+    }
+
+    .form-group.full-width {
+        flex: 0 0 100%;
+    }
+
+    .form-group.full-width textarea {
+        min-height: 120px;
+        resize: vertical;
+    }
+
+    .color-input {
+        height: 42px;
+        padding: 4px;
+        border-radius: 6px;
+        cursor: pointer;
+    }
+
+    /* 三列头像布局 - 更宽更舒适 */
+    .avatar-three-columns {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 24px;
+    }
+
+    .avatar-column {
+        background: linear-gradient(135deg, #f8f9ff 0%, #fff 100%);
+        border-radius: 16px;
+        padding: 24px;
+        border: 2px solid #eef0f5;
+        transition: all 0.3s ease;
+    }
+
+    .avatar-column:hover {
+        border-color: var(--primary);
+        box-shadow: 0 8px 24px rgba(79, 70, 229, 0.15);
+        transform: translateY(-2px);
+    }
+
+    .avatar-column-header {
+        text-align: center;
+        font-size: 16px;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-bottom: 20px;
+        padding-bottom: 16px;
+        border-bottom: 2px dashed #eef0f5;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+    }
+
+    .avatar-column-header i {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+        color: white;
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 2px 8px rgba(99, 102, 241, 0.3);
+    }
+
+    .avatar-column-content {
+        min-height: 280px;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .current-avatar-container {
+        border-radius: 12px;
+        padding: 16px;
+        background: white;
+        text-align: center;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+    }
+
+    .avatar-preview {
+        margin-bottom: 16px;
+    }
+
+    .preview-avatar {
+        width: 180px;
+        height: 180px;
+        border-radius: 12px;
+        object-fit: cover;
+        margin: 0 auto;
+        display: block;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .avatar-info {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+    }
+
+    .no-avatar-message {
+        text-align: center;
+        padding: 50px 24px;
+        border: 2px dashed #d1d5db;
+        border-radius: 12px;
+        color: var(--text-secondary);
+        background: #fafbfc;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .no-avatar-message i {
+        font-size: 56px;
+        margin-bottom: 16px;
+        color: #9ca3af;
+        background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .no-avatar-message p {
+        margin: 0 0 20px;
+        font-size: 15px;
+        color: #6b7280;
+    }
+
+    .avatar-column .current-avatar-container {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    .avatar-column .avatar-preview {
+        width: 100%;
+        aspect-ratio: 1;
+        border-radius: 12px;
+        overflow: hidden;
+        background: #f3f4f6;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .avatar-column .avatar-preview:hover {
+        transform: scale(1.02);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    }
+
+    .avatar-column .avatar-preview img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        background: #fafafa;
+    }
+
+    /* ========== 图片预览灯箱样式 ========== */
+    .image-preview-modal {
+        display: none;
+        position: fixed;
+        z-index: 10000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.85);
+        opacity: 1;
+        transition: none !important;
+        animation: none !important;
+    }
+
+    .image-preview-modal.show {
+        display: block;
+    }
+
+    .image-preview-modal .modal-content {
+        max-width: 60%;
+        max-height: 80vh;
+        object-fit: contain;
+        border-radius: 8px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        opacity: 1;
+        transition: none !important;
+        animation: none !important;
+    }
+
+    .image-preview-modal .modal-close {
+        position: fixed;
+        top: 15px;
+        right: 20px;
+        color: #fff;
+        font-size: 32px;
+        font-weight: bold;
+        cursor: pointer;
+        z-index: 10001;
+        width: 40px;
+        height: 40px;
+        line-height: 36px;
+        text-align: center;
+        background: rgba(255,255,255,0.1);
+        border-radius: 50%;
+        transition: none !important;
+        animation: none !important;
+    }
+
+    .image-preview-modal .modal-close:hover {
+        color: #ff6b6b;
+        background: rgba(255,255,255,0.2);
+    }
+
+    #previewCaption {
+        margin: auto;
+        display: block;
+        width: 80%;
+        max-width: 700px;
+        text-align: center;
+        color: #ccc;
+        padding: 10px 0;
+        font-size: 16px;
+        position: absolute;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+
+    /* ========== 优化后的按钮样式 ========== */
+    .avatar-actions {
+        display: flex;
+        gap: 12px;
+        justify-content: center;
+        flex-wrap: wrap;
+        margin-top: 12px;
+    }
+
+    /* 上传按钮 (outline) */
+    .btn-outline.upload-btn {
+        border: 2px solid #e5e7eb;
+        background: white;
+        color: #4b5563;
+        font-weight: 500;
+        padding: 10px 20px;
+        border-radius: 40px;  /* 胶囊圆角 */
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .btn-outline.upload-btn i {
+        font-size: 14px;
+        color: #9ca3af;
+        transition: color 0.3s ease;
+    }
+
+    .btn-outline.upload-btn:hover {
+        border-color: var(--primary);
+        background: rgba(79, 70, 229, 0.02);
+        color: var(--primary);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 16px rgba(79, 70, 229, 0.12);
+    }
+
+    .btn-outline.upload-btn:hover i {
+        color: var(--primary);
+    }
+
+    /* AI按钮 (primary) */
+    .btn-primary.ai-btn {
+        background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+        border: none;
+        color: white;
+        font-weight: 600;
+        padding: 10px 20px;
+        border-radius: 40px;
+        box-shadow: 0 8px 18px rgba(99, 102, 241, 0.3);
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        letter-spacing: 0.3px;
+    }
+
+    .btn-primary.ai-btn i {
+        font-size: 14px;
+        color: rgba(255, 255, 255, 0.9);
+    }
+
+    .btn-primary.ai-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 12px 24px rgba(99, 102, 241, 0.4);
+        background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+    }
+
+    .btn-primary.ai-btn:active {
+        transform: translateY(-1px);
+        box-shadow: 0 6px 12px rgba(99, 102, 241, 0.4);
+    }
+
+    /* 无头像时的按钮组 */
+    .no-avatar-message .avatar-actions {
+        margin-top: 20px;
+    }
+
+    /* 上传区域内的AI按钮 */
+    .avatar-upload-area + .btn-primary.ai-btn {
+        width: 100%;
+        margin-top: 12px;
+        padding: 12px 16px;
+        font-size: 15px;
+    }
+
+    /* 上传区域样式保持不变，仅微调 */
+    .avatar-upload-area {
+        border: 2px dashed #d1d5db;
+        border-radius: 16px;
+        padding: 40px 24px;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        background: #fafbfc;
+    }
+
+    .avatar-upload-area:hover {
+        border-color: var(--primary);
+        background: rgba(79, 70, 229, 0.05);
+    }
+
+    .upload-placeholder {
+        color: var(--text-secondary);
+    }
+
+    .upload-placeholder i {
+        width: 64px;
+        height: 64px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        color: #6366f1;
+        margin-bottom: 12px;
+        box-shadow: 0 4px 12px rgba(99, 102, 241, 0.15);
+    }
+
+    /* 表单操作按钮 */
+    .form-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 16px;
+        margin-top: 40px;
+        padding-top: 30px;
+        border-top: 1px solid var(--border-color);
+    }
+
+    /* 描述区域更宽 - 使用更高优先级 */
+    .edit-form-container #description, 
+    .edit-form-container #personality {
+        width: 100% !important;
+        min-height: 150px !important;
+        resize: vertical;
+        font-size: 15px !important;
+        line-height: 1.7 !important;
+        padding: 16px !important;
+    }
+
+    /* 确保full-width组占满整行 */
+    .edit-form-container .form-group.full-width {
+        flex: 0 0 100% !important;
+        max-width: 100% !important;
+        width: 100% !important;
+    }
+
+    .edit-form-container .form-row {
+        width: 100% !important;
+        display: block !important;
+    }
+
+    @media (max-width: 1024px) {
+        .character-edit-container {
+            max-width: 100%;
+            padding: 20px;
+        }
+
+        .avatar-three-columns {
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .form-row {
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .form-group.half-width {
+            flex: 0 0 100%;
+        }
+
+        .edit-form-container {
+            padding: 24px;
+        }
+
+        .avatar-three-columns {
+            grid-template-columns: 1fr;
+        }
+
+        .avatar-info {
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .avatar-actions {
+            flex-direction: column;
+            width: 100%;
+        }
+
+        .btn-outline.upload-btn,
+        .btn-primary.ai-btn {
+            width: 100%;
+            justify-content: center;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    let newAvatarFiles = {
+        front: null,
+        back: null,
+        side: null
+    };
+
+    const projectId = document.getElementById('projectId').value;
+    const characterId = document.getElementById('characterId').value;
+    const characterName = document.getElementById('name').value;
+    const characterAppearance = `{{ character.appearance or '' }}`;
+
+    // 显示上传区域
+    function showUploadSection(view) {
+        const uploadDiv = document.getElementById(`avatar${view.charAt(0).toUpperCase() + view.slice(1)}Upload`);
+        if (uploadDiv) {
+            uploadDiv.style.display = 'block';
+        }
+    }
+
+    // 上传文件处理
+    function setupAvatarUpload(view) {
+        const fileInput = document.getElementById(`avatar${view.charAt(0).toUpperCase() + view.slice(1)}File`);
+        if (!fileInput) return;
+
+        fileInput.addEventListener('change', async function(e) {
+            if (e.target.files.length > 0) {
+                const file = e.target.files[0];
+
+                if (!file.type.startsWith('image/')) {
+                    showNotification('请选择图片文件', 'error');
+                    return;
+                }
+
+                // 上传到服务器
+                await uploadAvatarImage(view, file);
+            }
+        });
+    }
+
+    // 上传头像图片
+    async function uploadAvatarImage(view, file) {
+        const formData = new FormData();
+        formData.append('image', file);
+        formData.append('view', view);
+
+        try {
+            showNotification('正在上传...', 'info');
+            const response = await fetch(`/api/characters/${characterId}/image`, {
+                method: 'POST',
+                body: formData
+            });
+
+            if (!response.ok) {
+                throw new Error('上传失败');
+            }
+
+            const result = await response.json();
+
+            // 更新隐藏字段
+            document.getElementById(`avatar${view.charAt(0).toUpperCase() + view.slice(1)}`).value = result.filename;
+
+            // 更新显示
+            refreshAvatarDisplay(view, result.filename);
+            showNotification('上传成功！', 'success');
+
+        } catch (error) {
+            console.error('上传失败:', error);
+            showNotification('上传失败: ' + error.message, 'error');
+        }
+    }
+
+    // 刷新头像显示
+    function refreshAvatarDisplay(view, filename, imagePath) {
+        const section = document.getElementById(`avatar${view.charAt(0).toUpperCase() + view.slice(1)}Section`);
+        const noAvatar = document.getElementById(`noAvatar${view.charAt(0).toUpperCase() + view.slice(1)}`);
+
+        if (noAvatar) {
+            noAvatar.style.display = 'none';
+        }
+
+        // 使用传入的imagePath或默认路径（正确的路径：uploads/characters/projectId/characterId/filename）
+        const imgSrc = imagePath || `/uploads/characters/${projectId}/${characterId}/${filename}`;
+
+        // 检查是否已有头像容器
+        let container = section.querySelector('.current-avatar-container');
+        if (!container) {
+            container = document.createElement('div');
+            container.className = 'current-avatar-container';
+            section.insertBefore(container, section.firstChild);
+        }
+
+        container.innerHTML = `
+            <div class="avatar-preview">
+                <img src="${imgSrc}" alt="${characterName}-${view}" class="preview-avatar" onerror="this.src='${imgSrc}'">
+            </div>
+            <div class="avatar-actions">
+                <button type="button" class="btn btn-outline btn-sm upload-btn" onclick="showUploadSection('${view}')">
+                    <i class="fas fa-upload"></i> 上传
+                </button>
+                <button type="button" class="btn btn-primary btn-sm ai-btn" onclick="generateAvatar('${view}')">
+                    <i class="fas fa-robot"></i> ${view === 'front' ? 'AI生成' : 'AI编辑'}
+                </button>
+            </div>
+        `;
+
+        // 隐藏上传区域
+        const uploadDiv = document.getElementById(`avatar${view.charAt(0).toUpperCase() + view.slice(1)}Upload`);
+        if (uploadDiv) {
+            uploadDiv.style.display = 'none';
+        }
+    }
+
+    // AI生成/编辑头像
+    async function generateAvatar(view) {
+        // 获取正面图像作为参考（用于背面和侧面）
+        const frontAvatar = document.getElementById('avatarFront').value;
+
+        if ((view === 'back' || view === 'side') && !frontAvatar) {
+            showNotification('请先上传或生成正面图像作为参考', 'warning');
+            return;
+        }
+
+        // 构建提示词
+        let prompt = '';
+        if (view === 'front') {
+            prompt = characterAppearance || `${characterName}，正面视角，高品质，写实风格，人物肖像`;
+        } else if (view === 'back') {
+            prompt = characterAppearance ? `${characterAppearance}，背面视角` : `${characterName}，背面视角，高品质，写实风格`;
+        } else if (view === 'side') {
+            prompt = characterAppearance ? `${characterAppearance}，侧面/3/4侧视角` : `${characterName}，侧面/3/4侧视角，高品质，写实风格`;
+        }
+
+        // 本地UnifiedGenerator配置
+        let imageGeneratorConfig = {
+            'class_path': 'UnifiedGeneratorImageGenerator',
+            'init_args': {
+                'api_key': '',
+                'base_url': 'http://192.168.2.15:58888',
+                'model': 'black-forest-labs/FLUX.2-klein-4B'
+            }
+        };
+
+        // 从设置中获取图像生成器配置
+        try {
+            const configResponse = await fetch('/api/settings/image-generator-config');
+            const configData = await configResponse.json();
+            if (configData.config) {
+                imageGeneratorConfig = configData.config;
+                console.log('从设置中获取的图像生成器配置:', imageGeneratorConfig);
+            }
+        } catch (e) {
+            console.error('获取图像生成器配置失败:', e);
+        }
+
+        if (!imageGeneratorConfig.init_args.api_key) {
+            showNotification('请先在设置页面配置本地UnifiedGenerator', 'warning');
+            return;
+        }
+
+        try {
+            showNotification('正在AI生成图像，请稍候...', 'info');
+
+            const response = await fetch(`/api/characters/${characterId}/image/generate`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    view: view,
+                    prompt: prompt,
+                    reference_image: frontAvatar,
+                    image_generator_config: imageGeneratorConfig
+                })
+            });
+
+            if (!response.ok) {
+                const err = await response.json();
+                throw new Error(err.error || '生成失败');
+            }
+
+            const result = await response.json();
+
+            // 更新隐藏字段
+            document.getElementById(`avatar${view.charAt(0).toUpperCase() + view.slice(1)}`).value = result.filename;
+
+            // 更新显示 - 使用返回的image_path
+            if (result.image_path) {
+                refreshAvatarDisplay(view, result.filename, result.image_path);
+            } else {
+                refreshAvatarDisplay(view, result.filename);
+            }
+            showNotification('AI图像生成成功！', 'success');
+
+        } catch (error) {
+            console.error('AI生成失败:', error);
+            showNotification('AI生成失败: ' + error.message, 'error');
+        }
+    }
+
+    // 初始化上传事件
+    document.addEventListener('DOMContentLoaded', function() {
+        setupAvatarUpload('front');
+        setupAvatarUpload('back');
+        setupAvatarUpload('side');
+
+        // 头像更换按钮
+        const replaceAvatarBtn = document.getElementById('replaceAvatarBtn');
+        const avatarUploadSection = document.getElementById('avatarUploadSection');
+        const avatarUploadArea = document.getElementById('avatarUploadArea');
+        const avatarInput = document.getElementById('avatarFile');
+
+        if (replaceAvatarBtn) {
+            replaceAvatarBtn.addEventListener('click', function() {
+                avatarUploadSection.style.display = 'block';
+            });
+        } else {
+            // 如果没有头像，直接显示上传区域
+            avatarUploadSection.style.display = 'block';
+        }
+
+        // 头像上传处理
+        if (avatarUploadArea) {
+            avatarUploadArea.addEventListener('click', function() {
+                avatarInput.click();
+            });
+
+            avatarInput.addEventListener('change', function(e) {
+                if (e.target.files.length > 0) {
+                    newAvatarFile = e.target.files[0];
+
+                    // 验证文件类型
+                    if (!newAvatarFile.type.startsWith('image/')) {
+                        showNotification('请选择图片文件', 'error');
+                        return;
+                    }
+
+                    // 显示预览
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        avatarUploadArea.innerHTML = `
+                            <div class="preview-container">
+                                <img src="${e.target.result}" alt="头像预览" class="preview-avatar">
+                                <div class="preview-overlay">
+                                    <button type="button" class="btn btn-outline btn-sm" onclick="event.stopPropagation(); resetAvatarUpload();">
+                                        <i class="fas fa-trash"></i> 取消上传
+                                    </button>
+                                </div>
+                            </div>
+                        `;
+                    };
+                    reader.readAsDataURL(newAvatarFile);
+                }
+            });
+        }
+
+        // 拖拽上传
+        if (avatarUploadArea) {
+            setupDragAndDrop(avatarUploadArea, avatarInput);
+        }
+
+        // 表单提交处理
+        form.addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const submitBtn = form.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+
+            // 验证表单
+            let isValid = true;
+
+            // 验证角色名称
+            if (!form.name.value || form.name.value.length < 2) {
+                form.name.classList.add('is-invalid');
+                const feedback = form.name.nextElementSibling.nextElementSibling;
+                if (feedback && feedback.classList.contains('invalid-feedback')) {
+                    feedback.textContent = '角色名称至少需要2个字符';
+                }
+                isValid = false;
+            }
+
+            if (!isValid) {
+                showNotification('请检查表单中的错误', 'error');
+                return;
+            }
+
+            // 显示加载状态
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span class="spinner"></span> 保存中...';
+
+            try {
+                // 构建更新数据
+                const updateData = {
+                    name: form.name.value,
+                    role: form.role.value,
+                    gender: form.gender.value || null,
+                    color: form.color.value,
+                    description: form.description.value,
+                    personality: form.personality.value
+                };
+
+                // 如果有年龄，添加年龄
+                if (form.age.value) {
+                    updateData.age = parseInt(form.age.value);
+                }
+
+                // 发送更新请求
+                const updateResponse = await fetch(`/api/characters/${characterId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(updateData)
+                });
+
+                if (!updateResponse.ok) {
+                    const errorData = await updateResponse.json();
+                    throw new Error(errorData.error || '更新失败');
+                }
+
+                // 如果有新头像文件，上传头像
+                if (newAvatarFile) {
+                    const avatarFormData = new FormData();
+                    avatarFormData.append('avatar', newAvatarFile);
+
+                    const avatarResponse = await fetch(`/api/characters/${characterId}/avatar`, {
+                        method: 'POST',
+                        body: avatarFormData
+                    });
+
+                    if (!avatarResponse.ok) {
+                        const errorData = await avatarResponse.json();
+                        throw new Error(errorData.error || '头像上传失败');
+                    }
+                }
+
+                showNotification('角色更新成功！', 'success');
+                setTimeout(() => {
+                    window.location.href = `/projects/${projectId}`;
+                }, 1500);
+
+            } catch (error) {
+                console.error('更新角色错误:', error);
+                showNotification(error.message || '保存失败，请重试', 'error');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalText;
+            }
+        });
+
+        // 输入时清除错误状态
+        form.querySelectorAll('input, textarea, select').forEach(input => {
+            input.addEventListener('input', function() {
+                this.classList.remove('is-invalid');
+                const feedback = this.nextElementSibling;
+                if (feedback && feedback.classList.contains('invalid-feedback')) {
+                    feedback.textContent = '';
+                }
+            });
+        });
+    });
+
+    // 重置头像上传
+    function resetAvatarUpload() {
+        const avatarUploadArea = document.getElementById('avatarUploadArea');
+        const avatarInput = document.getElementById('avatarFile');
+
+        newAvatarFile = null;
+        avatarInput.value = '';
+
+        avatarUploadArea.innerHTML = `
+            <div class="upload-placeholder">
+                <i class="fas fa-user-circle"></i>
+                <p>点击或拖拽上传头像</p>
+                <p class="upload-hint">支持 JPG、PNG 格式，建议正方形图片</p>
+            </div>
+            <input type="file" id="avatarFile" name="avatar"
+                   class="avatar-input" accept="image/*" hidden>
+        `;
+
+        // 重新绑定事件
+        document.getElementById('avatarFile').addEventListener('change', function(e) {
+            // 重新绑定处理逻辑
+        });
+    }
+
+    function setupDragAndDrop(uploadArea, inputElement) {
+        uploadArea.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            uploadArea.style.borderColor = 'var(--primary)';
+            uploadArea.style.backgroundColor = 'rgba(79, 70, 229, 0.1)';
+        });
+
+        uploadArea.addEventListener('dragleave', function(e) {
+            e.preventDefault();
+            uploadArea.style.borderColor = 'var(--border-color)';
+            uploadArea.style.backgroundColor = 'var(--background-secondary)';
+        });
+
+        uploadArea.addEventListener('drop', function(e) {
+            e.preventDefault();
+            uploadArea.style.borderColor = 'var(--border-color)';
+            uploadArea.style.backgroundColor = 'var(--background-secondary)';
+
+            if (e.dataTransfer.files.length > 0) {
+                const file = e.dataTransfer.files[0];
+                if (file.type.startsWith('image/')) {
+                    const dataTransfer = new DataTransfer();
+                    dataTransfer.items.add(file);
+                    inputElement.files = dataTransfer.files;
+                    inputElement.dispatchEvent(new Event('change'));
+                } else {
+                    showNotification('请拖拽图片文件', 'error');
+                }
+            }
+        });
+    }
+
+    // 显示通知
+    function showNotification(message, type = 'info') {
+        // 创建通知元素
+        const notification = document.createElement('div');
+        notification.className = `notification notification-${type}`;
+        notification.textContent = message;
+        notification.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 16px 24px;
+            background: ${type === 'success' ? '#10b981' : type === 'error' ? '#ef4444' : '#3b82f6'};
+            color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            z-index: 9999;
+            animation: slideInRight 0.3s ease-out;
+            font-size: 14px;
+        `;
+
+        document.body.appendChild(notification);
+
+        // 3秒后移除
+        setTimeout(() => {
+            notification.style.animation = 'slideOutRight 0.3s ease-out';
+            setTimeout(() => {
+                document.body.removeChild(notification);
+            }, 300);
+        }, 3000);
+
+        // 添加动画关键帧
+        if (!document.querySelector('#notification-styles')) {
+            const style = document.createElement('style');
+            style.id = 'notification-styles';
+            style.textContent = `
+                @keyframes slideInRight {
+                    from { transform: translateX(100%); opacity: 0; }
+                    to { transform: translateX(0); opacity: 1; }
+                }
+                @keyframes slideOutRight {
+                    from { transform: translateX(0); opacity: 1; }
+                    to { transform: translateX(100%); opacity: 0; }
+                }
+            `;
+            document.head.appendChild(style);
+        }
+    }
+
+    // ========== 图片预览灯箱功能 ==========
+    function openImagePreview(imgSrc) {
+        const modal = document.getElementById('imagePreviewModal');
+        const modalImg = document.getElementById('previewImageFull');
+        
+        modalImg.src = imgSrc;
+        modal.classList.add('show');
+        
+        // 防止背景滚动
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeImagePreview(event) {
+        // 点击关闭按钮或背景时关闭
+        if (!event || event.target === document.getElementById('imagePreviewModal') || event.target.classList.contains('modal-close')) {
+            document.getElementById('imagePreviewModal').classList.remove('show');
+            document.body.style.overflow = 'auto';
+        }
+    }
+
+    // ESC键关闭预览
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            const modal = document.getElementById('imagePreviewModal');
+            if (modal.style.display === 'block') {
+                modal.style.display = 'none';
+                document.body.style.overflow = 'auto';
+            }
+        }
+    });
+
+    // 为所有预览图片添加点击事件
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('.avatar-preview img').forEach(function(img) {
+            img.style.cursor = 'pointer';
+            img.addEventListener('click', function(e) {
+                e.stopPropagation();
+                openImagePreview(img.src);
+            });
+        });
+    });
+</script>
+
+<!-- 图片预览灯箱 -->
+<div id="imagePreviewModal" class="image-preview-modal" onclick="closeImagePreview(event)">
+    <span class="modal-close" onclick="closeImagePreview(event)">&times;</span>
+    <img class="modal-content" id="previewImageFull">
+</div>
+
+{% endblock %}

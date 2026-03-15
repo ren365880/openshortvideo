@@ -1,0 +1,1928 @@
+<!-- templates/create_project.html -->
+{% extends "layout.html" %}
+
+{% block title %}新建项目 - 灵犀剧能{% endblock %}
+
+{% block content %}
+<div class="project-create-container">
+    <!-- 页面标题 -->
+    <div class="page-header">
+        <div class="header-content">
+            <h1 class="page-title">新建短剧项目</h1>
+            <p class="page-subtitle">开始创作您的短剧故事</p>
+        </div>
+        <div class="header-actions">
+            <button class="btn btn-outline" onclick="location.href='/projects'">
+                <i class="fas fa-arrow-left"></i> 返回项目列表
+            </button>
+        </div>
+    </div>
+
+    <!-- 创建表单 -->
+    <div class="create-form-container">
+        <form id="createProjectForm" class="project-form">
+            <div class="form-section">
+                <h2 class="form-section-title">
+                    <i class="fas fa-info-circle"></i> 基本信息
+                </h2>
+
+                <div class="form-group">
+                    <label for="title" class="form-label">项目标题 <span class="required">*</span></label>
+                    <input type="text" id="title" name="title" class="form-control"
+                           placeholder="请输入项目标题" required minlength="3">
+                    <div class="form-text">请为您的短剧起一个吸引人的标题</div>
+                    <div class="invalid-feedback"></div>
+                </div>
+
+                <div class="form-group">
+                    <div class="label-with-action">
+                        <label for="theme" class="form-label">主题</label>
+                        <button type="button" class="btn-ai-generate" data-field="theme" data-type="theme">
+                            <i class="fas fa-robot"></i> AI生成
+                        </button>
+                    </div>
+                    <input type="text" id="theme" name="theme" class="form-control"
+                           placeholder="请输入短剧的核心主题或一句话概括">
+                    <div class="form-text">例如：逆袭人生的霸总、穿越古代的现代女孩</div>
+                </div>
+
+                <div class="form-group">
+                    <div class="label-with-action">
+                        <label for="description" class="form-label">项目描述</label>
+                        <button type="button" class="btn-ai-generate" data-field="description" data-type="description">
+                            <i class="fas fa-robot"></i> AI生成
+                        </button>
+                    </div>
+                    <div class="description-fields">
+                        <div class="form-group">
+                            <label for="desc_summary" class="form-label sub-field">故事梗概</label>
+                            <input type="text" id="desc_summary" class="form-control" placeholder="简述故事核心情节">
+                        </div>
+                        <div class="form-group">
+                            <label for="desc_conflict" class="form-label sub-field">主要冲突</label>
+                            <input type="text" id="desc_conflict" class="form-control" placeholder="故事的主要矛盾和冲突">
+                        </div>
+                        <div class="form-group">
+                            <label for="desc_highlights" class="form-label sub-field">核心看点</label>
+                            <input type="text" id="desc_highlights" class="form-control" placeholder="吸引观众的关键亮点">
+                        </div>
+                    </div>
+                    <div class="form-text">填写故事梗概、主要冲突和核心看点，可手动输入或使用AI生成</div>
+                </div>
+
+                <div class="form-group">
+                    <div class="label-with-action">
+                        <label for="background" class="form-label">内容背景</label>
+                        <button type="button" class="btn-ai-generate" data-field="background" data-type="background">
+                            <i class="fas fa-robot"></i> AI生成
+                        </button>
+                    </div>
+                    <div class="background-fields">
+                        <div class="form-group">
+                            <label for="bg_time_location" class="form-label sub-field">时代背景和地点</label>
+                            <input type="text" id="bg_time_location" class="form-control" placeholder="故事发生的时代和地点">
+                        </div>
+                        <div class="form-group">
+                            <label for="bg_relationships" class="form-label sub-field">主要人物关系</label>
+                            <textarea id="bg_relationships" class="form-control" rows="2" placeholder="人物之间的关系网络"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="bg_worldview" class="form-label sub-field">世界观设定</label>
+                            <textarea id="bg_worldview" class="form-control" rows="2" placeholder="故事的设定和规则"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="bg_conflict_source" class="form-label sub-field">核心冲突来源</label>
+                            <textarea id="bg_conflict_source" class="form-control" rows="2" placeholder="冲突的根源和起因"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="bg_tone" class="form-label sub-field">情感基调</label>
+                            <input type="text" id="bg_tone" class="form-control" placeholder="整体情感氛围">
+                        </div>
+                    </div>
+                    <div class="form-text">填写时代背景、人物关系、世界观等设定，可手动输入或使用AI生成</div>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h2 class="form-section-title">
+                    <i class="fas fa-image"></i> 封面与分类
+                </h2>
+
+                <div class="form-row">
+                    <div class="form-group half">
+                        <label for="category" class="form-label">分类</label>
+                        <select id="category" name="category" class="form-control">
+                            <option value="其他">其他</option>
+                            <option value="喜剧">喜剧</option>
+                            <option value="爱情">爱情</option>
+                            <option value="悬疑">悬疑</option>
+                            <option value="科幻">科幻</option>
+                            <option value="恐怖">恐怖</option>
+                            <option value="动作">动作</option>
+                            <option value="剧情">剧情</option>
+                            <option value="动画">动画</option>
+                            <option value="教育">教育</option>
+                        </select>
+                        <div class="form-text">选择最适合您短剧的分类</div>
+                    </div>
+
+                    <div class="form-group half">
+                        <label class="form-label">标签</label>
+                        <div class="tags-selector" id="tagsSelector">
+                            <div class="tags-selected" id="tagsSelected">
+                                <span class="tags-placeholder">点击选择标签</span>
+                            </div>
+                            <div class="tags-dropdown" id="tagsDropdown">
+                                <div class="tags-search">
+                                    <i class="fas fa-search"></i>
+                                    <input type="text" id="tagsSearchInput" placeholder="搜索标签...">
+                                </div>
+                                <div class="tags-options" id="tagsOptions">
+                                    <div class="tag-option" data-value="穿越重生">穿越重生</div>
+                                    <div class="tag-option" data-value="霸道总裁">霸道总裁</div>
+                                    <div class="tag-option" data-value="甜宠">甜宠</div>
+                                    <div class="tag-option" data-value="逆袭">逆袭</div>
+                                    <div class="tag-option" data-value="悬疑推理">悬疑推理</div>
+                                    <div class="tag-option" data-value="古风">古风</div>
+                                    <div class="tag-option" data-value="现代都市">现代都市</div>
+                                    <div class="tag-option" data-value="青春校园">青春校园</div>
+                                    <div class="tag-option" data-value="科幻未来">科幻未来</div>
+                                    <div class="tag-option" data-value="职场励志">职场励志</div>
+                                    <div class="tag-option" data-value="家庭伦理">家庭伦理</div>
+                                    <div class="tag-option" data-value="奇幻冒险">奇幻冒险</div>
+                                    <div class="tag-option" data-value="搞笑">搞笑</div>
+                                    <div class="tag-option" data-value="虐恋">虐恋</div>
+                                    <div class="tag-option" data-value="复仇">复仇</div>
+                                    <div class="tag-option" data-value="先婚后爱">先婚后爱</div>
+                                    <div class="tag-option" data-value="破镜重圆">破镜重圆</div>
+                                    <div class="tag-option" data-value="青梅竹马">青梅竹马</div>
+                                    <div class="tag-option" data-value="替身">替身</div>
+                                    <div class="tag-option" data-value="白月光">白月光</div>
+                                </div>
+                            </div>
+                        </div>
+                        <input type="hidden" id="tags" name="tags">
+                        <div class="form-text">选择适合您短剧的标签，可多选</div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="coverImage" class="form-label">封面图片</label>
+                    <div class="cover-upload-area" id="coverUploadArea">
+                        <div class="upload-placeholder" id="uploadPlaceholder">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                            <p class="upload-title">点击或拖拽上传封面图片</p>
+                            <p class="upload-hint">支持 JPG、PNG、GIF 格式，建议尺寸 1200×630</p>
+                            <p class="upload-size">文件大小不超过 10MB</p>
+                        </div>
+                        <div class="cover-preview" id="coverPreview" style="display: none;">
+                            <img id="previewImage" src="" alt="封面预览">
+                            <div class="preview-overlay">
+                                <button type="button" class="btn btn-light" id="changeCoverBtn">
+                                    <i class="fas fa-sync-alt"></i> 更换图片
+                                </button>
+                                <button type="button" class="btn btn-danger" id="removeCoverBtn">
+                                    <i class="fas fa-trash"></i> 删除
+                                </button>
+                            </div>
+                        </div>
+                        <input type="file" id="coverImage" name="cover_image"
+                               class="cover-input" accept="image/*" hidden>
+                    </div>
+                    <div class="invalid-feedback" id="coverFeedback"></div>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h2 class="form-section-title">
+                    <i class="fas fa-cog"></i> 项目设置
+                </h2>
+
+                <div class="form-row">
+                    <div class="form-group half">
+                        <label for="status" class="form-label">初始状态</label>
+                        <select id="status" name="status" class="form-control">
+                            <option value="draft">草稿</option>
+                            <option value="active">进行中</option>
+                        </select>
+                        <div class="form-text">创建后可以随时更改状态</div>
+                    </div>
+
+                    <div class="form-group half">
+                        <label for="is_public" class="form-label">可见性</label>
+                        <select id="is_public" name="is_public" class="form-control">
+                            <option value="false">私密（仅自己可见）</option>
+                            <option value="true">公开（所有人可见）</option>
+                        </select>
+                        <div class="form-text">公开项目可以被其他用户查看</div>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group half">
+                        <label for="episode_count" class="form-label">初始集数</label>
+                        <input type="number" id="episode_count" name="episode_count"
+                               class="form-control" min="1" max="100" value="1">
+                        <div class="form-text">创建项目时自动生成的集数</div>
+                    </div>
+
+                    <div class="form-group half">
+                        <label for="episode_type" class="form-label">分集类型</label>
+                        <select id="episode_type" name="episode_type" class="form-control">
+                            <option value="empty">空白分集</option>
+                            <option value="outline">大纲分集</option>
+                            <option value="detailed">详细分集</option>
+                        </select>
+                        <div class="form-text">创建初始集的内容详细程度</div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">角色生成</label>
+                    <div class="character-generation-options">
+                        <label class="character-option">
+                            <input type="radio" name="generate_characters" value="false" checked>
+                            <div class="character-option-content">
+                                <div class="character-option-title">
+                                    <i class="fas fa-times-circle"></i> 暂不生成角色
+                                </div>
+                                <div class="character-option-desc">项目创建后不自动生成角色，后续可在每集生成时创建角色</div>
+                            </div>
+                        </label>
+                        <label class="character-option" style="opacity: 0.5; pointer-events: none;">
+                            <input type="radio" name="generate_characters" value="true" disabled>
+                            <div class="character-option-content">
+                                <div class="character-option-title">
+                                    <i class="fas fa-users"></i> 生成角色 <span style="font-size: 12px; color: #dc3545;">(功能正在开发中)</span>
+                                </div>
+                                <div class="character-option-desc">使用AI根据项目信息自动生成4个主要角色（含图像）</div>
+                            </div>
+                        </label>
+                    </div>
+                    <div class="form-text">提示：选择"暂不生成角色"后，您可以在后续每集生成时选择是否创建角色</div>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button type="button" class="btn btn-outline btn-lg" onclick="location.href='/projects'">
+                    取消
+                </button>
+                <button type="submit" class="btn btn-primary btn-lg" id="submitBtn">
+                    <i class="fas fa-plus"></i> 创建项目
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block styles %}
+<style>
+    .project-create-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 30px 20px;
+    }
+
+    .create-form-container {
+        background: white;
+        border-radius: 16px;
+        padding: 40px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        margin-top: 30px;
+    }
+
+    .form-section {
+        margin-bottom: 35px;
+        padding-bottom: 35px;
+        border-bottom: 1px solid var(--border-color, #e5e7eb);
+    }
+
+    .form-section:last-of-type {
+        border-bottom: none;
+        margin-bottom: 0;
+        padding-bottom: 0;
+    }
+
+    .form-section-title {
+        font-size: 18px;
+        font-weight: 600;
+        color: var(--text-primary, #1f2937);
+        margin-bottom: 24px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .form-section-title i {
+        color: var(--primary, #4f46e5);
+        font-size: 20px;
+    }
+
+    .form-group {
+        margin-bottom: 24px;
+    }
+
+    .form-group:last-child {
+        margin-bottom: 0;
+    }
+
+    .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+    }
+
+    .form-group.half {
+        margin-bottom: 0;
+    }
+
+    .form-label {
+        display: block;
+        font-weight: 500;
+        color: var(--text-primary, #1f2937);
+        margin-bottom: 8px;
+        font-size: 14px;
+    }
+
+    .form-label .required {
+        color: #ef4444;
+        margin-left: 2px;
+    }
+
+    .label-with-action {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 8px;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 12px 16px;
+        border: 2px solid var(--border-color, #e5e7eb);
+        border-radius: 10px;
+        font-size: 15px;
+        transition: all 0.3s ease;
+        background-color: white;
+        color: var(--text-primary, #1f2937);
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: var(--primary, #4f46e5);
+        box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1);
+    }
+
+    .form-control.is-invalid {
+        border-color: #ef4444;
+    }
+
+    .form-control.is-invalid:focus {
+        box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.1);
+    }
+
+    textarea.form-control {
+        resize: vertical;
+        min-height: 100px;
+    }
+
+    /* 子字段样式 */
+    .description-fields,
+    .background-fields {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .form-label.sub-field {
+        font-size: 13px;
+        color: #6b7280;
+        font-weight: 500;
+        margin-bottom: 4px;
+        display: block;
+    }
+
+    .description-fields .form-group,
+    .background-fields .form-group {
+        margin-bottom: 0;
+    }
+
+    .description-fields .form-control,
+    .background-fields .form-control {
+        font-size: 14px;
+    }
+
+    .form-text {
+        font-size: 13px;
+        color: var(--text-tertiary, #9ca3af);
+        margin-top: 6px;
+    }
+
+    .invalid-feedback {
+        font-size: 13px;
+        color: #ef4444;
+        margin-top: 6px;
+        display: none;
+    }
+
+    .invalid-feedback.show {
+        display: block;
+    }
+
+    /* AI生成按钮 */
+    .btn-ai-generate {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        padding: 6px 14px;
+        border-radius: 6px;
+        font-size: 12px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+    }
+
+    .btn-ai-generate:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+    }
+
+    .btn-ai-generate:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        transform: none;
+    }
+
+    .btn-ai-generate.generating {
+        background: #9ca3af;
+    }
+
+    .btn-ai-generate.generating::after {
+        content: '';
+        width: 12px;
+        height: 12px;
+        border: 2px solid rgba(255,255,255,0.3);
+        border-top-color: white;
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+        margin-left: 4px;
+    }
+
+    @keyframes spin {
+        to { transform: rotate(360deg); }
+    }
+
+    /* 标签选择器 */
+    .tags-selector {
+        position: relative;
+    }
+
+    .tags-selected {
+        min-height: 46px;
+        padding: 8px 12px;
+        border: 2px solid var(--border-color, #e5e7eb);
+        border-radius: 10px;
+        cursor: pointer;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        align-items: center;
+        transition: all 0.3s ease;
+        background: white;
+    }
+
+    .tags-selected:hover {
+        border-color: var(--primary, #4f46e5);
+    }
+
+    .tags-selected.active {
+        border-color: var(--primary, #4f46e5);
+        box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1);
+    }
+
+    .tags-placeholder {
+        color: var(--text-tertiary, #9ca3af);
+        font-size: 15px;
+    }
+
+    .tag-item {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 4px 10px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border-radius: 15px;
+        font-size: 13px;
+        font-weight: 500;
+    }
+
+    .tag-item .remove-tag {
+        cursor: pointer;
+        opacity: 0.8;
+        transition: opacity 0.2s;
+    }
+
+    .tag-item .remove-tag:hover {
+        opacity: 1;
+    }
+
+    .tags-dropdown {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        margin-top: 8px;
+        background: white;
+        border: 2px solid var(--border-color, #e5e7eb);
+        border-radius: 10px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+        z-index: 100;
+        display: none;
+        overflow: hidden;
+    }
+
+    .tags-dropdown.show {
+        display: block;
+        animation: dropdownSlide 0.2s ease;
+    }
+
+    @keyframes dropdownSlide {
+        from {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .tags-search {
+        padding: 12px;
+        border-bottom: 1px solid var(--border-color, #e5e7eb);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .tags-search i {
+        color: var(--text-tertiary, #9ca3af);
+    }
+
+    .tags-search input {
+        flex: 1;
+        border: none;
+        outline: none;
+        font-size: 14px;
+        color: var(--text-primary, #1f2937);
+    }
+
+    .tags-search input::placeholder {
+        color: var(--text-tertiary, #9ca3af);
+    }
+
+    .tags-options {
+        max-height: 240px;
+        overflow-y: auto;
+        padding: 8px;
+    }
+
+    .tag-option {
+        padding: 10px 12px;
+        cursor: pointer;
+        border-radius: 6px;
+        font-size: 14px;
+        color: var(--text-secondary, #6b7280);
+        transition: all 0.2s ease;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .tag-option:hover {
+        background: rgba(79, 70, 229, 0.05);
+        color: var(--primary, #4f46e5);
+    }
+
+    .tag-option.selected {
+        background: rgba(79, 70, 229, 0.1);
+        color: var(--primary, #4f46e5);
+        font-weight: 500;
+    }
+
+    .tag-option.selected::after {
+        content: '\f00c';
+        font-family: 'Font Awesome 6 Free';
+        font-weight: 900;
+        font-size: 12px;
+    }
+
+    .tag-option.hidden {
+        display: none;
+    }
+
+    /* 封面上传区域 */
+    .cover-upload-area {
+        border: 2px dashed var(--border-color, #e5e7eb);
+        border-radius: 12px;
+        padding: 40px 20px;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        background: var(--bg-tertiary, #f9fafb);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .cover-upload-area:hover {
+        border-color: var(--primary, #4f46e5);
+        background: rgba(79, 70, 229, 0.05);
+    }
+
+    .cover-upload-area.dragover {
+        border-color: var(--primary, #4f46e5);
+        background: rgba(79, 70, 229, 0.1);
+        transform: scale(1.02);
+    }
+
+    .upload-placeholder i {
+        font-size: 48px;
+        color: var(--text-tertiary, #9ca3af);
+        margin-bottom: 16px;
+    }
+
+    .upload-title {
+        font-size: 16px;
+        font-weight: 500;
+        color: var(--text-primary, #1f2937);
+        margin-bottom: 8px;
+    }
+
+    .upload-hint {
+        font-size: 13px;
+        color: var(--text-secondary, #6b7280);
+        margin-bottom: 4px;
+    }
+
+    .upload-size {
+        font-size: 12px;
+        color: var(--text-tertiary, #9ca3af);
+    }
+
+    /* 封面预览 */
+    .cover-preview {
+        position: relative;
+        border-radius: 12px;
+        overflow: hidden;
+    }
+
+    .cover-preview img {
+        width: 100%;
+        height: 250px;
+        object-fit: cover;
+        display: block;
+    }
+
+    .preview-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.6);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+
+    .cover-preview:hover .preview-overlay {
+        opacity: 1;
+    }
+
+    .preview-overlay .btn {
+        padding: 10px 20px;
+        font-size: 14px;
+    }
+
+    .btn-light {
+        background: white;
+        color: var(--text-primary, #1f2937);
+        border: none;
+        padding: 8px 16px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 14px;
+        transition: all 0.3s ease;
+    }
+
+    .btn-light:hover {
+        background: #f3f4f6;
+    }
+
+    .btn-danger {
+        background: #ef4444;
+        color: white;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 14px;
+        transition: all 0.3s ease;
+    }
+
+    .btn-danger:hover {
+        background: #dc2626;
+    }
+
+    /* 表单操作按钮 */
+    .form-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 16px;
+        margin-top: 40px;
+        padding-top: 30px;
+        border-top: 1px solid var(--border-color, #e5e7eb);
+    }
+
+    .btn {
+        padding: 12px 24px;
+        border-radius: 8px;
+        font-size: 15px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        border: none;
+    }
+
+    .btn-lg {
+        padding: 14px 32px;
+        font-size: 16px;
+    }
+
+    .btn-outline {
+        background: transparent;
+        color: var(--text-secondary, #6b7280);
+        border: 2px solid var(--border-color, #e5e7eb);
+    }
+
+    .btn-outline:hover {
+        border-color: var(--primary, #4f46e5);
+        color: var(--primary, #4f46e5);
+    }
+
+    .btn-primary {
+        background: var(--primary, #4f46e5);
+        color: white;
+    }
+
+    .btn-primary:hover {
+        background: #4338ca;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+    }
+
+    .btn:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+    }
+
+    /* 角色生成选项 */
+    .character-generation-options {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        margin-bottom: 8px;
+    }
+
+    .character-option {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        padding: 16px 20px;
+        border: 2px solid #e5e7eb;
+        border-radius: 12px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        background: #fafafa;
+    }
+
+    .character-option:hover {
+        border-color: #a5b4fc;
+        background: #f0f4ff;
+    }
+
+    .character-option input[type="radio"] {
+        margin-top: 4px;
+        width: 18px;
+        height: 18px;
+        accent-color: #4f46e5;
+    }
+
+    .character-option-content {
+        flex: 1;
+    }
+
+    .character-option-title {
+        font-weight: 600;
+        color: #1f2937;
+        margin-bottom: 4px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .character-option-title i {
+        color: #4f46e5;
+    }
+
+    .character-option-desc {
+        font-size: 13px;
+        color: #6b7280;
+        line-height: 1.5;
+    }
+
+    /* 响应式 */
+    @media (max-width: 640px) {
+        .create-form-container {
+            padding: 24px;
+        }
+
+        .form-row {
+            grid-template-columns: 1fr;
+        }
+
+        .form-actions {
+            flex-direction: column-reverse;
+        }
+
+        .form-actions .btn {
+            width: 100%;
+            justify-content: center;
+        }
+
+        .label-with-action {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 8px;
+        }
+    }
+
+    /* 选项模态框样式 */
+    .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 10000;
+        padding: 20px;
+    }
+
+    .modal-container {
+        background: white;
+        border-radius: 16px;
+        max-width: 600px;
+        width: 100%;
+        max-height: 80vh;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 20px 24px;
+        border-bottom: 1px solid #e9ecef;
+    }
+
+    .modal-header h3 {
+        margin: 0;
+        font-size: 1.25rem;
+        color: #1a1a2e;
+    }
+
+    .modal-close {
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        color: #6c757d;
+        cursor: pointer;
+        padding: 0;
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 8px;
+    }
+
+    .modal-close:hover {
+        background: #f8f9fa;
+        color: #1a1a2e;
+    }
+
+    .modal-body {
+        padding: 24px;
+        overflow-y: auto;
+    }
+
+    .modal-tip {
+        color: #6c757d;
+        margin-bottom: 16px;
+    }
+
+    .options-list {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .option-item {
+        display: flex;
+        gap: 16px;
+        padding: 16px;
+        border: 2px solid #e9ecef;
+        border-radius: 12px;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    .option-item:hover {
+        border-color: #4f46e5;
+        background: rgba(79, 70, 229, 0.05);
+    }
+
+    .option-number {
+        width: 32px;
+        height: 32px;
+        background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        flex-shrink: 0;
+    }
+
+    .option-content {
+        flex: 1;
+        line-height: 1.6;
+        color: #374151;
+        white-space: pre-wrap;
+        max-height: 200px;
+        overflow-y: auto;
+        font-size: 14px;
+    }
+
+    .option-content.formatted {
+        max-height: 300px;
+    }
+
+    /* 格式化内容样式 */
+    .format-section {
+        margin-bottom: 12px;
+        padding-bottom: 12px;
+        border-bottom: 1px dashed #e5e7eb;
+    }
+
+    .format-section:last-child {
+        margin-bottom: 0;
+        padding-bottom: 0;
+        border-bottom: none;
+    }
+
+    .format-section-title {
+        font-weight: 600;
+        color: #4f46e5;
+        margin-bottom: 6px;
+        font-size: 13px;
+    }
+
+    .format-section-content {
+        color: #6b7280;
+        font-size: 13px;
+        line-height: 1.5;
+    }
+
+    .option-item {
+        display: flex;
+        gap: 16px;
+        padding: 16px;
+        border: 2px solid #e5e7eb;
+        border-radius: 12px;
+        cursor: pointer;
+        transition: all 0.2s;
+        background: #fafafa;
+    }
+
+    .option-item:hover {
+        border-color: #4f46e5;
+        background: rgba(79, 70, 229, 0.08);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(79, 70, 229, 0.15);
+    }
+
+    /* 通知样式 */
+    .notification {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 16px 24px;
+        border-radius: 12px;
+        background: white;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+        transform: translateX(120%);
+        transition: transform 0.3s ease;
+        z-index: 10001;
+    }
+
+    .notification.show {
+        transform: translateX(0);
+    }
+
+    .notification-content {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .notification-success {
+        border-left: 4px solid #28a745;
+    }
+
+    .notification-success i {
+        color: #28a745;
+    }
+
+    .notification-error {
+        border-left: 4px solid #dc3545;
+    }
+
+    .notification-error i {
+        color: #dc3545;
+    }
+
+    .notification-warning {
+        border-left: 4px solid #ffc107;
+    }
+
+    .notification-warning i {
+        color: #ffc107;
+    }
+
+    .notification-info {
+        border-left: 4px solid #17a2b8;
+    }
+
+    .notification-info i {
+        color: #17a2b8;
+    }
+</style>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // 通知函数
+    function showNotification(message, type = 'info') {
+        const notification = document.createElement('div');
+        notification.className = `notification notification-${type}`;
+        notification.innerHTML = `
+            <div class="notification-content">
+                <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? '-times-circle' : 'info-circle'}"></i>
+                <span>${message}</span>
+            </div>
+        `;
+        document.body.appendChild(notification);
+        
+        setTimeout(() => notification.classList.add('show'), 10);
+        setTimeout(() => {
+            notification.classList.remove('show');
+            setTimeout(() => notification.remove(), 300);
+        }, 3000);
+    }
+
+    // 格式化显示JSON内容
+    function formatOptionContent(option, field) {
+        // 如果是字符串，尝试解析为JSON
+        if (typeof option === 'string') {
+            try {
+                const parsed = JSON.parse(option);
+                if (Array.isArray(parsed)) {
+                    option = parsed[0]; // 取数组第一个元素
+                } else {
+                    option = parsed;
+                }
+            } catch (e) {
+                // 解析失败，返回原始字符串
+                return option;
+            }
+        }
+        
+        // 如果是对象，根据字段类型提取内容
+        if (typeof option === 'object' && option !== null) {
+            let content = '';
+            
+            if (field === 'description') {
+                // 项目描述：显示故事梗概、主要冲突、核心看点
+                const summary = option['故事梗概'] || option['description'] || '';
+                const conflict = option['主要冲突'] || option['conflict'] || '';
+                const highlights = option['核心看点'] || option['highlights'] || '';
+                
+                if (summary || conflict || highlights) {
+                    content = `
+                        <div class="format-section">
+                            <div class="format-section-title">📝 故事梗概</div>
+                            <div class="format-section-content">${summary}</div>
+                        </div>
+                        <div class="format-section">
+                            <div class="format-section-title">⚔️ 主要冲突</div>
+                            <div class="format-section-content">${conflict}</div>
+                        </div>
+                        <div class="format-section">
+                            <div class="format-section-title">✨ 核心看点</div>
+                            <div class="format-section-content">${highlights}</div>
+                        </div>
+                    `;
+                } else {
+                    content = option['描述'] || JSON.stringify(option, null, 2);
+                }
+            } else if (field === 'background') {
+                // 内容背景：格式化显示各个字段
+                const sections = [
+                    { key: '时代背景和地点', label: '📍 时代背景和地点' },
+                    { key: '主要人物关系', label: '👥 主要人物关系' },
+                    { key: '世界观设定', label: '🌐 世界观设定' },
+                    { key: '核心冲突来源', label: '⚔️ 核心冲突来源' },
+                    { key: '情感基调', label: '💫 情感基调' }
+                ];
+                
+                content = sections.map(section => {
+                    const value = option[section.key];
+                    if (value) {
+                        return `<div class="format-section">
+                            <div class="format-section-title">${section.label}</div>
+                            <div class="format-section-content">${value}</div>
+                        </div>`;
+                    }
+                    return '';
+                }).join('');
+                
+                if (!content) {
+                    content = JSON.stringify(option, null, 2);
+                }
+            } else {
+                // 其他情况直接转JSON
+                content = JSON.stringify(option, null, 2);
+            }
+            
+            return content;
+        }
+        
+        return String(option);
+    }
+
+    // 获取填充到输入框的值
+    function getInputValue(option, field) {
+        if (typeof option === 'string') {
+            return option;
+        }
+        
+        if (typeof option === 'object' && option !== null) {
+            if (field === 'description') {
+                return option['描述'] || option['description'] || JSON.stringify(option, null, 2);
+            } else if (field === 'background') {
+                // 背景内容需要整合所有字段
+                const sections = [
+                    { key: '时代背景和地点', prefix: '【时代背景和地点】' },
+                    { key: '主要人物关系', prefix: '【主要人物关系】' },
+                    { key: '世界观设定', prefix: '【世界观设定】' },
+                    { key: '核心冲突来源', prefix: '【核心冲突来源】' },
+                    { key: '情感基调', prefix: '【情感基调】' }
+                ];
+                
+                let content = '';
+                sections.forEach(section => {
+                    const value = option[section.key];
+                    if (value) {
+                        content += `\n${section.prefix}\n${value}\n`;
+                    }
+                });
+                
+                return content.trim() || JSON.stringify(option, null, 2);
+            }
+        }
+        
+        return JSON.stringify(option, null, 2);
+    }
+
+    // 显示AI生成选项模态框
+    function showOptionsModal(options, field, targetInput) {
+        console.log('showOptionsModal options:', options);
+        
+        const modal = document.createElement('div');
+        modal.className = 'modal-overlay';
+        modal.id = 'optionsModal';
+        
+        const fieldNames = {
+            'theme': '主题',
+            'description': '项目描述',
+            'background': '内容背景'
+        };
+        
+        // 处理每个选项，美化显示
+        let optionsHtml = options.map((opt, idx) => {
+            const formattedContent = formatOptionContent(opt, field);
+            const isObject = typeof opt === 'object';
+            
+            return `
+                <div class="option-item ${isObject ? 'is-object' : ''}" onclick="selectOption(${idx})">
+                    <div class="option-number">${idx + 1}</div>
+                    <div class="option-content ${isObject ? 'formatted' : ''}">${formattedContent}</div>
+                </div>
+            `;
+        }).join('');
+        
+        modal.innerHTML = `
+            <div class="modal-container" style="max-width: 700px;">
+                <div class="modal-header">
+                    <h3>选择${fieldNames[field] || field}</h3>
+                    <button class="modal-close" onclick="closeOptionsModal()">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <p class="modal-tip">AI生成了${options.length}个选项，请选择一个：</p>
+                    <div class="options-list">
+                        ${optionsHtml}
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        document.body.appendChild(modal);
+        
+        // 将选择函数暴露到全局
+        window.selectOption = function(idx) {
+            let option = options[idx];
+            
+            // 如果选项是字符串，尝试解析为JSON
+            if (typeof option === 'string') {
+                try {
+                    const parsed = JSON.parse(option);
+                    // 如果解析后是数组，取第一个元素
+                    if (Array.isArray(parsed)) {
+                        option = parsed[0];
+                    } else {
+                        option = parsed;
+                    }
+                } catch (e) {
+                    console.log('无法解析选项:', e);
+                }
+            }
+            
+            // 根据字段类型填充到对应的输入框
+            if (field === 'description') {
+                const summaryInput = document.getElementById('desc_summary');
+                const conflictInput = document.getElementById('desc_conflict');
+                const highlightsInput = document.getElementById('desc_highlights');
+                
+                // 解析选项内容
+                let parsedOption = option;
+                if (typeof option === 'string') {
+                    try {
+                        // 尝试解析JSON字符串
+                        parsedOption = JSON.parse(option);
+                    } catch (e) {
+                        // 如果解析失败，尝试提取JSON部分
+                        const jsonMatch = option.match(/\[[\s\S]*\]/);
+                        if (jsonMatch) {
+                            try {
+                                const arr = JSON.parse(jsonMatch[0]);
+                                if (Array.isArray(arr) && arr.length > 0) {
+                                    parsedOption = arr[0];
+                                }
+                            } catch (e2) {}
+                        }
+                    }
+                }
+                
+                // 如果是数组，取第一个元素
+                if (Array.isArray(parsedOption)) {
+                    parsedOption = parsedOption[0];
+                }
+                
+                // 填充数据
+                if (typeof parsedOption === 'object' && parsedOption !== null) {
+                    if (summaryInput) summaryInput.value = parsedOption['故事梗概'] || parsedOption['description'] || '';
+                    if (conflictInput) conflictInput.value = parsedOption['主要冲突'] || parsedOption['conflict'] || '';
+                    if (highlightsInput) highlightsInput.value = parsedOption['核心看点'] || parsedOption['highlights'] || '';
+                }
+                
+                // 触发input事件
+                if (summaryInput) summaryInput.dispatchEvent(new Event('input'));
+                if (conflictInput) conflictInput.dispatchEvent(new Event('input'));
+                if (highlightsInput) highlightsInput.dispatchEvent(new Event('input'));
+                
+            } else if (field === 'background' && typeof option === 'object') {
+                // 内容背景 - 填充到各个子字段
+                const timeLocationInput = document.getElementById('bg_time_location');
+                const relationshipsInput = document.getElementById('bg_relationships');
+                const worldviewInput = document.getElementById('bg_worldview');
+                const conflictSourceInput = document.getElementById('bg_conflict_source');
+                const toneInput = document.getElementById('bg_tone');
+                
+                // 解析选项内容
+                let parsedOption = option;
+                if (typeof option === 'string') {
+                    try {
+                        parsedOption = JSON.parse(option);
+                    } catch (e) {
+                        const jsonMatch = option.match(/\[[\s\S]*\]/);
+                        if (jsonMatch) {
+                            try {
+                                const arr = JSON.parse(jsonMatch[0]);
+                                if (Array.isArray(arr) && arr.length > 0) {
+                                    parsedOption = arr[0];
+                                }
+                            } catch (e2) {}
+                        }
+                    }
+                }
+                
+                // 如果是数组，取第一个元素
+                if (Array.isArray(parsedOption)) {
+                    parsedOption = parsedOption[0];
+                }
+                
+                if (typeof parsedOption === 'object' && parsedOption !== null) {
+                    if (timeLocationInput) timeLocationInput.value = parsedOption['时代背景和地点'] || parsedOption['time_location'] || '';
+                    if (relationshipsInput) relationshipsInput.value = parsedOption['主要人物关系'] || parsedOption['relationships'] || '';
+                    if (worldviewInput) worldviewInput.value = parsedOption['世界观设定'] || parsedOption['worldview'] || '';
+                    if (conflictSourceInput) conflictSourceInput.value = parsedOption['核心冲突来源'] || parsedOption['conflict_source'] || '';
+                    if (toneInput) toneInput.value = parsedOption['情感基调'] || parsedOption['tone'] || '';
+                }
+                
+                // 触发input事件
+                if (timeLocationInput) timeLocationInput.dispatchEvent(new Event('input'));
+                if (relationshipsInput) relationshipsInput.dispatchEvent(new Event('input'));
+                if (worldviewInput) worldviewInput.dispatchEvent(new Event('input'));
+                if (conflictSourceInput) conflictSourceInput.dispatchEvent(new Event('input'));
+                if (toneInput) toneInput.dispatchEvent(new Event('input'));
+                
+            } else if (field === 'theme') {
+                // 主题直接填充
+                const value = typeof option === 'string' ? option : JSON.stringify(option);
+                targetInput.value = value;
+                targetInput.dispatchEvent(new Event('input'));
+            } else {
+                // 其他情况使用原有逻辑
+                const value = getInputValue(option, field);
+                targetInput.value = value;
+                targetInput.dispatchEvent(new Event('input'));
+            }
+            
+            closeOptionsModal();
+            showNotification('已选择第' + (idx + 1) + '个选项', 'success');
+        };
+        
+        window.closeOptionsModal = function() {
+            modal.remove();
+        };
+        
+        // 点击遮罩关闭
+        modal.addEventListener('click', function(e) {
+            if (e.target === modal) closeOptionsModal();
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        // 元素引用
+        const form = document.getElementById('createProjectForm');
+        const titleInput = document.getElementById('title');
+        const coverUploadArea = document.getElementById('coverUploadArea');
+        const coverInput = document.getElementById('coverImage');
+        const uploadPlaceholder = document.getElementById('uploadPlaceholder');
+        const coverPreview = document.getElementById('coverPreview');
+        const previewImage = document.getElementById('previewImage');
+        const changeCoverBtn = document.getElementById('changeCoverBtn');
+        const removeCoverBtn = document.getElementById('removeCoverBtn');
+        const coverFeedback = document.getElementById('coverFeedback');
+        
+        // 状态变量
+        let coverFile = null;
+
+        // ============ 封面图片上传 ============
+        function showUploadPlaceholder() {
+            uploadPlaceholder.style.display = 'block';
+            coverPreview.style.display = 'none';
+            coverFile = null;
+            coverInput.value = '';
+        }
+
+        function showCoverPreview(src) {
+            uploadPlaceholder.style.display = 'none';
+            coverPreview.style.display = 'block';
+            previewImage.src = src;
+        }
+
+        // 点击上传区域
+        coverUploadArea.addEventListener('click', function(e) {
+            if (e.target.closest('.preview-overlay')) return;
+            coverInput.click();
+        });
+
+        // 文件选择处理
+        coverInput.addEventListener('change', function(e) {
+            if (e.target.files.length > 0) {
+                handleFile(e.target.files[0]);
+            }
+        });
+
+        // 处理文件
+        function handleFile(file) {
+            // 验证文件类型
+            if (!file.type.startsWith('image/')) {
+                showCoverError('请选择图片文件（JPG、PNG、GIF）');
+                return;
+            }
+
+            // 验证文件大小 (10MB)
+            if (file.size > 10 * 1024 * 1024) {
+                showCoverError('图片大小不能超过 10MB');
+                return;
+            }
+
+            coverFile = file;
+            clearCoverError();
+
+            // 预览图片
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                showCoverPreview(e.target.result);
+                showNotification('封面图片上传成功', 'success');
+            };
+            reader.onerror = function() {
+                showCoverError('图片读取失败，请重试');
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function showCoverError(message) {
+            coverFeedback.textContent = message;
+            coverFeedback.classList.add('show');
+            coverUploadArea.classList.add('is-invalid');
+        }
+
+        function clearCoverError() {
+            coverFeedback.textContent = '';
+            coverFeedback.classList.remove('show');
+            coverUploadArea.classList.remove('is-invalid');
+        }
+
+        // 更换图片
+        changeCoverBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            coverInput.click();
+        });
+
+        // 删除图片
+        removeCoverBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            showUploadPlaceholder();
+            showNotification('封面已删除', 'info');
+        });
+
+        // 拖拽上传
+        coverUploadArea.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            coverUploadArea.classList.add('dragover');
+        });
+
+        coverUploadArea.addEventListener('dragleave', function(e) {
+            e.preventDefault();
+            coverUploadArea.classList.remove('dragover');
+        });
+
+        coverUploadArea.addEventListener('drop', function(e) {
+            e.preventDefault();
+            coverUploadArea.classList.remove('dragover');
+
+            if (e.dataTransfer.files.length > 0) {
+                handleFile(e.dataTransfer.files[0]);
+            }
+        });
+
+        // ============ 标签选择器 ============
+        const tagsSelector = document.getElementById('tagsSelector');
+        const tagsSelected = document.getElementById('tagsSelected');
+        const tagsDropdown = document.getElementById('tagsDropdown');
+        const tagsSearchInput = document.getElementById('tagsSearchInput');
+        const tagsOptions = document.getElementById('tagsOptions');
+        const tagsInput = document.getElementById('tags');
+        let selectedTags = [];
+
+        // 点击展开/收起下拉框
+        tagsSelected.addEventListener('click', function(e) {
+            if (e.target.closest('.remove-tag')) return;
+            tagsDropdown.classList.toggle('show');
+            tagsSelected.classList.toggle('active');
+            if (tagsDropdown.classList.contains('show')) {
+                tagsSearchInput.focus();
+            }
+        });
+
+        // 点击外部关闭下拉框
+        document.addEventListener('click', function(e) {
+            if (!tagsSelector.contains(e.target)) {
+                tagsDropdown.classList.remove('show');
+                tagsSelected.classList.remove('active');
+            }
+        });
+
+        // 搜索标签
+        tagsSearchInput.addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase();
+            document.querySelectorAll('.tag-option').forEach(option => {
+                const text = option.textContent.toLowerCase();
+                if (text.includes(searchTerm)) {
+                    option.classList.remove('hidden');
+                } else {
+                    option.classList.add('hidden');
+                }
+            });
+        });
+
+        // 选择/取消选择标签
+        document.querySelectorAll('.tag-option').forEach(option => {
+            option.addEventListener('click', function() {
+                const value = this.dataset.value;
+                
+                if (selectedTags.includes(value)) {
+                    // 取消选择
+                    selectedTags = selectedTags.filter(tag => tag !== value);
+                    this.classList.remove('selected');
+                } else {
+                    // 选择（最多5个）
+                    if (selectedTags.length >= 5) {
+                        showNotification('最多只能选择5个标签', 'warning');
+                        return;
+                    }
+                    selectedTags.push(value);
+                    this.classList.add('selected');
+                }
+                
+                updateTagsDisplay();
+            });
+        });
+
+        // 更新标签显示
+        function updateTagsDisplay() {
+            if (selectedTags.length === 0) {
+                tagsSelected.innerHTML = '<span class="tags-placeholder">点击选择标签</span>';
+            } else {
+                tagsSelected.innerHTML = selectedTags.map(tag => `
+                    <span class="tag-item">
+                        ${tag}
+                        <i class="fas fa-times remove-tag" data-tag="${tag}"></i>
+                    </span>
+                `).join('');
+                
+                // 绑定删除事件
+                tagsSelected.querySelectorAll('.remove-tag').forEach(btn => {
+                    btn.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        const tag = this.dataset.tag;
+                        selectedTags = selectedTags.filter(t => t !== tag);
+                        document.querySelector(`.tag-option[data-value="${tag}"]`).classList.remove('selected');
+                        updateTagsDisplay();
+                    });
+                });
+            }
+            
+            // 更新隐藏input的值
+            tagsInput.value = JSON.stringify(selectedTags);
+        }
+
+        // ============ AI生成功能 ============
+        document.querySelectorAll('.btn-ai-generate').forEach(btn => {
+            btn.addEventListener('click', async function() {
+                const field = this.dataset.field;
+                const type = this.dataset.type;
+                const title = titleInput.value.trim();
+                
+                // 检查是否有标题（生成主题时必需）
+                if (!title && field !== 'background') {
+                    showNotification('请先在上方输入项目标题', 'warning');
+                    titleInput.focus();
+                    titleInput.classList.add('is-invalid');
+                    return;
+                }
+
+                // 获取依赖字段
+                let theme = '';
+                let description = '';
+                
+                if (field === 'description' || field === 'background') {
+                    const themeInput = document.getElementById('theme');
+                    theme = themeInput ? themeInput.value.trim() : '';
+                    if (!theme) {
+                        showNotification('请先生成或填写主题', 'warning');
+                        if (themeInput) themeInput.focus();
+                        return;
+                    }
+                }
+                
+                // 获取项目描述内容
+                if (field === 'background') {
+                    const descSummary = document.getElementById('desc_summary');
+                    const descConflict = document.getElementById('desc_conflict');
+                    const descHighlights = document.getElementById('desc_highlights');
+                    
+                    // 组合项目描述
+                    const summary = descSummary?.value.trim() || '';
+                    const conflict = descConflict?.value.trim() || '';
+                    const highlights = descHighlights?.value.trim() || '';
+                    
+                    if (summary || conflict || highlights) {
+                        description = `【故事梗概】${summary}\n【主要冲突】${conflict}\n【核心看点】${highlights}`;
+                    }
+                    
+                    // 检查是否有内容
+                    if (!description) {
+                        // 尝试旧的description字段
+                        const oldDesc = document.getElementById('description');
+                        if (oldDesc && oldDesc.value.trim()) {
+                            description = oldDesc.value.trim();
+                        }
+                    }
+                    
+                    if (!description) {
+                        showNotification('请先生成或填写项目描述', 'warning');
+                        if (descSummary) descSummary.focus();
+                        return;
+                    }
+                }
+                
+                // 检查字段是否已有内容，获取目标输入框
+                let hasContent = false;
+                let targetInput = null;
+                
+                if (field === 'theme') {
+                    targetInput = document.getElementById(field);
+                    hasContent = targetInput && targetInput.value.trim();
+                } else if (field === 'description') {
+                    const descSummary = document.getElementById('desc_summary');
+                    const descConflict = document.getElementById('desc_conflict');
+                    const descHighlights = document.getElementById('desc_highlights');
+                    hasContent = (descSummary?.value.trim() || descConflict?.value.trim() || descHighlights?.value.trim());
+                    targetInput = descSummary; // 用于显示提示
+                } else if (field === 'background') {
+                    const bgTimeLocation = document.getElementById('bg_time_location');
+                    const bgRelationships = document.getElementById('bg_relationships');
+                    const bgWorldview = document.getElementById('bg_worldview');
+                    const bgConflictSource = document.getElementById('bg_conflict_source');
+                    const bgTone = document.getElementById('bg_tone');
+                    hasContent = (bgTimeLocation?.value.trim() || bgRelationships?.value.trim() || 
+                                 bgWorldview?.value.trim() || bgConflictSource?.value.trim() || bgTone?.value.trim());
+                    targetInput = bgTimeLocation; // 用于显示提示
+                }
+                
+                if (hasContent && !confirm('该字段已有内容，是否覆盖？')) {
+                    return;
+                }
+                
+                // 设置加载状态
+                this.disabled = true;
+                this.classList.add('generating');
+                const originalText = this.innerHTML;
+                this.innerHTML = '<i class="fas fa-spinner"></i> 生成中...';
+                
+                try {
+                    const category = document.getElementById('category').value;
+                    
+                    const response = await fetch('/api/ai/generate-field', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            title: title,
+                            field: field,
+                            category: category,
+                            theme: theme,
+                            description: description
+                        })
+                    });
+
+                    const result = await response.json();
+
+                    console.log('AI生成结果:', result);
+                    console.log('result.content:', result.content);
+                    console.log('result.content类型:', typeof result.content);
+                    console.log('result.content长度:', result.content ? result.content.length : 'N/A');
+
+                    if (result.success && result.content && result.content.length > 0) {
+                        // 如果返回多个选项，显示选择模态框
+                        if (result.content.length > 1) {
+                            showOptionsModal(result.content, field, targetInput);
+                        } else {
+                            // 只有一个选项，直接填入
+                            targetInput.value = result.content[0];
+                            targetInput.dispatchEvent(new Event('input'));
+                            
+                            // 添加高亮效果
+                            targetInput.style.transition = 'all 0.3s ease';
+                            targetInput.style.backgroundColor = 'rgba(79, 70, 229, 0.1)';
+                            setTimeout(() => {
+                                targetInput.style.backgroundColor = '';
+                            }, 1000);
+                        }
+                        
+                        showNotification('AI内容已生成并填入', 'success');
+                    } else {
+                        showNotification(result.error || '生成失败，请重试', 'error');
+                    }
+                } catch (error) {
+                    console.error('AI生成错误:', error);
+                    showNotification('网络错误，请稍后重试', 'error');
+                } finally {
+                    // 恢复按钮状态
+                    this.disabled = false;
+                    this.classList.remove('generating');
+                    this.innerHTML = originalText;
+                }
+            });
+        });
+
+        // ============ 表单提交 ============
+        form.addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const submitBtn = document.getElementById('submitBtn');
+            const originalText = submitBtn.innerHTML;
+
+            // 验证表单
+            let isValid = true;
+
+            // 验证标题
+            if (!titleInput.value || titleInput.value.length < 3) {
+                titleInput.classList.add('is-invalid');
+                const feedback = titleInput.parentNode.querySelector('.invalid-feedback');
+                if (feedback) {
+                    feedback.textContent = '标题至少需要3个字符';
+                    feedback.classList.add('show');
+                }
+                isValid = false;
+            } else {
+                titleInput.classList.remove('is-invalid');
+                const feedback = titleInput.parentNode.querySelector('.invalid-feedback');
+                if (feedback) feedback.classList.remove('show');
+            }
+
+            if (!isValid) {
+                showNotification('请检查表单中的错误', 'error');
+                return;
+            }
+
+            // 显示加载状态
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span class="spinner"></span> 创建中...';
+
+            try {
+                // 构建表单数据
+                const formData = new FormData();
+                formData.append('title', titleInput.value);
+                formData.append('theme', document.getElementById('theme').value);
+                
+                // 组合项目描述子字段
+                const descSummaryEl = document.getElementById('desc_summary');
+                const descConflictEl = document.getElementById('desc_conflict');
+                const descHighlightsEl = document.getElementById('desc_highlights');
+                const oldDescEl = document.getElementById('description');
+                
+                let combinedDescription = '';
+                if (descSummaryEl || descConflictEl || descHighlightsEl) {
+                    // 新格式：使用子字段
+                    const descSummary = descSummaryEl?.value || '';
+                    const descConflict = descConflictEl?.value || '';
+                    const descHighlights = descHighlightsEl?.value || '';
+                    combinedDescription = `【故事梗概】${descSummary}\n【主要冲突】${descConflict}\n【核心看点】${descHighlights}`;
+                } else if (oldDescEl) {
+                    // 旧格式：直接使用textarea
+                    combinedDescription = oldDescEl.value;
+                }
+                formData.append('description', combinedDescription);
+                
+                // 组合内容背景子字段
+                const bgTimeLocationEl = document.getElementById('bg_time_location');
+                const bgRelationshipsEl = document.getElementById('bg_relationships');
+                const bgWorldviewEl = document.getElementById('bg_worldview');
+                const bgConflictSourceEl = document.getElementById('bg_conflict_source');
+                const bgToneEl = document.getElementById('bg_tone');
+                const oldBgEl = document.getElementById('background');
+                
+                let combinedBackground = '';
+                if (bgTimeLocationEl || bgRelationshipsEl || bgWorldviewEl || bgConflictSourceEl || bgToneEl) {
+                    // 新格式：使用子字段
+                    const bgTimeLocation = bgTimeLocationEl?.value || '';
+                    const bgRelationships = bgRelationshipsEl?.value || '';
+                    const bgWorldview = bgWorldviewEl?.value || '';
+                    const bgConflictSource = bgConflictSourceEl?.value || '';
+                    const bgTone = bgToneEl?.value || '';
+                    combinedBackground = `【时代背景和地点】${bgTimeLocation}\n【主要人物关系】${bgRelationships}\n【世界观设定】${bgWorldview}\n【核心冲突来源】${bgConflictSource}\n【情感基调】${bgTone}`;
+                } else if (oldBgEl) {
+                    // 旧格式：直接使用textarea
+                    combinedBackground = oldBgEl.value;
+                }
+                formData.append('background', combinedBackground);
+                
+                formData.append('category', document.getElementById('category').value);
+                formData.append('status', document.getElementById('status').value);
+                formData.append('is_public', document.getElementById('is_public').value === 'true');
+                formData.append('episode_count', document.getElementById('episode_count').value);
+                formData.append('episode_type', document.getElementById('episode_type').value);
+                
+                // 角色生成选项
+                const generateCharactersEl = document.querySelector('input[name="generate_characters"]:checked');
+                formData.append('generate_characters', generateCharactersEl ? generateCharactersEl.value : 'false');
+
+                // 处理标签
+                const tagsValue = document.getElementById('tags').value;
+                if (tagsValue) {
+                    try {
+                        const tags = JSON.parse(tagsValue);
+                        if (tags.length > 0) {
+                            formData.append('tags', tagsValue);
+                        }
+                    } catch (e) {
+                        // 如果不是JSON格式，按逗号分隔处理
+                        const tags = tagsValue.split(',').map(tag => tag.trim()).filter(tag => tag);
+                        if (tags.length > 0) {
+                            formData.append('tags', JSON.stringify(tags));
+                        }
+                    }
+                }
+
+                // 如果有封面图片
+                if (coverFile) {
+                    formData.append('cover_image', coverFile);
+                }
+
+                // 调试：打印发送的数据
+                console.log('Submitting form data:');
+                for (let [key, value] of formData.entries()) {
+                    console.log(`${key}: ${value}`);
+                }
+
+                // 发送请求
+                const response = await fetch('/api/projects', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    showNotification('项目创建成功！', 'success');
+                    setTimeout(() => {
+                        window.location.href = '/projects';
+                    }, 1500);
+                } else {
+                    showNotification(result.error || '创建失败，请重试', 'error');
+                }
+            } catch (error) {
+                console.error('创建项目错误:', error);
+                showNotification('网络错误，请稍后重试', 'error');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalText;
+            }
+        });
+
+        // 输入时清除错误状态
+        form.querySelectorAll('input, textarea, select').forEach(input => {
+            input.addEventListener('input', function() {
+                this.classList.remove('is-invalid');
+                const feedback = this.parentNode.querySelector('.invalid-feedback');
+                if (feedback) feedback.classList.remove('show');
+            });
+        });
+    });
+</script>
+{% endblock %}

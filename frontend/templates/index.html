@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>灵犀剧能 - 短剧制作平台</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+        }
+
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+        }
+
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* 侧边栏样式 */
+        .sidebar {
+            width: 240px;
+            background: linear-gradient(180deg, #1a237e 0%, #283593 100%);
+            color: white;
+            padding: 20px 0;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+            z-index: 100;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            padding: 0 20px 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .logo h1 {
+            font-size: 24px;
+            font-weight: 700;
+            margin-left: 10px;
+            background: linear-gradient(90deg, #ff9800, #ff5722);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .logo-icon {
+            font-size: 28px;
+            color: #ff9800;
+        }
+
+        .menu-section {
+            margin-bottom: 25px;
+        }
+
+        .menu-title {
+            font-size: 12px;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.6);
+            padding: 0 20px;
+            margin-bottom: 10px;
+            letter-spacing: 1px;
+        }
+
+        .menu-list {
+            list-style: none;
+        }
+
+        .menu-item {
+            padding: 12px 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            border-left: 3px solid transparent;
+        }
+
+        .menu-item:hover, .menu-item.active {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-left: 3px solid #ff9800;
+        }
+
+        .menu-icon {
+            width: 24px;
+            margin-right: 12px;
+            text-align: center;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .menu-text {
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        /* 主内容区样式 */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .topbar {
+            height: 70px;
+            background-color: white;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 30px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .project-info {
+            display: flex;
+            align-items: center;
+        }
+
+        .project-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: #1a237e;
+            margin-right: 15px;
+        }
+
+        .project-tag {
+            background-color: #e8eaf6;
+            color: #3949ab;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #ff9800, #ff5722);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            margin-right: 10px;
+        }
+
+        .user-name {
+            font-weight: 600;
+            color: #555;
+        }
+
+        .content-area {
+            flex: 1;
+            padding: 30px;
+            overflow-y: auto;
+        }
+
+        .content-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .content-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #1a237e;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+            font-size: 14px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #ff9800, #ff5722);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 87, 34, 0.3);
+        }
+
+        .btn-secondary {
+            background-color: #e8eaf6;
+            color: #3949ab;
+        }
+
+        .btn-secondary:hover {
+            background-color: #d1d9ff;
+        }
+
+        .btn-icon {
+            margin-right: 8px;
+        }
+
+        /* 卡片布局 */
+        .card-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-header {
+            padding: 20px;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-title {
+            font-weight: 700;
+            font-size: 18px;
+            color: #1a237e;
+        }
+
+        .card-badge {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .card-body {
+            padding: 20px;
+        }
+
+        .card-info {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .card-icon {
+            margin-right: 10px;
+            color: #ff9800;
+        }
+
+        .episode-list {
+            list-style: none;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .episode-item {
+            padding: 12px 15px;
+            border-bottom: 1px solid #f5f5f5;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background-color 0.2s;
+        }
+
+        .episode-item:hover {
+            background-color: #f9f9f9;
+        }
+
+        .episode-item:last-child {
+            border-bottom: none;
+        }
+
+        .episode-name {
+            font-weight: 600;
+        }
+
+        .episode-duration {
+            color: #888;
+            font-size: 13px;
+        }
+
+        /* 底部区域 */
+        .footer {
+            padding: 20px 30px;
+            background-color: white;
+            border-top: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .contact {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .copyright {
+            color: #999;
+            font-size: 13px;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 1024px) {
+            .card-container {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 70px;
+            }
+
+            .menu-text, .menu-title, .logo h1 {
+                display: none;
+            }
+
+            .logo {
+                justify-content: center;
+                padding: 0 0 20px;
+            }
+
+            .menu-icon {
+                margin-right: 0;
+                font-size: 18px;
+            }
+
+            .menu-item {
+                justify-content: center;
+                padding: 15px 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 侧边栏 -->
+        <div class="sidebar">
+            <div class="logo">
+                <div class="logo-icon"><i class="fas fa-fire"></i></div>
+                <h1>灵犀剧能</h1>
+            </div>
+
+            <div class="menu-section">
+                <div class="menu-title">项目内容</div>
+                <ul class="menu-list">
+                    <li class="menu-item active" onclick="switchTab('episodes')">
+                        <div class="menu-icon"><i class="fas fa-list-ol"></i></div>
+                        <div class="menu-text">分集列表</div>
+                    </li>
+                    <li class="menu-item" onclick="switchTab('characters')">
+                        <div class="menu-icon"><i class="fas fa-users"></i></div>
+                        <div class="menu-text">角色库</div>
+                    </li>
+                    <li class="menu-item" onclick="switchTab('scenes')">
+                        <div class="menu-icon"><i class="fas fa-map"></i></div>
+                        <div class="menu-text">场景库</div>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="menu-section">
+                <div class="menu-title">账户管理</div>
+                <ul class="menu-list">
+                    <li class="menu-item" onclick="switchTab('upload')">
+                        <div class="menu-icon"><i class="fas fa-cloud-upload-alt"></i></div>
+                        <div class="menu-text">上传封面</div>
+                    </li>
+                    <li class="menu-item" onclick="switchTab('package')">
+                        <div class="menu-icon"><i class="fas fa-box-open"></i></div>
+                        <div class="menu-text">我的套餐</div>
+                    </li>
+                    <li class="menu-item" onclick="switchTab('ai')">
+                        <div class="menu-icon"><i class="fas fa-robot"></i></div>
+                        <div class="menu-text">AI生成</div>
+                    </li>
+                    <li class="menu-item" onclick="switchTab('transactions')">
+                        <div class="menu-icon"><i class="fas fa-exchange-alt"></i></div>
+                        <div class="menu-text">交易记录</div>
+                    </li>
+                    <li class="menu-item" onclick="switchTab('download')">
+                        <div class="menu-icon"><i class="fas fa-cloud-download-alt"></i></div>
+                        <div class="menu-text">下载封面</div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- 主内容区 -->
+        <div class="main-content">
+            <!-- 顶部栏 -->
+            <div class="topbar">
+                <div class="project-info">
+                    <div class="project-title">斩仙台下</div>
+                    <div class="project-tag">连载中 · 161集</div>
+                </div>
+
+                <div class="user-info">
+                    <div class="user-avatar">用户</div>
+                    <div class="user-name">用户6167_897</div>
+                </div>
+            </div>
+
+            <!-- 内容区域 -->
+            <div class="content-area">
+                <!-- 分集列表内容 -->
+                <div id="episodes-tab" class="tab-content active-tab">
+                    <div class="content-header">
+                        <div class="content-title">分集列表</div>
+                        <div class="action-buttons">
+                            <button class="btn btn-secondary">
+                                <i class="fas fa-pen btn-icon"></i>编辑项目
+                            </button>
+                            <button class="btn btn-primary" onclick="addNewEpisode()">
+                                <i class="fas fa-plus btn-icon"></i>新增一集
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="card-container">
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="card-title">第1集</div>
+                                <div class="card-badge">0分钟</div>
+                            </div>
+                            <div class="card-body">
+                                <div class="card-info">
+                                    <i class="fas fa-clock card-icon"></i>
+                                    <span>时长：待制作</span>
+                                </div>
+                                <div class="card-info">
+                                    <i class="fas fa-calendar card-icon"></i>
+                                    <span>创建时间：2023-10-15</span>
+                                </div>
+                                <button class="btn btn-primary" style="width: 100%; margin-top: 15px;">
+                                    <i class="fas fa-play-circle btn-icon"></i>进入制作
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="card-title">第2集</div>
+                                <div class="card-badge">3:45</div>
+                            </div>
+                            <div class="card-body">
+                                <div class="card-info">
+                                    <i class="fas fa-clock card-icon"></i>
+                                    <span>时长：3分45秒</span>
+                                </div>
+                                <div class="card-info">
+                                    <i class="fas fa-calendar card-icon"></i>
+                                    <span>创建时间：2023-10-16</span>
+                                </div>
+                                <button class="btn btn-secondary" style="width: 100%; margin-top: 15px;">
+                                    <i class="fas fa-edit btn-icon"></i>继续创作
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="card-title">第3集</div>
+                                <div class="card-badge">5:22</div>
+                            </div>
+                            <div class="card-body">
+                                <div class="card-info">
+                                    <i class="fas fa-clock card-icon"></i>
+                                    <span>时长：5分22秒</span>
+                                </div>
+                                <div class="card-info">
+                                    <i class="fas fa-calendar card-icon"></i>
+                                    <span>创建时间：2023-10-18</span>
+                                </div>
+                                <button class="btn btn-secondary" style="width: 100%; margin-top: 15px;">
+                                    <i class="fas fa-edit btn-icon"></i>继续创作
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="content-title" style="margin-bottom: 15px;">最近更新</div>
+                    <div class="card">
+                        <div class="card-body" style="padding: 0;">
+                            <ul class="episode-list">
+                                <li class="episode-item">
+                                    <div class="episode-name">第1集 斩仙台之劫</div>
+                                    <div class="episode-duration">0分钟</div>
+                                </li>
+                                <li class="episode-item">
+                                    <div class="episode-name">第2集 仙人恩怨</div>
+                                    <div class="episode-duration">3:45</div>
+                                </li>
+                                <li class="episode-item">
+                                    <div class="episode-name">第3集 凡间奇遇</div>
+                                    <div class="episode-duration">5:22</div>
+                                </li>
+                                <li class="episode-item">
+                                    <div class="episode-name">第4集 秘境探宝</div>
+                                    <div class="episode-duration">4:15</div>
+                                </li>
+                                <li class="episode-item">
+                                    <div class="episode-name">第5集 师徒重逢</div>
+                                    <div class="episode-duration">6:30</div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 角色库内容 -->
+                <div id="characters-tab" class="tab-content">
+                    <div class="content-header">
+                        <div class="content-title">角色库</div>
+                        <div class="action-buttons">
+                            <button class="btn btn-primary">
+                                <i class="fas fa-plus btn-icon"></i>新增角色
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="card-container">
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="card-title">凌霄仙子</div>
+                                <div class="card-badge">主角</div>
+                            </div>
+                            <div class="card-body">
+                                <div class="card-info">
+                                    <i class="fas fa-venus card-icon"></i>
+                                    <span>性别：女</span>
+                                </div>
+                                <div class="card-info">
+                                    <i class="fas fa-tag card-icon"></i>
+                                    <span>身份：天界仙子</span>
+                                </div>
+                                <div class="card-info">
+                                    <i class="fas fa-heart card-icon"></i>
+                                    <span>性格：高傲、善良</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="card-title">玄天剑尊</div>
+                                <div class="card-badge">主角</div>
+                            </div>
+                            <div class="card-body">
+                                <div class="card-info">
+                                    <i class="fas fa-mars card-icon"></i>
+                                    <span>性别：男</span>
+                                </div>
+                                <div class="card-info">
+                                    <i class="fas fa-tag card-icon"></i>
+                                    <span>身份：剑修大能</span>
+                                </div>
+                                <div class="card-info">
+                                    <i class="fas fa-heart card-icon"></i>
+                                    <span>性格：正直、执着</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 其他标签页内容 -->
+                <div id="scenes-tab" class="tab-content">
+                    <div class="content-header">
+                        <div class="content-title">场景库</div>
+                    </div>
+                    <p>场景库内容正在加载中...</p>
+                </div>
+
+                <div id="upload-tab" class="tab-content">
+                    <div class="content-header">
+                        <div class="content-title">上传封面</div>
+                    </div>
+                    <p>上传封面功能正在开发中...</p>
+                </div>
+            </div>
+
+            <!-- 底部 -->
+            <div class="footer">
+                <div class="contact">
+                    <i class="fas fa-envelope" style="margin-right: 8px;"></i>联系我们：854197093@qq.com
+                </div>
+                <div class="copyright">
+                    &copy; 2023 灵犀剧能 版权所有
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 切换标签页
+        function switchTab(tabName) {
+            // 隐藏所有标签页内容
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active-tab');
+                tab.style.display = 'none';
+            });
+
+            // 显示选中的标签页
+            const activeTab = document.getElementById(`${tabName}-tab`);
+            if (activeTab) {
+                activeTab.classList.add('active-tab');
+                activeTab.style.display = 'block';
+            }
+
+            // 更新菜单项状态
+            document.querySelectorAll('.menu-item').forEach(item => {
+                item.classList.remove('active');
+            });
+
+            // 找到对应的菜单项并激活
+            const menuItems = document.querySelectorAll('.menu-item');
+            let targetItem;
+
+            if (tabName === 'episodes') targetItem = menuItems[0];
+            if (tabName === 'characters') targetItem = menuItems[1];
+            if (tabName === 'scenes') targetItem = menuItems[2];
+            if (tabName === 'upload') targetItem = menuItems[3];
+            if (tabName === 'package') targetItem = menuItems[4];
+            if (tabName === 'ai') targetItem = menuItems[5];
+            if (tabName === 'transactions') targetItem = menuItems[6];
+            if (tabName === 'download') targetItem = menuItems[7];
+
+            if (targetItem) targetItem.classList.add('active');
+        }
+
+        // 新增一集功能
+        function addNewEpisode() {
+            alert("新增一集功能正在开发中...");
+        }
+
+        // 页面加载时显示分集列表
+        document.addEventListener('DOMContentLoaded', function() {
+            // 初始化显示第一个标签页
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.style.display = 'none';
+            });
+
+            const firstTab = document.getElementById('episodes-tab');
+            if (firstTab) {
+                firstTab.classList.add('active-tab');
+                firstTab.style.display = 'block';
+            }
+        });
+    </script>
+</body>
+</html>

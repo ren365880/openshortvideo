@@ -1,0 +1,1555 @@
+<!-- templates/tutorials.html -->
+{% extends "layout.html" %}
+
+{% block title %}教程中心 - 灵犀剧能{% endblock %}
+
+{% block content %}
+<div class="tutorials-container">
+    <!-- 顶部导航 -->
+    <div class="tutorials-header">
+        <div class="header-content">
+            <h1 class="page-title">教程中心</h1>
+            <p class="page-subtitle">从入门到精通，掌握短剧制作全流程</p>
+        </div>
+        <div class="header-search">
+            <button class="btn btn-primary" onclick="openCreateTutorialModal()">
+                <i class="fas fa-plus"></i> 发布文章
+            </button>
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" id="searchTutorials" placeholder="搜索教程..." class="search-input">
+            </div>
+        </div>
+    </div>
+
+    <!-- 教程分类 -->
+    <div class="tutorial-categories">
+        <div class="category-grid">
+            <a href="#beginner" class="category-card category-card-primary">
+                <div class="category-icon">
+                    <i class="fas fa-graduation-cap"></i>
+                </div>
+                <div class="category-content">
+                    <h3>新手入门</h3>
+                    <p>适合零基础用户快速上手</p>
+                </div>
+            </a>
+            <a href="#advanced" class="category-card category-card-success">
+                <div class="category-icon">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <div class="category-content">
+                    <h3>进阶技巧</h3>
+                    <p>提升制作水平的专业技巧</p>
+                </div>
+            </a>
+            <a href="#ai" class="category-card category-card-warning">
+                <div class="category-icon">
+                    <i class="fas fa-robot"></i>
+                </div>
+                <div class="category-content">
+                    <h3>AI创作</h3>
+                    <p>利用AI工具高效创作</p>
+                </div>
+            </a>
+            <a href="#marketing" class="category-card category-card-info">
+                <div class="category-icon">
+                    <i class="fas fa-bullhorn"></i>
+                </div>
+                <div class="category-content">
+                    <h3>推广运营</h3>
+                    <p>作品推广和运营策略</p>
+                </div>
+            </a>
+        </div>
+    </div>
+
+    <!-- 推荐教程 -->
+    <div class="section-container">
+        <div class="section-header">
+            <h2 class="section-title">推荐教程</h2>
+            <div class="section-tabs">
+                <button class="tab-btn active" data-type="popular">热门</button>
+                <button class="tab-btn" data-type="newest">最新</button>
+                <button class="tab-btn" data-type="free">免费</button>
+            </div>
+        </div>
+        <div class="tutorial-grid" id="recommendedTutorials">
+            <!-- 推荐教程将通过JavaScript加载 -->
+        </div>
+    </div>
+
+    <!-- 学习路径 -->
+    <div class="section-container">
+        <div class="section-header">
+            <h2 class="section-title">学习路径</h2>
+        </div>
+        <div class="learning-paths">
+            <div class="path-card">
+                <div class="path-header">
+                    <h3 class="path-title">短剧制作全流程</h3>
+                    <span class="path-duration">12小时 · 8个章节</span>
+                </div>
+                <div class="path-progress">
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 40%"></div>
+                    </div>
+                    <span class="progress-text">40% 完成</span>
+                </div>
+                <div class="path-content">
+                    <p>从剧本创作到成品发布的全流程指南</p>
+                    <div class="path-steps">
+                        <div class="step active">
+                            <i class="fas fa-check-circle"></i>
+                            <span>剧本创作基础</span>
+                        </div>
+                        <div class="step active">
+                            <i class="fas fa-check-circle"></i>
+                            <span>拍摄技巧</span>
+                        </div>
+                        <div class="step">
+                            <i class="fas fa-circle"></i>
+                            <span>视频剪辑</span>
+                        </div>
+                        <div class="step">
+                            <i class="fas fa-circle"></i>
+                            <span>特效制作</span>
+                        </div>
+                    </div>
+                </div>
+                <button class="btn btn-primary btn-full">继续学习</button>
+            </div>
+
+            <div class="path-card">
+                <div class="path-header">
+                    <h3 class="path-title">AI辅助创作指南</h3>
+                    <span class="path-duration">6小时 · 5个章节</span>
+                </div>
+                <div class="path-progress">
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 20%"></div>
+                    </div>
+                    <span class="progress-text">20% 完成</span>
+                </div>
+                <div class="path-content">
+                    <p>掌握AI工具提升创作效率</p>
+                    <div class="path-steps">
+                        <div class="step active">
+                            <i class="fas fa-check-circle"></i>
+                            <span>AI剧本生成</span>
+                        </div>
+                        <div class="step">
+                            <i class="fas fa-circle"></i>
+                            <span>智能配音</span>
+                        </div>
+                        <div class="step">
+                            <i class="fas fa-circle"></i>
+                            <span>AI特效</span>
+                        </div>
+                    </div>
+                </div>
+                <button class="btn btn-outline btn-full">开始学习</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 视频教程 -->
+    <div class="section-container">
+        <div class="section-header">
+            <h2 class="section-title">视频教程</h2>
+            <a href="#" class="section-link">查看更多 <i class="fas fa-arrow-right"></i></a>
+        </div>
+        <div class="video-grid" id="videoTutorials">
+            <!-- 视频教程将通过JavaScript加载 -->
+        </div>
+    </div>
+
+    <!-- 常见问题 -->
+    <div class="section-container">
+        <div class="section-header">
+            <h2 class="section-title">常见问题</h2>
+        </div>
+        <div class="faq-list">
+            <div class="faq-item">
+                <button class="faq-question">
+                    <span>如何创建第一个短剧项目？</span>
+                    <i class="fas fa-chevron-down"></i>
+                </button>
+                <div class="faq-answer">
+                    <p>创建短剧项目的步骤如下：</p>
+                    <ol>
+                        <li>登录后点击"创建项目"按钮</li>
+                        <li>填写项目基本信息（标题、描述等）</li>
+                        <li>选择项目模板或从头开始</li>
+                        <li>进入编辑器开始创作</li>
+                        <li>保存并发布作品</li>
+                    </ol>
+                </div>
+            </div>
+            <div class="faq-item">
+                <button class="faq-question">
+                    <span>支持哪些视频格式？</span>
+                    <i class="fas fa-chevron-down"></i>
+                </button>
+                <div class="faq-answer">
+                    <p>灵犀剧能支持以下视频格式：</p>
+                    <ul>
+                        <li>MP4（推荐）</li>
+                        <li>MOV</li>
+                        <li>AVI</li>
+                        <li>WMV</li>
+                        <li>MKV</li>
+                    </ul>
+                    <p>建议使用MP4格式以获得最佳兼容性。</p>
+                </div>
+            </div>
+            <div class="faq-item">
+                <button class="faq-question">
+                    <span>如何使用AI生成剧本？</span>
+                    <i class="fas fa-chevron-down"></i>
+                </button>
+                <div class="faq-answer">
+                    <p>使用AI生成剧本的方法：</p>
+                    <ol>
+                        <li>在项目中选择"AI生成"功能</li>
+                        <li>输入主题、角色设定等信息</li>
+                        <li>选择剧本风格（爱情、悬疑、喜剧等）</li>
+                        <li>调整生成参数（长度、复杂度等）</li>
+                        <li>点击生成，AI将为您创建剧本草稿</li>
+                        <li>您可以在此基础上进行修改和完善</li>
+                    </ol>
+                </div>
+            </div>
+            <div class="faq-item">
+                <button class="faq-question">
+                    <span>如何导出和发布作品？</span>
+                    <i class="fas fa-chevron-down"></i>
+                </button>
+                <div class="faq-answer">
+                    <p>导出和发布作品的步骤：</p>
+                    <ol>
+                        <li>完成编辑后点击"导出"按钮</li>
+                        <li>选择导出格式和分辨率</li>
+                        <li>设置水印和版权信息</li>
+                        <li>点击"开始导出"，等待处理完成</li>
+                        <li>下载导出文件或直接发布到平台</li>
+                        <li>可以分享到社交媒体或保存到本地</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 社区问答 -->
+    <div class="section-container">
+        <div class="section-header">
+            <h2 class="section-title">社区问答</h2>
+            <a href="#" class="btn btn-primary">提问</a>
+        </div>
+        <div class="community-questions" id="communityQuestions">
+            <!-- 社区问题将通过JavaScript加载 -->
+        </div>
+    </div>
+</div>
+
+<!-- 教程详情模态框 -->
+<div class="modal" id="tutorialModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 id="modalTutorialTitle">教程标题</h2>
+            <button class="modal-close" onclick="closeTutorialModal()">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="tutorial-meta-info">
+                <span><i class="fas fa-user"></i> <span id="modalTutorialAuthor">未知作者</span></span>
+                <span><i class="fas fa-clock"></i> <span id="modalTutorialDuration">未设置</span></span>
+                <span><i class="fas fa-users"></i> <span id="modalTutorialViews">0</span> 次浏览</span>
+                <span><i class="fas fa-tag"></i> <span id="modalTutorialCategory">其他</span></span>
+                <span><i class="fas fa-layer-group"></i> <span id="modalTutorialLevel">初级</span></span>
+            </div>
+            <div class="tutorial-cover-container">
+                <img id="modalTutorialCover" src="" alt="教程封面" onerror="this.src='https://images.unsplash.com/photo-1595769812725-4c6564f70466?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'">
+            </div>
+            <div class="tutorial-content" id="modalTutorialContent">
+                加载中...
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-outline" onclick="closeTutorialModal()">关闭</button>
+            <button class="btn btn-primary" onclick="likeTutorial()"><i class="fas fa-thumbs-up"></i> 点赞 (<span id="modalTutorialLikes">0</span>)</button>
+        </div>
+    </div>
+</div>
+
+<!-- 创建教程模态框 -->
+<div class="modal" id="createTutorialModal">
+    <div class="modal-content" style="max-width: 700px;">
+        <div class="modal-header">
+            <h2>发布新教程</h2>
+            <button class="modal-close" onclick="closeCreateTutorialModal()">&times;</button>
+        </div>
+        <div class="modal-body">
+            <form id="createTutorialForm">
+                <div class="form-group">
+                    <label for="tutorialTitle">标题 *</label>
+                    <input type="text" id="tutorialTitle" class="form-control" required placeholder="请输入教程标题">
+                </div>
+                <div class="form-group">
+                    <label for="tutorialCategory">分类</label>
+                    <select id="tutorialCategory" class="form-control">
+                        <option value="新手入门">新手入门</option>
+                        <option value="进阶技巧">进阶技巧</option>
+                        <option value="AI创作">AI创作</option>
+                        <option value="推广运营">推广运营</option>
+                        <option value="其他">其他</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="tutorialLevel">难度级别</label>
+                    <select id="tutorialLevel" class="form-control">
+                        <option value="初级">初级</option>
+                        <option value="中级">中级</option>
+                        <option value="高级">高级</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="tutorialDuration">预计学习时长</label>
+                    <input type="text" id="tutorialDuration" class="form-control" placeholder="例如：2小时">
+                </div>
+                <div class="form-group">
+                    <label for="tutorialCover">封面图片URL</label>
+                    <input type="url" id="tutorialCover" class="form-control" placeholder="https://example.com/image.jpg">
+                </div>
+                <div class="form-group">
+                    <label for="tutorialTags">标签（用逗号分隔）</label>
+                    <input type="text" id="tutorialTags" class="form-control" placeholder="视频剪辑, 特效, AI">
+                </div>
+                <div class="form-group">
+                    <label for="tutorialContent">内容 *</label>
+                    <textarea id="tutorialContent" class="form-control" rows="10" required placeholder="请输入教程详细内容，支持Markdown格式"></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="tutorialIsFree" checked>
+                        <span>免费教程</span>
+                    </label>
+                </div>
+                <div class="form-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="tutorialStatus">
+                        <span>直接发布（不勾选则为草稿）</span>
+                    </label>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-outline" onclick="closeCreateTutorialModal()">取消</button>
+            <button class="btn btn-primary" onclick="submitTutorial()">发布教程</button>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block styles %}
+<style>
+    .tutorials-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 20px;
+    }
+
+    .tutorials-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 40px;
+        flex-wrap: wrap;
+        gap: 20px;
+    }
+
+    .page-title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        margin-bottom: 10px;
+    }
+
+    .page-subtitle {
+        color: var(--text-secondary);
+        font-size: 1.1rem;
+    }
+
+    .header-search {
+        flex: 1;
+        max-width: 500px;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .header-search .btn {
+        white-space: nowrap;
+    }
+
+    .header-search .search-box {
+        flex: 1;
+    }
+
+    .tutorial-categories {
+        margin-bottom: 40px;
+    }
+
+    .category-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+    }
+
+    .category-card {
+        background: white;
+        border-radius: 12px;
+        padding: 25px;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        transition: all 0.3s ease;
+        box-shadow: var(--shadow);
+    }
+
+    .category-card:hover {
+        transform: translateY(-5px);
+        box-shadow: var(--shadow-lg);
+    }
+
+    .category-card-primary {
+        border-left: 5px solid var(--primary);
+    }
+
+    .category-card-success {
+        border-left: 5px solid var(--secondary);
+    }
+
+    .category-card-warning {
+        border-left: 5px solid var(--warning);
+    }
+
+    .category-card-info {
+        border-left: 5px solid var(--info);
+    }
+
+    .category-icon {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.8rem;
+    }
+
+    .category-card-primary .category-icon {
+        background: rgba(79, 70, 229, 0.1);
+        color: var(--primary);
+    }
+
+    .category-card-success .category-icon {
+        background: rgba(16, 185, 129, 0.1);
+        color: var(--secondary);
+    }
+
+    .category-card-warning .category-icon {
+        background: rgba(245, 158, 11, 0.1);
+        color: var(--warning);
+    }
+
+    .category-card-info .category-icon {
+        background: rgba(59, 130, 246, 0.1);
+        color: var(--info);
+    }
+
+    .category-content h3 {
+        font-size: 1.3rem;
+        font-weight: 600;
+        margin-bottom: 5px;
+        color: var(--text-primary);
+    }
+
+    .category-content p {
+        color: var(--text-secondary);
+        font-size: 0.9rem;
+    }
+
+    .section-container {
+        margin-bottom: 50px;
+    }
+
+    .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 25px;
+    }
+
+    .section-title {
+        font-size: 1.8rem;
+        font-weight: 600;
+        color: var(--text-primary);
+    }
+
+    .section-tabs {
+        display: flex;
+        gap: 10px;
+    }
+
+    .tab-btn {
+        padding: 8px 16px;
+        background: var(--bg-tertiary);
+        border: none;
+        border-radius: 20px;
+        color: var(--text-secondary);
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .tab-btn:hover {
+        background: var(--primary-light);
+        color: var(--primary);
+    }
+
+    .tab-btn.active {
+        background: var(--primary);
+        color: white;
+    }
+
+    .tutorial-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 25px;
+    }
+
+    .tutorial-card {
+        background: white;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: var(--shadow);
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+
+    .tutorial-card:hover {
+        transform: translateY(-5px);
+        box-shadow: var(--shadow-lg);
+    }
+
+    .tutorial-cover {
+        height: 160px;
+        background: var(--gray-200);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .tutorial-cover img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.5s ease;
+    }
+
+    .tutorial-card:hover .tutorial-cover img {
+        transform: scale(1.05);
+    }
+
+    .tutorial-level {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        background: rgba(0,0,0,0.7);
+        color: white;
+        padding: 4px 10px;
+        border-radius: 15px;
+        font-size: 0.8rem;
+        backdrop-filter: blur(4px);
+    }
+
+    .tutorial-info {
+        padding: 20px;
+    }
+
+    .tutorial-title {
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin-bottom: 10px;
+        color: var(--text-primary);
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        height: 3em;
+        line-height: 1.5em;
+    }
+
+    .tutorial-description {
+        color: var(--text-secondary);
+        font-size: 0.9rem;
+        margin-bottom: 15px;
+        line-height: 1.5;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        height: 4.5em;
+        line-height: 1.5em;
+    }
+
+    .tutorial-meta {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        color: var(--text-tertiary);
+        font-size: 0.85rem;
+    }
+
+    .tutorial-duration {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .tutorial-stats {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .learning-paths {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        gap: 25px;
+    }
+
+    .path-card {
+        background: white;
+        border-radius: 12px;
+        padding: 25px;
+        box-shadow: var(--shadow);
+    }
+
+    .path-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 20px;
+    }
+
+    .path-title {
+        font-size: 1.3rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-bottom: 5px;
+    }
+
+    .path-duration {
+        font-size: 0.9rem;
+        color: var(--text-tertiary);
+    }
+
+    .path-progress {
+        margin-bottom: 25px;
+    }
+
+    .progress-bar {
+        height: 8px;
+        background: var(--gray-200);
+        border-radius: 4px;
+        overflow: hidden;
+        margin-bottom: 8px;
+    }
+
+    .progress-fill {
+        height: 100%;
+        background: var(--primary);
+        border-radius: 4px;
+        transition: width 0.3s ease;
+    }
+
+    .progress-text {
+        font-size: 0.9rem;
+        color: var(--text-secondary);
+        text-align: right;
+        display: block;
+    }
+
+    .path-content p {
+        color: var(--text-secondary);
+        margin-bottom: 20px;
+    }
+
+    .path-steps {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        margin-bottom: 25px;
+    }
+
+    .step {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: var(--text-secondary);
+        font-size: 0.95rem;
+    }
+
+    .step.active {
+        color: var(--primary);
+    }
+
+    .step i {
+        font-size: 0.9rem;
+    }
+
+    .video-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+        gap: 25px;
+    }
+
+    .search-box {
+        position: relative;
+        width: 300px;
+    }
+
+    .search-box i {
+        position: absolute;
+        left: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--text-tertiary);
+    }
+        .search-input {
+        width: 100%;
+        padding: 12px 15px 12px 45px;
+        border: 2px solid var(--border-color);
+        border-radius: 25px;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+    }
+
+    .search-input:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+    }
+
+    .video-card {
+        background: white;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: var(--shadow);
+        transition: all 0.3s ease;
+    }
+
+    .video-card:hover {
+        transform: translateY(-5px);
+        box-shadow: var(--shadow-lg);
+    }
+
+    .video-thumbnail {
+        position: relative;
+        height: 180px;
+        overflow: hidden;
+    }
+
+    .video-thumbnail img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.5s ease;
+    }
+
+    .video-card:hover .video-thumbnail img {
+        transform: scale(1.05);
+    }
+
+    .video-play {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 60px;
+        height: 60px;
+        background: rgba(255,255,255,0.9);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--primary);
+        font-size: 1.5rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .video-play:hover {
+        background: white;
+        transform: translate(-50%, -50%) scale(1.1);
+    }
+
+    .video-duration {
+        position: absolute;
+        bottom: 10px;
+        right: 10px;
+        background: rgba(0,0,0,0.7);
+        color: white;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 0.8rem;
+        backdrop-filter: blur(4px);
+    }
+
+    .video-info {
+        padding: 20px;
+    }
+
+    .video-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin-bottom: 10px;
+        color: var(--text-primary);
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .video-meta {
+        display: flex;
+        justify-content: space-between;
+        color: var(--text-tertiary);
+        font-size: 0.85rem;
+    }
+
+    .faq-list {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .faq-item {
+        background: white;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: var(--shadow);
+    }
+
+    .faq-question {
+        width: 100%;
+        padding: 20px;
+        background: none;
+        border: none;
+        text-align: left;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        cursor: pointer;
+        font-size: 1rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        transition: all 0.3s ease;
+    }
+
+    .faq-question:hover {
+        background: var(--bg-tertiary);
+    }
+
+    .faq-question i {
+        transition: transform 0.3s ease;
+    }
+
+    .faq-item.active .faq-question i {
+        transform: rotate(180deg);
+    }
+
+    .faq-answer {
+        padding: 0 20px;
+        max-height: 0;
+        overflow: hidden;
+        transition: all 0.3s ease;
+    }
+
+    .faq-item.active .faq-answer {
+        padding: 0 20px 20px;
+        max-height: 1000px;
+    }
+
+    .faq-answer p,
+    .faq-answer ol,
+    .faq-answer ul {
+        color: var(--text-secondary);
+        line-height: 1.6;
+        margin-bottom: 10px;
+    }
+
+    .faq-answer ol,
+    .faq-answer ul {
+        padding-left: 20px;
+    }
+
+    .faq-answer li {
+        margin-bottom: 8px;
+    }
+
+    .community-questions {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .question-card {
+        background: white;
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: var(--shadow);
+    }
+
+    .question-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 10px;
+    }
+
+    .question-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-bottom: 5px;
+    }
+
+    .question-tags {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 15px;
+    }
+
+    .question-tag {
+        background: var(--bg-tertiary);
+        color: var(--text-secondary);
+        padding: 4px 10px;
+        border-radius: 15px;
+        font-size: 0.8rem;
+    }
+
+    .question-content {
+        color: var(--text-secondary);
+        line-height: 1.5;
+        margin-bottom: 15px;
+    }
+
+    .question-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        color: var(--text-tertiary);
+        font-size: 0.85rem;
+    }
+
+    .question-stats {
+        display: flex;
+        gap: 15px;
+    }
+
+    .question-stats span {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    @media (max-width: 768px) {
+        .tutorials-header {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .header-search {
+            max-width: 100%;
+        }
+
+        .tutorial-grid,
+        .video-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .learning-paths {
+            grid-template-columns: 1fr;
+        }
+
+        .section-header {
+            flex-direction: column;
+            align-items: stretch;
+            gap: 15px;
+        }
+
+        .section-tabs {
+            justify-content: center;
+        }
+    }
+
+    /* 教程详情模态框样式 */
+    .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.7);
+        z-index: 1000;
+        overflow-y: auto;
+    }
+
+    .modal-content {
+        background: white;
+        margin: 40px auto;
+        max-width: 800px;
+        border-radius: 12px;
+        box-shadow: var(--shadow-lg);
+        overflow: hidden;
+        animation: modalFadeIn 0.3s ease;
+    }
+
+    @keyframes modalFadeIn {
+        from { opacity: 0; transform: translateY(-20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .modal-header {
+        padding: 25px 30px;
+        border-bottom: 1px solid var(--border-color);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .modal-header h2 {
+        font-size: 1.8rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin: 0;
+        flex: 1;
+    }
+
+    .modal-close {
+        background: none;
+        border: none;
+        font-size: 2rem;
+        color: var(--text-tertiary);
+        cursor: pointer;
+        padding: 0;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        transition: all 0.3s ease;
+    }
+
+    .modal-close:hover {
+        background: var(--bg-tertiary);
+        color: var(--text-primary);
+    }
+
+    .modal-body {
+        padding: 30px;
+    }
+
+    .tutorial-meta-info {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 15px;
+        margin-bottom: 25px;
+        color: var(--text-secondary);
+        font-size: 0.9rem;
+    }
+
+    .tutorial-meta-info span {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .tutorial-meta-info i {
+        color: var(--text-tertiary);
+    }
+
+    .tutorial-cover-container {
+        margin-bottom: 25px;
+        border-radius: 10px;
+        overflow: hidden;
+        max-height: 400px;
+    }
+
+    .tutorial-cover-container img {
+        width: 100%;
+        height: auto;
+        object-fit: cover;
+    }
+
+    .tutorial-content {
+        line-height: 1.8;
+        color: var(--text-primary);
+        font-size: 1.1rem;
+    }
+
+    .tutorial-content h3 {
+        font-size: 1.5rem;
+        margin-top: 1.5em;
+        margin-bottom: 0.5em;
+    }
+
+    .tutorial-content p {
+        margin-bottom: 1em;
+    }
+
+    .tutorial-content ul,
+    .tutorial-content ol {
+        padding-left: 1.5em;
+        margin-bottom: 1em;
+    }
+
+    .tutorial-content li {
+        margin-bottom: 0.5em;
+    }
+
+    .modal-footer {
+        padding: 20px 30px;
+        border-top: 1px solid var(--border-color);
+        display: flex;
+        justify-content: flex-end;
+        gap: 15px;
+    }
+
+    @media (max-width: 768px) {
+        .modal-content {
+            margin: 20px;
+            max-width: calc(100% - 40px);
+        }
+
+        .modal-header {
+            padding: 20px;
+        }
+
+        .modal-body {
+            padding: 20px;
+        }
+
+        .modal-footer {
+            padding: 15px 20px;
+        }
+
+        .tutorial-meta-info {
+            gap: 10px;
+            font-size: 0.85rem;
+        }
+    }
+
+    /* 表单样式 */
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 500;
+        color: var(--text-primary);
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 10px 12px;
+        border: 1px solid var(--border-color);
+        border-radius: 6px;
+        font-size: 1rem;
+        transition: border-color 0.3s ease;
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+    }
+
+    .checkbox-label {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        cursor: pointer;
+    }
+
+    .checkbox-label input[type="checkbox"] {
+        width: 18px;
+        height: 18px;
+        cursor: pointer;
+    }
+</style>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // 初始化教程页面
+        initTutorialsPage();
+
+        // 加载推荐教程
+        loadRecommendedTutorials();
+
+        // 加载视频教程
+        loadVideoTutorials();
+
+        // 加载社区问题
+        loadCommunityQuestions();
+
+        // 初始化FAQ
+        initFAQ();
+    });
+
+    function initTutorialsPage() {
+        // 搜索功能
+        const searchInput = document.getElementById('searchTutorials');
+        searchInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                searchTutorials(this.value);
+            }
+        });
+
+        // 标签切换
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                const type = this.dataset.type;
+                loadRecommendedTutorials(type);
+            });
+        });
+    }
+
+    function initFAQ() {
+        // FAQ展开/收起
+        document.querySelectorAll('.faq-question').forEach(question => {
+            question.addEventListener('click', function() {
+                const item = this.parentElement;
+                item.classList.toggle('active');
+            });
+        });
+    }
+
+    async function loadRecommendedTutorials(type = 'popular') {
+        const container = document.getElementById('recommendedTutorials');
+        container.innerHTML = '<div class="loading">加载中...</div>';
+
+        try {
+            // 从API获取教程数据
+            const response = await fetch('/api/tutorials/recommended');
+            if (!response.ok) {
+                throw new Error('网络响应错误');
+            }
+            const tutorials = await response.json();
+
+            // 根据类型筛选（如果需要）
+            let filtered = tutorials;
+            if (type === 'newest') {
+                // 按ID降序排序（假设ID越大越新）
+                filtered = [...tutorials].sort((a, b) => b.id - a.id);
+            } else if (type === 'free') {
+                filtered = tutorials.filter(t => t.free);
+            }
+
+            if (filtered.length === 0) {
+                container.innerHTML = '<div class="empty">暂无教程</div>';
+                return;
+            }
+
+            container.innerHTML = filtered.map(tutorial => `
+                <div class="tutorial-card" onclick="viewTutorial(${tutorial.id})">
+                    <div class="tutorial-cover">
+                        <img src="${tutorial.cover}" alt="${tutorial.title}" onerror="this.src='https://images.unsplash.com/photo-1595769812725-4c6564f70466?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80'">
+                        <span class="tutorial-level">${tutorial.level}</span>
+                    </div>
+                    <div class="tutorial-info">
+                        <h3 class="tutorial-title">${tutorial.title}</h3>
+                        <p class="tutorial-description">${tutorial.description}</p>
+                        <div class="tutorial-meta">
+                            <div class="tutorial-duration">
+                                <i class="fas fa-clock"></i> ${tutorial.duration || '未设置'}
+                            </div>
+                            <div class="tutorial-stats">
+                                <span><i class="fas fa-users"></i> ${tutorial.students || '0'}</span>
+                                ${tutorial.free ? '<span class="text-success">免费</span>' : '<span class="text-primary">会员</span>'}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        } catch (error) {
+            console.error('加载教程失败:', error);
+            container.innerHTML = '<div class="error">加载失败，请刷新重试</div>';
+        }
+    }
+
+    async function loadVideoTutorials() {
+        const container = document.getElementById('videoTutorials');
+
+        // 模拟数据
+        const videos = [
+            {
+                id: 1,
+                title: '快速上手：创建你的第一个短剧',
+                thumbnail: 'https://images.unsplash.com/photo-1485827404703-89b55fcc595e?ixlib=rb-4.0.3&auto=format&fit=crop&w=320&q=80',
+                duration: '15:23',
+                author: '教程君',
+                views: '12.5万'
+            },
+            {
+                id: 2,
+                title: 'AI辅助创作全流程演示',
+                thumbnail: 'https://images.unsplash.com/photo-1485827404703-89b55fcc595e?ixlib=rb-4.0.3&auto=format&fit=crop&w=320&q=80',
+                duration: '22:45',
+                author: 'AI导师',
+                views: '8.7万'
+            },
+            {
+                id: 3,
+                title: '特效制作：让视频更出彩',
+                thumbnail: 'https://images.unsplash.com/photo-1593359677879-a4bb92f829d1?ixlib=rb-4.0.3&auto=format&fit=crop&w=320&q=80',
+                duration: '18:12',
+                author: '特效大师',
+                views: '6.3万'
+            }
+        ];
+
+        container.innerHTML = videos.map(video => `
+            <div class="video-card">
+                <div class="video-thumbnail">
+                    <img src="${video.thumbnail}" alt="${video.title}">
+                    <div class="video-play" onclick="playVideo(${video.id})">
+                        <i class="fas fa-play"></i>
+                    </div>
+                    <div class="video-duration">${video.duration}</div>
+                </div>
+                <div class="video-info">
+                    <h3 class="video-title">${video.title}</h3>
+                    <div class="video-meta">
+                        <span>${video.author}</span>
+                        <span><i class="fas fa-eye"></i> ${video.views}</span>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    async function loadCommunityQuestions() {
+        const container = document.getElementById('communityQuestions');
+
+        // 模拟数据
+        const questions = [
+            {
+                id: 1,
+                title: '如何提高视频的清晰度？',
+                content: '我导出的视频总是有些模糊，有什么办法可以提高清晰度吗？',
+                tags: ['视频质量', '导出设置'],
+                author: '新手创作者',
+                time: '2小时前',
+                answers: 8,
+                views: 125
+            },
+            {
+                id: 2,
+                title: 'AI生成的角色设定不够生动怎么办？',
+                content: 'AI生成的角色设定比较模板化，如何让它更生动有个性？',
+                tags: ['AI创作', '角色设计'],
+                author: '剧本创作者',
+                time: '昨天',
+                answers: 15,
+                views: 342
+            },
+            {
+                id: 3,
+                title: '有什么好的配乐网站推荐？',
+                content: '需要找一些免费可商用的背景音乐，大家有什么推荐吗？',
+                tags: ['配乐', '素材'],
+                author: '音乐需求者',
+                time: '3天前',
+                answers: 23,
+                views: 589
+            }
+        ];
+
+        container.innerHTML = questions.map(question => `
+            <div class="question-card">
+                <div class="question-header">
+                    <div>
+                        <h4 class="question-title">${question.title}</h4>
+                        <div class="question-tags">
+                            ${question.tags.map(tag => `<span class="question-tag">${tag}</span>`).join('')}
+                        </div>
+                    </div>
+                </div>
+                <div class="question-content">${question.content}</div>
+                <div class="question-footer">
+                    <div class="question-stats">
+                        <span><i class="fas fa-user"></i> ${question.author}</span>
+                        <span><i class="fas fa-clock"></i> ${question.time}</span>
+                    </div>
+                    <div class="question-stats">
+                        <span><i class="fas fa-comment"></i> ${question.answers}</span>
+                        <span><i class="fas fa-eye"></i> ${question.views}</span>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    function searchTutorials(query) {
+        if (query.trim()) {
+            showNotification(`搜索教程: ${query}`, 'info');
+            // 这里可以调用搜索API
+        }
+    }
+
+    async function viewTutorial(id) {
+        try {
+            const modal = document.getElementById('tutorialModal');
+            const titleEl = document.getElementById('modalTutorialTitle');
+            const authorEl = document.getElementById('modalTutorialAuthor');
+            const durationEl = document.getElementById('modalTutorialDuration');
+            const viewsEl = document.getElementById('modalTutorialViews');
+            const categoryEl = document.getElementById('modalTutorialCategory');
+            const levelEl = document.getElementById('modalTutorialLevel');
+            const coverEl = document.getElementById('modalTutorialCover');
+            const contentEl = document.getElementById('modalTutorialContent');
+            const likesEl = document.getElementById('modalTutorialLikes');
+
+            // 显示加载状态
+            modal.style.display = 'block';
+            titleEl.textContent = '加载中...';
+            contentEl.textContent = '加载中...';
+
+            // 获取教程详情
+            const response = await fetch(`/api/tutorials/${id}`);
+            if (!response.ok) {
+                throw new Error('教程加载失败');
+            }
+            const tutorial = await response.json();
+
+            // 填充数据
+            titleEl.textContent = tutorial.title;
+            authorEl.textContent = tutorial.author_name || '未知作者';
+            durationEl.textContent = tutorial.duration || '未设置';
+            viewsEl.textContent = tutorial.views || 0;
+            categoryEl.textContent = tutorial.category || '其他';
+            levelEl.textContent = tutorial.level || '初级';
+            coverEl.src = tutorial.cover_image || 'https://images.unsplash.com/photo-1595769812725-4c6564f70466?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80';
+            contentEl.innerHTML = tutorial.content || '<p>暂无内容</p>';
+            likesEl.textContent = tutorial.likes || 0;
+
+            // 存储当前教程ID用于点赞功能
+            modal.dataset.tutorialId = id;
+        } catch (error) {
+            console.error('加载教程详情失败:', error);
+            showNotification('加载教程失败', 'error');
+            closeTutorialModal();
+        }
+    }
+
+    function closeTutorialModal() {
+        const modal = document.getElementById('tutorialModal');
+        modal.style.display = 'none';
+    }
+
+    async function likeTutorial() {
+        const modal = document.getElementById('tutorialModal');
+        const tutorialId = modal.dataset.tutorialId;
+        const likesEl = document.getElementById('modalTutorialLikes');
+        
+        if (!tutorialId) return;
+        
+        try {
+            // 这里可以调用点赞API
+            showNotification('点赞功能开发中', 'info');
+            // 模拟点赞
+            let likes = parseInt(likesEl.textContent) || 0;
+            likesEl.textContent = likes + 1;
+        } catch (error) {
+            console.error('点赞失败:', error);
+        }
+    }
+
+    function openCreateTutorialModal() {
+        // 检查用户是否登录
+        // 这里可以添加登录检查逻辑
+        const modal = document.getElementById('createTutorialModal');
+        modal.style.display = 'block';
+    }
+
+    function closeCreateTutorialModal() {
+        const modal = document.getElementById('createTutorialModal');
+        modal.style.display = 'none';
+    }
+
+    async function submitTutorial() {
+        const title = document.getElementById('tutorialTitle').value.trim();
+        const content = document.getElementById('tutorialContent').value.trim();
+        
+        if (!title || !content) {
+            showNotification('标题和内容不能为空', 'error');
+            return;
+        }
+        
+        const tutorialData = {
+            title: title,
+            content: content,
+            category: document.getElementById('tutorialCategory').value,
+            level: document.getElementById('tutorialLevel').value,
+            duration: document.getElementById('tutorialDuration').value.trim(),
+            cover_image: document.getElementById('tutorialCover').value.trim(),
+            tags: document.getElementById('tutorialTags').value.trim().split(',').map(tag => tag.trim()).filter(tag => tag),
+            is_free: document.getElementById('tutorialIsFree').checked,
+            status: document.getElementById('tutorialStatus').checked ? 'published' : 'draft'
+        };
+        
+        try {
+            const response = await fetch('/api/tutorials', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(tutorialData)
+            });
+            
+            if (response.ok) {
+                const tutorial = await response.json();
+                showNotification('教程发布成功！', 'success');
+                closeCreateTutorialModal();
+                // 刷新教程列表
+                loadRecommendedTutorials();
+                // 清空表单
+                document.getElementById('createTutorialForm').reset();
+            } else {
+                const error = await response.json();
+                showNotification(error.error || '发布失败', 'error');
+            }
+        } catch (error) {
+            console.error('发布教程失败:', error);
+            showNotification('网络错误，请重试', 'error');
+        }
+    }
+
+    function playVideo(id) {
+        showNotification(`播放视频 ID: ${id}`, 'info');
+        // 这里可以打开视频播放器
+    }
+</script>
+{% endblock %}

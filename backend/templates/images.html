@@ -1,0 +1,1336 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>图片数据库浏览器</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
+    <style>
+        :root {
+            --primary-color: #4361ee;
+            --secondary-color: #3a0ca3;
+            --success-color: #4cc9f0;
+            --light-color: #f8f9fa;
+            --dark-color: #212529;
+            --border-color: #dee2e6;
+        }
+
+        body {
+            background-color: #f5f7fb;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding-bottom: 50px;
+        }
+
+        .navbar-custom {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .card {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+            height: 100%;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+        }
+
+        .card-img-container {
+            height: 200px;
+            overflow: hidden;
+            border-radius: 8px 8px 0 0;
+            background-color: #f8f9fa;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            border: 2px solid #e9ecef;
+        }
+
+        .card-img-preview {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            padding: 5px;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .card-img-preview:hover {
+            transform: scale(1.05);
+        }
+
+        .file-missing {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            width: 100%;
+            color: #dc3545;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .file-missing i {
+            font-size: 3rem;
+            margin-bottom: 10px;
+        }
+
+        .card-body {
+            padding: 1.25rem;
+        }
+
+        .card-title {
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: var(--dark-color);
+            margin-bottom: 0.5rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .card-text {
+            font-size: 0.85rem;
+            color: #6c757d;
+            margin-bottom: 0.5rem;
+        }
+
+        .badge-custom {
+            background-color: var(--success-color);
+            color: white;
+            font-weight: 500;
+        }
+
+        .path-text {
+            font-family: 'Courier New', monospace;
+            font-size: 0.8rem;
+            background-color: #f8f9fa;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            margin-bottom: 0.5rem;
+            word-break: break-all;
+        }
+
+        .url-display {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(transparent, rgba(0,0,0,0.9));
+            color: white;
+            padding: 8px 10px;
+            font-size: 0.75rem;
+            max-height: 60px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .url-display a {
+            color: white;
+            text-decoration: none;
+            display: block;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .url-display a:hover {
+            color: #4cc9f0;
+        }
+
+        .stats-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+
+        .stats-icon {
+            font-size: 2rem;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .stats-number {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--dark-color);
+        }
+
+        .stats-label {
+            font-size: 0.9rem;
+            color: #6c757d;
+        }
+
+        .pagination-custom .page-link {
+            border: none;
+            color: var(--primary-color);
+            margin: 0 3px;
+            border-radius: 6px;
+        }
+
+        .pagination-custom .page-item.active .page-link {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .image-modal .modal-dialog {
+            max-width: 100%;
+        }
+
+        .action-buttons {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            z-index: 100;
+            display: flex;
+            gap: 5px;
+        }
+
+        .action-btn {
+            background-color: rgba(255,255,255,0.9);
+            border: none;
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: all 0.2s ease;
+            color: #333;
+            cursor: pointer;
+        }
+
+        .action-btn:hover {
+            background-color: white;
+            transform: scale(1.1);
+            color: var(--primary-color);
+        }
+
+        .search-box {
+            max-width: 500px;
+        }
+
+        .image-checkbox {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            z-index: 10;
+        }
+
+        .batch-actions {
+            background-color: white;
+            padding: 1rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%;
+            max-width: 800px;
+            z-index: 1000;
+        }
+
+        .file-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 0.5rem;
+            font-size: 0.8rem;
+        }
+
+        .url-truncate {
+            max-width: 150px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .image-error {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+            background: #f8f9fa;
+            color: #6c757d;
+            font-size: 0.9rem;
+            text-align: center;
+            padding: 20px;
+            cursor: pointer;
+        }
+
+        .image-error i {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            color: #6c757d;
+        }
+
+        .image-error:hover {
+            background: #e9ecef;
+        }
+
+        .placeholder-img {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            color: #6c757d;
+            font-size: 0.9rem;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 1rem;
+            height: 1rem;
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid #3498db;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .img-loading {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+            background: #f8f9fa;
+        }
+
+        @media (max-width: 768px) {
+            .card-img-container {
+                height: 180px;
+            }
+
+            .search-box {
+                max-width: 100%;
+            }
+
+            .url-display {
+                font-size: 0.65rem;
+                padding: 6px 8px;
+            }
+
+            .action-btn {
+                width: 32px;
+                height: 32px;
+                font-size: 0.9rem;
+            }
+        }
+
+        .modal-content {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            pointer-events: auto;
+            background-color: #fff;
+            background-clip: padding-box;
+            border: 1px solid rgba(0, 0, 0, .2);
+            border-radius: .3rem;
+            outline: 0;
+        }
+
+        /* 修复模态框背景遮罩 */
+        .modal-backdrop {
+            z-index: 1040;
+        }
+
+        .modal {
+            z-index: 1050;
+        }
+
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar navbar-expand-lg navbar-dark navbar-custom">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <i class="bi bi-images me-2"></i>
+                <strong>图片数据库浏览器</strong>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/images">
+                            <i class="bi bi-grid-3x3-gap me-1"></i> 图片库
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" id="refreshBtn">
+                            <i class="bi bi-arrow-clockwise me-1"></i> 刷新
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#statsModal">
+                            <i class="bi bi-graph-up me-1"></i> 统计
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 主内容区 -->
+    <div class="container mt-4">
+        <!-- 搜索栏和筛选 -->
+        <div class="row mb-4">
+            <div class="col-md-8">
+                <div class="input-group search-box">
+                    <span class="input-group-text">
+                        <i class="bi bi-search"></i>
+                    </span>
+                    <input type="text" class="form-control" id="searchInput" placeholder="搜索图片路径、提示词、任务ID或URL..." value="{{ keyword }}">
+                    <button class="btn btn-primary" id="searchBtn">
+                        <i class="bi bi-search me-1"></i> 搜索
+                    </button>
+                    {% if keyword %}
+                    <a href="/images" class="btn btn-outline-secondary">
+                        <i class="bi bi-x-circle me-1"></i> 清除
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="col-md-4 text-end">
+                <div class="btn-group" role="group">
+                    <button type="button" class="btn btn-outline-primary" id="selectAllBtn">
+                        <i class="bi bi-check-square me-1"></i> 全选
+                    </button>
+                    <button type="button" class="btn btn-outline-danger" id="deleteSelectedBtn" disabled>
+                        <i class="bi bi-trash me-1"></i> 删除选中
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 批量操作栏 -->
+        <div class="batch-actions d-none" id="batchActions">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <span id="selectedCount">0</span> 张图片被选中
+                </div>
+                <div>
+                    <button class="btn btn-danger btn-sm" id="confirmDeleteBtn">
+                        <i class="bi bi-trash me-1"></i> 确认删除选中
+                    </button>
+                    <button class="btn btn-outline-secondary btn-sm ms-2" id="cancelSelectionBtn">
+                        <i class="bi bi-x-circle me-1"></i> 取消选择
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 统计信息 -->
+        <div class="row mb-4 d-none" id="statsRow">
+            <div class="col-md-3">
+                <div class="stats-card text-center">
+                    <div class="stats-icon">
+                        <i class="bi bi-images"></i>
+                    </div>
+                    <div class="stats-number" id="totalImages">0</div>
+                    <div class="stats-label">总图片数</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stats-card text-center">
+                    <div class="stats-icon">
+                        <i class="bi bi-check-circle"></i>
+                    </div>
+                    <div class="stats-number" id="existingImages">0</div>
+                    <div class="stats-label">文件存在</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stats-card text-center">
+                    <div class="stats-icon">
+                        <i class="bi bi-exclamation-circle"></i>
+                    </div>
+                    <div class="stats-number" id="missingImages">0</div>
+                    <div class="stats-label">文件丢失</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stats-card text-center">
+                    <div class="stats-icon">
+                        <i class="bi bi-hdd"></i>
+                    </div>
+                    <div class="stats-number" id="totalSize">0 B</div>
+                    <div class="stats-label">总大小</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 图片网格 -->
+        <div class="row" id="imagesGrid">
+            {% if images %}
+                {% for image in images %}
+                <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 mb-4">
+                    <div class="card h-100" data-image-id="{{ image.id }}">
+                        <!-- 复选框 -->
+                        <div class="image-checkbox">
+                            <input type="checkbox" class="form-check-input image-checkbox-input"
+                                   data-image-id="{{ image.id }}"
+                                   style="transform: scale(1.2);">
+                        </div>
+
+                        <!-- 图片预览 -->
+                        <div class="card-img-container">
+                            {% if image.file_exists %}
+                            <!-- 修复：使用正确的预览路径 -->
+                            <img src="/preview/{{ image.id }}?size=300"
+                             class="card-img-preview"
+                             alt="预览"
+                             data-image-id="{{ image.id }}"
+                             onerror="handleImageError(this)"
+                             onload="handleImageLoad(this)">
+                            {% else %}
+                            <div class="file-missing">
+                                <i class="bi bi-file-excel"></i>
+                                <span>文件不存在</span>
+                            </div>
+                            {% endif %}
+
+                            <!-- URL链接显示在预览区域 -->
+                            <div class="url-display" title="{{ image.image_url }}">
+                                <a href="{{ image.image_url }}" target="_blank" onclick="event.stopPropagation();">
+                                    <i class="bi bi-link-45deg me-1"></i>
+                                    {{ image.image_url|truncate(60) if image.image_url else '无URL' }}
+                                </a>
+                            </div>
+
+                            <!-- 操作按钮 -->
+                            <div class="action-buttons">
+                                <button class="action-btn view-btn" data-image-id="{{ image.id }}" title="查看详情" onclick="event.stopPropagation(); loadImageDetail('{{ image.id }}')">
+                                    <i class="bi bi-eye"></i>
+                                </button>
+                                <button class="action-btn delete-btn" data-image-id="{{ image.id }}" title="删除记录" onclick="event.stopPropagation(); deleteImage('{{ image.id }}')">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- 图片信息 -->
+                        <div class="card-body">
+                            <h6 class="card-title" title="{{ image.prompt or '无提示词' }}">
+                                {{ image.prompt[:50] or "无提示词" }}{% if image.prompt and image.prompt|length > 50 %}...{% endif %}
+                            </h6>
+
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span class="badge badge-custom">
+                                    ID: {{ image.id }}
+                                </span>
+                                <small class="text-muted">
+                                    {{ image.created_at[:16] if image.created_at else '未知时间' }}
+                                </small>
+                            </div>
+
+                            <div class="path-text" title="{{ image.local_path }}">
+                                <small>
+                                    <i class="bi bi-folder me-1"></i>
+                                    {% if image.local_path %}
+                                        {% set path_parts = image.local_path.replace('\\', '/').split('/') %}
+                                        {{ path_parts[-1] if path_parts else image.local_path }}
+                                    {% else %}
+                                        无路径
+                                    {% endif %}
+                                </small>
+                            </div>
+
+                            <div class="file-info">
+                                <span class="badge bg-{{ 'success' if image.file_exists else 'danger' }}">
+                                    <i class="bi bi-{{ 'check-circle' if image.file_exists else 'exclamation-circle' }} me-1"></i>
+                                    {{ '文件存在' if image.file_exists else '文件丢失' }}
+                                </span>
+                                <small class="text-muted url-truncate" title="{{ image.task_id }}">
+                                    任务ID: {{ image.task_id[:8] if image.task_id else '无' }}...
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="col-12 text-center py-5">
+                    <div class="display-1 text-muted">
+                        <i class="bi bi-images"></i>
+                    </div>
+                    <h3 class="mt-3 text-muted">暂无图片数据</h3>
+                    <p class="text-muted">数据库中没有找到图片记录</p>
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- 分页 -->
+        {% if pages > 1 %}
+        <nav aria-label="图片分页" class="mt-4">
+            <ul class="pagination justify-content-center pagination-custom">
+                {% if page > 1 %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page-1 }}&per_page={{ per_page }}{% if keyword %}&keyword={{ keyword }}{% endif %}">
+                        <i class="bi bi-chevron-left"></i>
+                    </a>
+                </li>
+                {% endif %}
+
+                {% for p in range(1, pages+1) %}
+                    {% if p >= page-2 and p <= page+2 %}
+                    <li class="page-item {% if p == page %}active{% endif %}">
+                        <a class="page-link" href="?page={{ p }}&per_page={{ per_page }}{% if keyword %}&keyword={{ keyword }}{% endif %}">
+                            {{ p }}
+                        </a>
+                    </li>
+                    {% elif p == 1 or p == pages %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ p }}&per_page={{ per_page }}{% if keyword %}&keyword={{ keyword }}{% endif %}">
+                            {{ p }}
+                        </a>
+                    </li>
+                    {% elif p == page-3 or p == page+3 %}
+                    <li class="page-item disabled">
+                        <a class="page-link">...</a>
+                    </li>
+                    {% endif %}
+                {% endfor %}
+
+                {% if page < pages %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page+1 }}&per_page={{ per_page }}{% if keyword %}&keyword={{ keyword }}{% endif %}">
+                        <i class="bi bi-chevron-right"></i>
+                    </a>
+                </li>
+                {% endif %}
+            </ul>
+        </nav>
+        {% endif %}
+    </div>
+
+    <!-- 图片详情模态框 -->
+    <div class="modal fade" id="imageDetailModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">图片详情</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="关闭"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div id="detailImageContainer" class="text-center mb-3">
+                                <div style="border: 2px solid #dee2e6; border-radius: 8px; padding: 10px; background: #f8f9fa; min-height: 400px; display: flex; align-items: center; justify-content: center;">
+                                    <img id="detailImage" src="" class="img-fluid"
+                                         style="max-height: 400px; max-width: 100%; object-fit: contain;" alt="图片详情"
+                                         onerror="handleDetailImageError(this)">
+                                    <div id="detailImageLoading" class="d-none">
+                                        <div class="loading-spinner" style="width: 3rem; height: 3rem;"></div>
+                                        <div class="mt-2">加载中...</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <table class="table table-sm">
+                                <tr>
+                                    <th style="width: 30%;">ID:</th>
+                                    <td id="detailId">-</td>
+                                </tr>
+                                <tr>
+                                    <th>本地路径:</th>
+                                    <td id="detailLocalPath">-</td>
+                                </tr>
+                                <tr>
+                                    <th>URL:</th>
+                                    <td id="detailUrl">
+                                        <a href="#" target="_blank" id="detailUrlLink" style="word-break: break-all;">查看</a>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>任务ID:</th>
+                                    <td id="detailTaskId">-</td>
+                                </tr>
+                                <tr>
+                                    <th>提示词:</th>
+                                    <td id="detailPrompt">-</td>
+                                </tr>
+                                <tr>
+                                    <th>宽高比:</th>
+                                    <td id="detailAspectRatio">-</td>
+                                </tr>
+                                <tr>
+                                    <th>尺寸:</th>
+                                    <td id="detailDimensions">-</td>
+                                </tr>
+                                <tr>
+                                    <th>文件大小:</th>
+                                    <td id="detailFileSize">-</td>
+                                </tr>
+                                <tr>
+                                    <th>创建时间:</th>
+                                    <td id="detailCreatedAt">-</td>
+                                </tr>
+                                <tr>
+                                    <th>状态:</th>
+                                    <td id="detailStatus">-</td>
+                                </tr>
+                            </table>
+
+                            <div class="d-grid gap-2 mt-3">
+                                <a href="#" class="btn btn-primary" id="openImageBtn" target="_blank">
+                                    <i class="bi bi-eye me-1"></i> 在新窗口打开图片
+                                </a>
+                                <button class="btn btn-outline-danger" id="deleteImageBtn">
+                                    <i class="bi bi-trash me-1"></i> 删除此记录
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 统计信息模态框 -->
+    <div class="modal fade" id="statsModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">数据库统计信息</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="关闭"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row text-center">
+                        <div class="col-6 mb-3">
+                            <div class="stats-card">
+                                <div class="stats-number" id="modalTotalImages">0</div>
+                                <div class="stats-label">总图片数</div>
+                            </div>
+                        </div>
+                        <div class="col-6 mb-3">
+                            <div class="stats-card">
+                                <div class="stats-number" id="modalTodayAdded">0</div>
+                                <div class="stats-label">今日新增</div>
+                            </div>
+                        </div>
+                        <div class="col-6 mb-3">
+                            <div class="stats-card">
+                                <div class="stats-number" id="modalExistingImages">0</div>
+                                <div class="stats-label">文件存在</div>
+                            </div>
+                        </div>
+                        <div class="col-6 mb-3">
+                            <div class="stats-card">
+                                <div class="stats-number" id="modalMissingImages">0</div>
+                                <div class="stats-label">文件丢失</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-center mt-3">
+                        <div class="stats-number" id="modalTotalSize">0 B</div>
+                        <div class="stats-label">总占用空间</div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
+                    <button type="button" class="btn btn-primary" id="refreshStatsBtn">
+                        <i class="bi bi-arrow-clockwise me-1"></i> 刷新统计
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 加载中提示 -->
+    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+        <div id="loadingToast" class="toast align-items-center text-white bg-primary border-0" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body">
+                    <i class="bi bi-hourglass-split me-2"></i>
+                    <span id="loadingMessage">加载中...</span>
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // 全局变量
+        let selectedImages = new Set();
+        let currentImageId = null;
+        let currentModal = null;
+        let modalClosedByUser = false;
+
+        // 处理图片加载成功
+        function handleImageLoad(img) {
+            console.log('图片加载成功:', img.src);
+            img.style.opacity = '1';
+        }
+
+        // 处理图片加载错误
+        function handleImageError(img) {
+            console.log('图片加载失败:', img.src);
+            const container = img.closest('.card-img-container');
+            const imageId = img.getAttribute('data-image-id');
+
+            // 检查是否已经有错误信息
+            if (container.querySelector('.image-error')) {
+                return;
+            }
+
+            // 创建错误显示
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'image-error';
+            errorDiv.innerHTML = `
+                <i class="bi bi-exclamation-triangle"></i>
+                <div>预览加载失败</div>
+                <small>点击查看详情</small>
+            `;
+
+            // 替换图片
+            img.style.display = 'none';
+            container.insertBefore(errorDiv, img.nextSibling);
+
+            // 点击错误信息也可以查看详情
+            errorDiv.addEventListener('click', function(e) {
+                e.stopPropagation();
+                loadImageDetail(imageId);
+            });
+        }
+
+        // 处理详情图片加载错误
+        function handleDetailImageError(img) {
+            console.log('详情图片加载失败:', img.src);
+            const container = img.parentElement;
+
+            // 检查是否已经有错误信息
+            if (container.querySelector('.image-error')) {
+                return;
+            }
+
+            // 隐藏原图片，显示错误信息
+            img.style.display = 'none';
+            container.appendChild(errorDiv);
+        }
+
+        // 重置模态框状态
+        function resetModal() {
+            const detailImage = document.getElementById('detailImage');
+            const detailImageLoading = document.getElementById('detailImageLoading');
+            const container = detailImage.parentElement;
+
+            // 重置图片
+            detailImage.src = '';
+            detailImage.style.display = 'none';
+            detailImageLoading.classList.add('d-none');
+
+            // 移除错误信息
+            const errorDiv = container.querySelector('.image-error');
+            if (errorDiv) {
+                errorDiv.remove();
+            }
+
+            // 重置其他信息
+            document.getElementById('detailId').textContent = '-';
+            document.getElementById('detailLocalPath').textContent = '-';
+            document.getElementById('detailUrlLink').href = '#';
+            document.getElementById('detailUrlLink').textContent = '查看';
+            document.getElementById('detailTaskId').textContent = '-';
+            document.getElementById('detailPrompt').textContent = '-';
+            document.getElementById('detailAspectRatio').textContent = '-';
+            document.getElementById('detailDimensions').textContent = '-';
+            document.getElementById('detailFileSize').textContent = '-';
+            document.getElementById('detailCreatedAt').textContent = '-';
+            document.getElementById('detailStatus').innerHTML = '-';
+            document.getElementById('openImageBtn').style.display = 'block';
+
+            currentImageId = null;
+        }
+
+        // 强制清理模态框残留
+        function forceCleanupModal() {
+            // 移除所有模态框背景遮罩
+            const backdrops = document.querySelectorAll('.modal-backdrop');
+            backdrops.forEach(backdrop => {
+                backdrop.remove();
+            });
+
+            // 恢复body滚动
+            document.body.classList.remove('modal-open');
+            document.body.style.overflow = '';
+            document.body.style.paddingRight = '';
+
+            // 重置所有模态框状态
+            const modals = document.querySelectorAll('.modal');
+            modals.forEach(modal => {
+                modal.classList.remove('show');
+                modal.style.display = 'none';
+                modal.setAttribute('aria-hidden', 'true');
+                modal.removeAttribute('aria-modal');
+                modal.removeAttribute('role');
+                modal.style.paddingRight = '';
+            });
+
+            // 重置模态框实例
+            currentModal = null;
+            modalClosedByUser = true;
+        }
+
+        // 显示加载提示
+        function showLoading(message = '加载中...') {
+            document.getElementById('loadingMessage').textContent = message;
+            const toastElement = document.getElementById('loadingToast');
+            const toast = new bootstrap.Toast(toastElement, { delay: 5000 });
+            toast.show();
+        }
+
+        // 显示消息
+        function showMessage(message, type = 'info') {
+            const toast = document.createElement('div');
+            toast.className = `toast align-items-center text-white bg-${type} border-0`;
+            toast.innerHTML = `
+                <div class="d-flex">
+                    <div class="toast-body">
+                        <i class="bi bi-${type === 'success' ? 'check-circle' : type === 'danger' ? 'exclamation-circle' : 'info-circle'} me-2"></i>
+                        ${message}
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                </div>
+            `;
+
+            const container = document.querySelector('.position-fixed.bottom-0.end-0');
+            container.appendChild(toast);
+
+            const bsToast = new bootstrap.Toast(toast, { delay: 3000 });
+            bsToast.show();
+
+            toast.addEventListener('hidden.bs.toast', () => {
+                toast.remove();
+            });
+        }
+
+        // 获取统计信息
+        async function loadStats() {
+            try {
+                const response = await fetch('/api/images/stats');
+                const data = await response.json();
+
+                if (data.success) {
+                    const stats = data.data;
+
+                    // 更新页面统计
+                    document.getElementById('totalImages').textContent = stats.total_images;
+                    document.getElementById('existingImages').textContent = stats.existing_images;
+                    document.getElementById('missingImages').textContent = stats.missing_images;
+                    document.getElementById('totalSize').textContent = stats.total_size_fmt;
+
+                    // 更新模态框统计
+                    document.getElementById('modalTotalImages').textContent = stats.total_images;
+                    document.getElementById('modalTodayAdded').textContent = stats.today_added;
+                    document.getElementById('modalExistingImages').textContent = stats.existing_images;
+                    document.getElementById('modalMissingImages').textContent = stats.missing_images;
+                    document.getElementById('modalTotalSize').textContent = stats.total_size_fmt;
+
+                    // 显示统计行
+                    document.getElementById('statsRow').classList.remove('d-none');
+                }
+            } catch (error) {
+                console.error('加载统计信息失败:', error);
+            }
+        }
+
+        // 加载图片详情
+        async function loadImageDetail(imageId) {
+            try {
+                showLoading('加载图片详情...');
+                currentImageId = imageId;
+                modalClosedByUser = false;
+
+                // 显示加载状态
+                const detailImage = document.getElementById('detailImage');
+                const detailImageLoading = document.getElementById('detailImageLoading');
+                detailImage.style.display = 'none';
+                detailImageLoading.classList.remove('d-none');
+
+                // 先重置模态框
+                resetModal();
+
+                const response = await fetch(`/api/images/${imageId}`);
+                const data = await response.json();
+
+                if (data.success) {
+                    const image = data.data;
+
+                    // 更新模态框内容
+                    document.getElementById('detailId').textContent = image.id;
+                    document.getElementById('detailLocalPath').textContent = image.local_path || '无';
+                    document.getElementById('detailUrlLink').href = image.image_url || '#';
+                    document.getElementById('detailUrlLink').textContent = image.image_url || '无URL';
+                    document.getElementById('detailTaskId').textContent = image.task_id || '无';
+                    document.getElementById('detailPrompt').textContent = image.prompt || '无';
+                    document.getElementById('detailAspectRatio').textContent = image.aspect_ratio || '未指定';
+                    document.getElementById('detailDimensions').textContent = image.dimensions || '未知';
+                    document.getElementById('detailFileSize').textContent = image.file_size_fmt || '未知';
+                    document.getElementById('detailCreatedAt').textContent = image.created_at || '未知';
+                    document.getElementById('detailStatus').innerHTML = image.file_exists ?
+                        '<span class="badge bg-success">文件存在</span>' :
+                        '<span class="badge bg-danger">文件丢失</span>';
+
+                    // 加载图片预览
+                    if (image.file_exists) {
+                        // 使用直接预览路径
+                        detailImage.src = `/preview/${imageId}?size=800`;
+                        detailImage.onload = function() {
+                            detailImage.style.display = 'block';
+                            detailImageLoading.classList.add('d-none');
+                        };
+                        detailImage.onerror = function() {
+                            detailImageLoading.classList.add('d-none');
+                            handleDetailImageError(detailImage);
+                        };
+
+                        // 设置打开图片按钮
+                        document.getElementById('openImageBtn').href = `/api/images/${imageId}/open`;
+                        document.getElementById('openImageBtn').style.display = 'block';
+                    } else {
+                        detailImage.style.display = 'none';
+                        detailImageLoading.classList.add('d-none');
+
+                        // 显示错误占位符
+                        const container = detailImage.parentElement;
+                        const errorDiv = document.createElement('div');
+                        errorDiv.className = 'image-error';
+                        errorDiv.style.width = '100%';
+                        errorDiv.style.height = '100%';
+                        errorDiv.innerHTML = `
+                            <i class="bi bi-file-excel" style="font-size: 3rem;"></i>
+                            <div>文件不存在</div>
+                        `;
+                        container.appendChild(errorDiv);
+
+                        document.getElementById('openImageBtn').style.display = 'none';
+                    }
+
+                    // 显示模态框
+                    const modalElement = document.getElementById('imageDetailModal');
+                    currentModal = new bootstrap.Modal(modalElement);
+
+                    // 添加模态框事件监听
+                    modalElement.addEventListener('hidden.bs.modal', function() {
+                        // 重置模态框状态
+                        resetModal();
+
+                        // 延迟执行强制清理，确保动画完成
+                        setTimeout(() => {
+                            forceCleanupModal();
+
+                            // 如果是用户主动关闭模态框，则刷新页面
+                            if (modalClosedByUser) {
+                                console.log('用户关闭模态框，刷新页面...');
+                                window.location.reload();
+                            }
+                        }, 100);
+
+                        currentModal = null;
+                    });
+
+                    // 监听关闭按钮点击
+                    const closeButtons = modalElement.querySelectorAll('[data-bs-dismiss="modal"]');
+                    closeButtons.forEach(button => {
+                        button.addEventListener('click', () => {
+                            modalClosedByUser = true;
+                        });
+                    });
+
+                    currentModal.show();
+                } else {
+                    showMessage(data.message || '加载失败', 'danger');
+                    detailImageLoading.classList.add('d-none');
+                }
+            } catch (error) {
+                console.error('加载图片详情失败:', error);
+                showMessage('加载失败: ' + error.message, 'danger');
+                document.getElementById('detailImageLoading').classList.add('d-none');
+            }
+        }
+
+        // 删除图片记录
+        async function deleteImage(imageId) {
+            if (!confirm('确定要删除这条记录吗？此操作不可恢复。')) {
+                return;
+            }
+
+            try {
+                showLoading('删除中...');
+
+                const response = await fetch(`/api/images/delete/${imageId}`, {
+                    method: 'DELETE'
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    showMessage('删除成功', 'success');
+
+                    // 从页面中移除
+                    const card = document.querySelector(`[data-image-id="${imageId}"]`);
+                    if (card) {
+                        card.closest('.col').remove();
+                    }
+
+                    // 关闭模态框
+                    if (currentModal) {
+                        currentModal.hide();
+                        setTimeout(() => {
+                            forceCleanupModal();
+                            // 删除后刷新页面以确保状态正确
+                            window.location.reload();
+                        }, 300);
+                    } else {
+                        // 如果模态框没有打开，直接刷新页面
+                        window.location.reload();
+                    }
+
+                    // 更新统计
+                    loadStats();
+
+                    // 如果图片网格空了，重新加载页面
+                    if (document.querySelectorAll('#imagesGrid .col').length === 0) {
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 1000);
+                    }
+                } else {
+                    showMessage(data.message || '删除失败', 'danger');
+                }
+            } catch (error) {
+                console.error('删除失败:', error);
+                showMessage('删除失败: ' + error.message, 'danger');
+            }
+        }
+
+        // 批量删除图片
+        async function batchDeleteImages() {
+            if (selectedImages.size === 0) {
+                showMessage('请先选择要删除的图片', 'warning');
+                return;
+            }
+
+            if (!confirm(`确定要删除选中的 ${selectedImages.size} 张图片记录吗？此操作不可恢复。`)) {
+                return;
+            }
+
+            try {
+                showLoading(`正在删除 ${selectedImages.size} 张图片...`);
+
+                const response = await fetch('/api/images/batch/delete', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        image_ids: Array.from(selectedImages)
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showMessage(`成功删除 ${data.deleted_count} 张图片`, 'success');
+
+                    // 从页面中移除已删除的图片
+                    selectedImages.forEach(imageId => {
+                        const card = document.querySelector(`[data-image-id="${imageId}"]`);
+                        if (card) {
+                            card.closest('.col').remove();
+                        }
+                    });
+
+                    // 清空选择
+                    selectedImages.clear();
+                    updateSelectionUI();
+
+                    // 更新统计
+                    loadStats();
+
+                    // 如果图片网格空了，重新加载页面
+                    if (document.querySelectorAll('#imagesGrid .col').length === 0) {
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 1000);
+                    }
+                } else {
+                    showMessage(data.message || '批量删除失败', 'danger');
+                }
+            } catch (error) {
+                console.error('批量删除失败:', error);
+                showMessage('批量删除失败: ' + error.message, 'danger');
+            }
+        }
+
+        // 更新选择UI
+        function updateSelectionUI() {
+            const selectedCount = selectedImages.size;
+            document.getElementById('selectedCount').textContent = selectedCount;
+
+            // 批量操作栏
+            const batchActions = document.getElementById('batchActions');
+            if (selectedCount > 0) {
+                batchActions.classList.remove('d-none');
+                document.getElementById('deleteSelectedBtn').disabled = false;
+            } else {
+                batchActions.classList.add('d-none');
+                document.getElementById('deleteSelectedBtn').disabled = true;
+            }
+
+            // 更新复选框状态
+            document.querySelectorAll('.image-checkbox-input').forEach(checkbox => {
+                const imageId = parseInt(checkbox.getAttribute('data-image-id'));
+                checkbox.checked = selectedImages.has(imageId);
+            });
+        }
+
+        // 事件监听器
+        document.addEventListener('DOMContentLoaded', function() {
+            // 加载统计信息
+            loadStats();
+
+            // 搜索按钮
+            document.getElementById('searchBtn').addEventListener('click', function() {
+                const keyword = document.getElementById('searchInput').value.trim();
+                if (keyword) {
+                    window.location.href = `/images?keyword=${encodeURIComponent(keyword)}`;
+                } else {
+                    window.location.href = '/images';
+                }
+            });
+
+            // 回车搜索
+            document.getElementById('searchInput').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    document.getElementById('searchBtn').click();
+                }
+            });
+
+            // 刷新按钮
+            document.getElementById('refreshBtn').addEventListener('click', function() {
+                window.location.reload();
+            });
+
+            // 全选按钮
+            document.getElementById('selectAllBtn').addEventListener('click', function() {
+                const checkboxes = document.querySelectorAll('.image-checkbox-input');
+                const allIds = Array.from(checkboxes).map(cb => parseInt(cb.getAttribute('data-image-id')));
+
+                if (selectedImages.size === allIds.length) {
+                    // 如果已经全选，则取消全选
+                    selectedImages.clear();
+                } else {
+                    // 否则全选
+                    selectedImages = new Set(allIds);
+                }
+
+                updateSelectionUI();
+            });
+
+            // 删除选中按钮
+            document.getElementById('deleteSelectedBtn').addEventListener('click', function() {
+                batchDeleteImages();
+            });
+
+            // 确认删除按钮
+            document.getElementById('confirmDeleteBtn').addEventListener('click', function() {
+                batchDeleteImages();
+            });
+
+            // 取消选择按钮
+            document.getElementById('cancelSelectionBtn').addEventListener('click', function() {
+                selectedImages.clear();
+                updateSelectionUI();
+            });
+
+            // 刷新统计按钮
+            document.getElementById('refreshStatsBtn').addEventListener('click', function() {
+                loadStats();
+            });
+
+            // 模态框中的删除按钮
+            document.getElementById('deleteImageBtn').addEventListener('click', function() {
+                if (currentImageId) {
+                    deleteImage(currentImageId);
+                }
+            });
+
+            // 复选框点击
+            document.addEventListener('change', function(e) {
+                if (e.target.classList.contains('image-checkbox-input')) {
+                    const imageId = parseInt(e.target.getAttribute('data-image-id'));
+
+                    if (e.target.checked) {
+                        selectedImages.add(imageId);
+                    } else {
+                        selectedImages.delete(imageId);
+                    }
+
+                    updateSelectionUI();
+                }
+            });
+
+            // 卡片点击查看详情
+            document.addEventListener('click', function(e) {
+                // 如果点击的是卡片主体（排除按钮和复选框）
+                const card = e.target.closest('.card');
+                if (card &&
+                    !e.target.closest('.action-btn') &&
+                    !e.target.closest('.image-checkbox') &&
+                    !e.target.closest('.url-display a')) {
+                    const imageId = card.getAttribute('data-image-id');
+                    loadImageDetail(imageId);
+                }
+            });
+
+            // 图片预览点击查看详情
+            document.addEventListener('click', function(e) {
+                if (e.target.classList.contains('card-img-preview')) {
+                    const card = e.target.closest('.card');
+                    if (card) {
+                        const imageId = card.getAttribute('data-image-id');
+                        loadImageDetail(imageId);
+                    }
+                }
+            });
+
+            // 页面加载完成后检查是否有残留的模态框
+            window.addEventListener('load', function() {
+                setTimeout(() => {
+                    forceCleanupModal();
+                }, 500);
+            });
+        });
+    </script>
+</body>
+</html>

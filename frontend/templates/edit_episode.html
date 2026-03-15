@@ -1,0 +1,514 @@
+<!-- templates/edit_episode.html -->
+{% extends "layout.html" %}
+
+{% block title %}编辑分集 - 灵犀剧能{% endblock %}
+
+{% block content %}
+<div class="episode-edit-container">
+    <!-- 页面标题 -->
+    <div class="page-header">
+        <div class="header-content">
+            <button class="btn btn-outline btn-sm" onclick="location.href='/projects/{{ project.id }}'">
+                <i class="fas fa-arrow-left"></i> 返回项目详情
+            </button>
+            <h1 class="page-title">编辑分集</h1>
+            <p class="page-subtitle">编辑项目 "{{ project.title }}" 的分集 "{{ episode.title }}"</p>
+        </div>
+    </div>
+
+    <!-- 编辑表单 -->
+    <div class="edit-form-container">
+        <form id="editEpisodeForm" class="episode-form">
+            <input type="hidden" id="projectId" value="{{ project.id }}">
+            <input type="hidden" id="episodeId" value="{{ episode.id }}">
+
+            <!-- 基本信息部分 -->
+            <div class="form-section">
+                <div class="section-header">
+                    <h2 class="section-title">
+                        <i class="fas fa-info-circle"></i> 基本信息
+                    </h2>
+                    <p class="section-description">填写分集的基本信息和内容</p>
+                </div>
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="title" class="form-label required">分集标题</label>
+                        <input type="text" id="title" name="title" class="form-control"
+                               value="{{ episode.title }}"
+                               placeholder="请输入分集标题" required>
+                        <div class="form-hint">例如：第1集 初遇</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="episode_number" class="form-label required">分集号</label>
+                        <input type="number" id="episode_number" name="episode_number" class="form-control"
+                               value="{{ episode.episode_number }}"
+                               min="1" required>
+                        <div class="form-hint">分集序号</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="duration" class="form-label">时长（秒）</label>
+                        <input type="number" id="duration" name="duration" class="form-control"
+                               value="{{ episode.duration }}"
+                               min="0">
+                        <div class="form-hint">视频时长，单位为秒</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="status" class="form-label">状态</label>
+                        <select id="status" name="status" class="form-control">
+                            <option value="draft" {% if episode.status == 'draft' %}selected{% endif %}>草稿</option>
+                            <option value="processing" {% if episode.status == 'processing' %}selected{% endif %}>处理中</option>
+                            <option value="ready" {% if episode.status == 'ready' %}selected{% endif %}>已就绪</option>
+                            <option value="published" {% if episode.status == 'published' %}selected{% endif %}>已发布</option>
+                        </select>
+                        <div class="form-hint">分集当前状态</div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="description" class="form-label">描述</label>
+                    <textarea id="description" name="description" class="form-control"
+                              rows="4" placeholder="填写分集描述...">{{ episode.description or '' }}</textarea>
+                    <div class="form-hint">简要描述本集内容</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="content" class="form-label">分集内容</label>
+                    <textarea id="content" name="content" class="form-control"
+                              rows="6" placeholder="填写分集脚本、内容描述...">{{ episode.content or '' }}</textarea>
+                    <div class="form-hint">支持Markdown格式</div>
+                </div>
+            </div>
+
+            <!-- 表单操作按钮 -->
+            <div class="form-actions">
+                <div class="action-buttons">
+                    <button type="button" class="btn btn-outline" onclick="location.href='/projects/{{ project.id }}'">
+                        <i class="fas fa-times"></i> 取消
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> 保存更改
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block styles %}
+<style>
+    /* 容器样式 */
+    .episode-edit-container {
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 30px 20px;
+    }
+
+    .edit-form-container {
+        background: white;
+        border-radius: 16px;
+        padding: 40px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+        margin-top: 30px;
+        border: 1px solid #e5e7eb;
+    }
+
+    /* 表单区域样式 */
+    .form-section {
+        margin-bottom: 48px;
+        padding-bottom: 48px;
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+    .form-section:last-child {
+        border-bottom: none;
+        margin-bottom: 0;
+        padding-bottom: 0;
+    }
+
+    .section-header {
+        margin-bottom: 32px;
+    }
+
+    .section-title {
+        font-size: 20px;
+        font-weight: 600;
+        color: #111827;
+        margin-bottom: 8px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .section-title i {
+        color: #4F46E5;
+        font-size: 22px;
+    }
+
+    .section-description {
+        color: #6b7280;
+        font-size: 14px;
+        margin: 0;
+        line-height: 1.6;
+    }
+
+    /* 表单网格布局 */
+    .form-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 24px;
+        margin-bottom: 32px;
+    }
+
+    .form-group {
+        margin-bottom: 24px;
+    }
+
+    .form-label {
+        display: block;
+        font-weight: 500;
+        color: #374151;
+        margin-bottom: 8px;
+        font-size: 14px;
+    }
+
+    .form-label.required:after {
+        content: " *";
+        color: #ef4444;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 12px 16px;
+        font-size: 14px;
+        line-height: 1.5;
+        color: #111827;
+        background-color: white;
+        border: 1px solid #d1d5db;
+        border-radius: 8px;
+        transition: all 0.2s;
+        box-sizing: border-box;
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: #4F46E5;
+        box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+    }
+
+    .form-control:hover {
+        border-color: #9ca3af;
+    }
+
+    .form-hint {
+        font-size: 12px;
+        color: #6b7280;
+        margin-top: 4px;
+        line-height: 1.4;
+    }
+
+    textarea.form-control {
+        resize: vertical;
+        min-height: 100px;
+    }
+
+    select.form-control {
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 12px center;
+        background-size: 16px;
+        padding-right: 40px;
+    }
+
+    /* 表单操作按钮 */
+    .form-actions {
+        margin-top: 48px;
+        padding-top: 32px;
+        border-top: 1px solid #e5e7eb;
+    }
+
+    .action-buttons {
+        display: flex;
+        justify-content: flex-end;
+        gap: 16px;
+    }
+
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 12px 24px;
+        font-size: 14px;
+        font-weight: 500;
+        line-height: 1.5;
+        border-radius: 8px;
+        border: 1px solid transparent;
+        cursor: pointer;
+        transition: all 0.2s;
+        gap: 8px;
+    }
+
+    .btn-outline {
+        background: white;
+        border-color: #d1d5db;
+        color: #374151;
+    }
+
+    .btn-outline:hover {
+        background: #f9fafb;
+        border-color: #9ca3af;
+    }
+
+    .btn-primary {
+        background: #4F46E5;
+        color: white;
+        border: none;
+    }
+
+    .btn-primary:hover {
+        background: #4338ca;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+    }
+
+    /* 响应式设计 */
+    @media (max-width: 768px) {
+        .episode-edit-container {
+            padding: 20px 16px;
+        }
+
+        .edit-form-container {
+            padding: 24px;
+            border-radius: 12px;
+        }
+
+        .form-section {
+            margin-bottom: 32px;
+            padding-bottom: 32px;
+        }
+
+        .form-grid {
+            grid-template-columns: 1fr;
+            gap: 16px;
+        }
+
+        .section-title {
+            font-size: 18px;
+        }
+
+        .action-buttons {
+            flex-direction: column;
+        }
+
+        .action-buttons .btn {
+            width: 100%;
+        }
+    }
+
+    /* 错误状态 */
+    .is-invalid {
+        border-color: #ef4444 !important;
+    }
+
+    .is-invalid:focus {
+        box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1) !important;
+    }
+
+    .invalid-feedback {
+        display: block;
+        color: #ef4444;
+        font-size: 12px;
+        margin-top: 4px;
+    }
+
+    /* 加载动画 */
+    .spinner {
+        display: inline-block;
+        width: 16px;
+        height: 16px;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        border-radius: 50%;
+        border-top-color: white;
+        animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+        to {
+            transform: rotate(360deg);
+        }
+    }
+</style>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.getElementById('editEpisodeForm');
+        const projectId = document.getElementById('projectId').value;
+        const episodeId = document.getElementById('episodeId').value;
+
+        // 表单提交处理
+        form.addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const submitBtn = form.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+
+            // 验证表单
+            if (!validateForm()) {
+                showNotification('请检查表单中的错误', 'error');
+                return;
+            }
+
+            // 显示加载状态
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span class="spinner"></span> 保存中...';
+
+            try {
+                // 构建更新数据
+                const updateData = {
+                    title: form.title.value,
+                    episode_number: parseInt(form.episode_number.value),
+                    content: form.content.value,
+                    status: form.status.value,
+                    description: form.description.value
+                };
+
+                if (form.duration.value) {
+                    updateData.duration = parseInt(form.duration.value);
+                }
+
+                // 发送更新请求
+                const updateResponse = await fetch(`/api/episodes/${episodeId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(updateData)
+                });
+
+                if (!updateResponse.ok) {
+                    const errorData = await updateResponse.json();
+                    throw new Error(errorData.error || '更新失败');
+                }
+
+                showNotification('分集更新成功！', 'success');
+                setTimeout(() => {
+                    window.location.href = `/projects/${projectId}`;
+                }, 1500);
+
+            } catch (error) {
+                console.error('更新分集错误:', error);
+                showNotification(error.message || '保存失败，请重试', 'error');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalText;
+            }
+        });
+
+        // 输入时清除错误状态
+        form.querySelectorAll('input, textarea, select').forEach(input => {
+            input.addEventListener('input', function() {
+                this.classList.remove('is-invalid');
+                const feedback = this.nextElementSibling;
+                if (feedback && feedback.classList.contains('invalid-feedback')) {
+                    feedback.textContent = '';
+                }
+            });
+        });
+    });
+
+    // 表单验证
+    function validateForm() {
+        let isValid = true;
+        const form = document.getElementById('editEpisodeForm');
+
+        // 验证标题
+        if (!form.title.value || form.title.value.trim().length < 2) {
+            markInvalid(form.title, '标题至少需要2个字符');
+            isValid = false;
+        }
+
+        // 验证分集号
+        if (!form.episode_number.value || parseInt(form.episode_number.value) < 1) {
+            markInvalid(form.episode_number, '分集号必须大于0');
+            isValid = false;
+        }
+
+        return isValid;
+    }
+
+    function markInvalid(element, message) {
+        element.classList.add('is-invalid');
+        let feedback = element.nextElementSibling;
+        while (feedback && !feedback.classList.contains('invalid-feedback')) {
+            feedback = feedback.nextElementSibling;
+        }
+        if (feedback && feedback.classList.contains('invalid-feedback')) {
+            feedback.textContent = message;
+        } else {
+            const div = document.createElement('div');
+            div.className = 'invalid-feedback';
+            div.textContent = message;
+            element.parentNode.appendChild(div);
+        }
+    }
+
+    // 显示通知
+    function showNotification(message, type = 'info') {
+        // 创建通知元素
+        const notification = document.createElement('div');
+        notification.className = 'notification';
+        notification.textContent = message;
+
+        notification.style.cssText = `
+            position: fixed;
+            top: 24px;
+            right: 24px;
+            padding: 16px 24px;
+            background: ${type === 'success' ? '#10b981' : type === 'error' ? '#ef4444' : '#3b82f6'};
+            color: white;
+            border-radius: 8px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+            z-index: 10000;
+            animation: slideIn 0.3s ease-out;
+            font-size: 14px;
+            font-weight: 500;
+            max-width: 400px;
+            line-height: 1.5;
+        `;
+
+        document.body.appendChild(notification);
+
+        // 3秒后移除
+        setTimeout(() => {
+            notification.style.animation = 'slideOut 0.3s ease-out';
+            setTimeout(() => {
+                document.body.removeChild(notification);
+            }, 300);
+        }, 3000);
+
+        // 添加动画关键帧
+        if (!document.querySelector('#notification-animations')) {
+            const style = document.createElement('style');
+            style.id = 'notification-animations';
+            style.textContent = `
+                @keyframes slideIn {
+                    from { transform: translateX(100%); opacity: 0; }
+                    to { transform: translateX(0); opacity: 1; }
+                }
+                @keyframes slideOut {
+                    from { transform: translateX(0); opacity: 1; }
+                    to { transform: translateX(100%); opacity: 0; }
+                }
+            `;
+            document.head.appendChild(style);
+        }
+    }
+</script>
+{% endblock %}

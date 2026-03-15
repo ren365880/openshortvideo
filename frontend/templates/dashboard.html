@@ -1,0 +1,718 @@
+<!-- templates/dashboard.html -->
+{% extends "layout.html" %}
+
+{% block title %}仪表板 - 灵犀剧能{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+    <!-- 欢迎区域 -->
+    <div class="welcome-section">
+        <div class="welcome-content">
+            <h1 class="welcome-title">欢迎回来，{{ current_user.username }}！</h1>
+            <p class="welcome-subtitle">今天有什么新的创作灵感吗？</p>
+        </div>
+        <div class="welcome-actions">
+            <button class="btn btn-primary btn-lg" onclick="location.href='/projects/create'">
+                <i class="fas fa-plus"></i> 创建新项目
+            </button>
+        </div>
+    </div>
+
+    <!-- 统计卡片 -->
+    <div class="stats-grid" id="statsContainer">
+        <div class="stat-card">
+            <div class="stat-icon stat-icon-primary">
+                <i class="fas fa-film"></i>
+            </div>
+            <div class="stat-content">
+                <h3 class="stat-value" id="totalProjects">0</h3>
+                <p class="stat-label">总项目数</p>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon stat-icon-success">
+                <i class="fas fa-play-circle"></i>
+            </div>
+            <div class="stat-content">
+                <h3 class="stat-value" id="totalEpisodes">0</h3>
+                <p class="stat-label">总分集数</p>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon stat-icon-warning">
+                <i class="fas fa-eye"></i>
+            </div>
+            <div class="stat-content">
+                <h3 class="stat-value" id="totalViews">0</h3>
+                <p class="stat-label">总观看量</p>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon stat-icon-info">
+                <i class="fas fa-clock"></i>
+            </div>
+            <div class="stat-content">
+                <h3 class="stat-value" id="totalDuration">0</h3>
+                <p class="stat-label">总时长(分钟)</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 主要内容区域 -->
+    <div class="dashboard-grid">
+        <!-- 最近项目 -->
+        <div class="dashboard-section">
+            <div class="section-header">
+                <h2 class="section-title">最近项目</h2>
+                <a href="/projects" class="section-link">查看全部 <i class="fas fa-arrow-right"></i></a>
+            </div>
+            <div class="section-content">
+                <div class="projects-grid" id="recentProjects">
+                    <!-- 项目将通过JavaScript动态加载 -->
+                    <div class="loading-placeholder">
+                        <div class="spinner"></div>
+                        <p>正在加载项目...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 快速操作 -->
+        <div class="dashboard-section">
+            <div class="section-header">
+                <h2 class="section-title">快速操作</h2>
+            </div>
+            <div class="section-content">
+                <div class="quick-actions">
+                    <button class="quick-action-btn" onclick="location.href='/projects/create'">
+                        <div class="action-icon action-icon-primary">
+                            <i class="fas fa-plus"></i>
+                        </div>
+                        <div class="action-content">
+                            <h4 class="action-title">新建项目</h4>
+                            <p class="action-description">开始一个新的短剧创作</p>
+                        </div>
+                    </button>
+
+                    <button class="quick-action-btn" onclick="location.href='#'">
+                        <div class="action-icon action-icon-success">
+                            <i class="fas fa-robot"></i>
+                        </div>
+                        <div class="action-content">
+                            <h4 class="action-title">AI生成</h4>
+                            <p class="action-description">使用AI快速生成剧本</p>
+                        </div>
+                    </button>
+
+                    <button class="quick-action-btn" onclick="location.href='#'">
+                        <div class="action-icon action-icon-warning">
+                            <i class="fas fa-download"></i>
+                        </div>
+                        <div class="action-content">
+                            <h4 class="action-title">下载模板</h4>
+                            <p class="action-description">获取专业模板和素材</p>
+                        </div>
+                    </button>
+
+                    <button class="quick-action-btn" onclick="location.href='#'">
+                        <div class="action-icon action-icon-info">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <div class="action-content">
+                            <h4 class="action-title">数据分析</h4>
+                            <p class="action-description">查看项目表现数据</p>
+                        </div>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 活动动态 -->
+        <div class="dashboard-section">
+            <div class="section-header">
+                <h2 class="section-title">最近活动</h2>
+            </div>
+            <div class="section-content">
+                <div class="activity-list" id="activityList">
+                    <!-- 活动列表将通过 JavaScript 动态加载 -->
+                    <div class="loading-state">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <p>加载中...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 系统提示 -->
+        <div class="dashboard-section">
+            <div class="section-header">
+                <h2 class="section-title">系统提示</h2>
+            </div>
+            <div class="section-content">
+                <div class="tips-list">
+                    <div class="tip-card tip-card-info">
+                        <div class="tip-icon">
+                            <i class="fas fa-lightbulb"></i>
+                        </div>
+                        <div class="tip-content">
+                            <h4 class="tip-title">新手教程</h4>
+                            <p class="tip-description">查看我们的新手教程，快速掌握短剧制作技巧。</p>
+                        </div>
+                    </div>
+                    <div class="tip-card tip-card-success">
+                        <div class="tip-icon">
+                            <i class="fas fa-rocket"></i>
+                        </div>
+                        <div class="tip-content">
+                            <h4 class="tip-title">升级套餐</h4>
+                            <p class="tip-description">升级到高级套餐，解锁更多功能和存储空间。</p>
+                        </div>
+                    </div>
+                    <div class="tip-card tip-card-warning">
+                        <div class="tip-icon">
+                            <i class="fas fa-exclamation-triangle"></i>
+                        </div>
+                        <div class="tip-content">
+                            <h4 class="tip-title">存储空间</h4>
+                            <p class="tip-description">您的存储空间已使用 65%，建议清理不需要的文件。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block styles %}
+<style>
+    .dashboard-container {
+        max-width: 1400px;
+        margin: 0 auto;
+    }
+
+    .welcome-section {
+        background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+        border-radius: var(--border-radius-lg);
+        padding: var(--spacing-2xl);
+        color: white;
+        margin-bottom: var(--spacing-xl);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .welcome-title {
+        font-size: var(--font-size-3xl);
+        font-weight: 700;
+        margin-bottom: var(--spacing-sm);
+    }
+
+    .welcome-subtitle {
+        font-size: var(--font-size-lg);
+        opacity: 0.9;
+    }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: var(--spacing-lg);
+        margin-bottom: var(--spacing-xl);
+    }
+
+    .stat-card {
+        background-color: var(--bg-primary);
+        border-radius: var(--border-radius);
+        padding: var(--spacing-lg);
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-lg);
+        box-shadow: var(--shadow);
+        transition: all var(--transition-base);
+    }
+
+    .stat-card:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-lg);
+    }
+
+    .stat-icon {
+        width: 60px;
+        height: 60px;
+        border-radius: var(--border-radius);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: var(--font-size-2xl);
+    }
+
+    .stat-icon-primary {
+        background-color: rgba(79, 70, 229, 0.1);
+        color: var(--primary);
+    }
+
+    .stat-icon-success {
+        background-color: rgba(16, 185, 129, 0.1);
+        color: var(--secondary);
+    }
+
+    .stat-icon-warning {
+        background-color: rgba(245, 158, 11, 0.1);
+        color: var(--warning);
+    }
+
+    .stat-icon-info {
+        background-color: rgba(59, 130, 246, 0.1);
+        color: var(--info);
+    }
+
+    .stat-value {
+        font-size: var(--font-size-3xl);
+        font-weight: 700;
+        color: var(--text-primary);
+        margin-bottom: var(--spacing-xs);
+    }
+
+    .stat-label {
+        font-size: var(--font-size-sm);
+        color: var(--text-secondary);
+    }
+
+    .dashboard-grid {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: var(--spacing-xl);
+    }
+
+    @media (max-width: 1024px) {
+        .dashboard-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    .dashboard-section {
+        background-color: var(--bg-primary);
+        border-radius: var(--border-radius);
+        box-shadow: var(--shadow);
+        overflow: hidden;
+    }
+
+    .section-header {
+        padding: var(--spacing-lg);
+        border-bottom: 1px solid var(--border-color);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .section-title {
+        font-size: var(--font-size-lg);
+        font-weight: 600;
+        color: var(--text-primary);
+        margin: 0;
+    }
+
+    .section-link {
+        font-size: var(--font-size-sm);
+        color: var(--primary);
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-xs);
+    }
+
+    .section-link:hover {
+        text-decoration: underline;
+    }
+
+    .section-content {
+        padding: var(--spacing-lg);
+    }
+
+    .projects-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: var(--spacing-lg);
+    }
+
+    .loading-placeholder {
+        grid-column: 1 / -1;
+        text-align: center;
+        padding: var(--spacing-2xl);
+        color: var(--text-secondary);
+    }
+
+    .loading-placeholder .spinner {
+        margin: 0 auto var(--spacing-md);
+    }
+
+    .project-item {
+        border: 1px solid var(--border-color);
+        border-radius: var(--border-radius);
+        overflow: hidden;
+        transition: all var(--transition-base);
+    }
+
+    .project-item:hover {
+        border-color: var(--primary-light);
+        box-shadow: var(--shadow-md);
+    }
+
+    .project-cover {
+        height: 150px;
+        background: linear-gradient(135deg, var(--gray-100) 0%, var(--gray-200) 100%);
+        position: relative;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .project-cover img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        transition: transform var(--transition-slow);
+    }
+
+    .project-item:hover .project-cover img {
+        transform: scale(1.1);
+    }
+
+    .project-info {
+        padding: var(--spacing-lg);
+    }
+
+    .project-title {
+        font-size: var(--font-size-base);
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-bottom: var(--spacing-sm);
+        display: -webkit-box;
+        -webkit-line-clamp: 1;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .project-meta {
+        display: flex;
+        justify-content: space-between;
+        font-size: var(--font-size-xs);
+        color: var(--text-tertiary);
+    }
+
+    .quick-actions {
+        display: grid;
+        gap: var(--spacing-md);
+    }
+
+    .quick-action-btn {
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-lg);
+        padding: var(--spacing-lg);
+        background: none;
+        border: 1px solid var(--border-color);
+        border-radius: var(--border-radius);
+        cursor: pointer;
+        text-align: left;
+        transition: all var(--transition-base);
+        width: 100%;
+    }
+
+    .quick-action-btn:hover {
+        border-color: var(--primary);
+        background-color: var(--bg-tertiary);
+    }
+
+    .action-icon {
+        width: 50px;
+        height: 50px;
+        border-radius: var(--border-radius);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: var(--font-size-xl);
+    }
+
+    .action-icon-primary {
+        background-color: rgba(79, 70, 229, 0.1);
+        color: var(--primary);
+    }
+
+    .action-icon-success {
+        background-color: rgba(16, 185, 129, 0.1);
+        color: var(--secondary);
+    }
+
+    .action-icon-warning {
+        background-color: rgba(245, 158, 11, 0.1);
+        color: var(--warning);
+    }
+
+    .action-icon-info {
+        background-color: rgba(59, 130, 246, 0.1);
+        color: var(--info);
+    }
+
+    .action-content {
+        flex: 1;
+    }
+
+    .action-title {
+        font-size: var(--font-size-base);
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-bottom: var(--spacing-xs);
+    }
+
+    .action-description {
+        font-size: var(--font-size-sm);
+        color: var(--text-secondary);
+    }
+
+    .activity-list {
+        display: flex;
+        flex-direction: column;
+        gap: var(--spacing-lg);
+    }
+
+    .activity-item {
+        display: flex;
+        align-items: flex-start;
+        gap: var(--spacing-lg);
+        padding-bottom: var(--spacing-lg);
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .activity-item:last-child {
+        padding-bottom: 0;
+        border-bottom: none;
+    }
+
+    .activity-icon {
+        width: 40px;
+        height: 40px;
+        background-color: var(--gray-100);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--primary);
+        flex-shrink: 0;
+    }
+
+    .activity-content {
+        flex: 1;
+    }
+
+    .activity-content p {
+        margin: 0 0 var(--spacing-xs);
+        color: var(--text-primary);
+    }
+
+    .activity-time {
+        font-size: var(--font-size-xs);
+        color: var(--text-tertiary);
+    }
+
+    .tips-list {
+        display: flex;
+        flex-direction: column;
+        gap: var(--spacing-md);
+    }
+
+    .tip-card {
+        padding: var(--spacing-lg);
+        border-radius: var(--border-radius);
+        display: flex;
+        align-items: flex-start;
+        gap: var(--spacing-lg);
+    }
+
+    .tip-card-info {
+        background-color: rgba(59, 130, 246, 0.05);
+        border: 1px solid rgba(59, 130, 246, 0.2);
+    }
+
+    .tip-card-success {
+        background-color: rgba(16, 185, 129, 0.05);
+        border: 1px solid rgba(16, 185, 129, 0.2);
+    }
+
+    .tip-card-warning {
+        background-color: rgba(245, 158, 11, 0.05);
+        border: 1px solid rgba(245, 158, 11, 0.2);
+    }
+
+    .tip-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: var(--border-radius);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: var(--font-size-lg);
+        flex-shrink: 0;
+    }
+
+    .tip-card-info .tip-icon {
+        background-color: rgba(59, 130, 246, 0.1);
+        color: var(--info);
+    }
+
+    .tip-card-success .tip-icon {
+        background-color: rgba(16, 185, 129, 0.1);
+        color: var(--secondary);
+    }
+
+    .tip-card-warning .tip-icon {
+        background-color: rgba(245, 158, 11, 0.1);
+        color: var(--warning);
+    }
+
+    .tip-content {
+        flex: 1;
+    }
+
+    .tip-title {
+        font-size: var(--font-size-base);
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-bottom: var(--spacing-xs);
+    }
+
+    .tip-description {
+        font-size: var(--font-size-sm);
+        color: var(--text-secondary);
+        line-height: 1.5;
+    }
+</style>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // 页面初始化函数
+    function initPage() {
+        loadDashboardData();
+        loadRecentProjects();
+        loadActivities();
+    }
+
+    // 加载仪表板数据
+    async function loadDashboardData() {
+        try {
+            const response = await fetch('/api/dashboard');
+            if (response.ok) {
+                const data = await response.json();
+
+                // 更新统计数据
+                document.getElementById('totalProjects').textContent = data.stats.total_projects || 0;
+                document.getElementById('totalEpisodes').textContent = data.stats.total_episodes || 0;
+                document.getElementById('totalViews').textContent = data.stats.total_views || 0;
+                document.getElementById('totalDuration').textContent = data.stats.total_duration || 0;
+            }
+        } catch (error) {
+            console.error('加载仪表板数据失败:', error);
+        }
+    }
+
+    // 加载最近项目
+    async function loadRecentProjects() {
+        const container = document.getElementById('recentProjects');
+
+        try {
+            const response = await fetch('/api/projects?limit=4');
+            if (response.ok) {
+                const data = await response.json();
+
+                if (data.projects && data.projects.length > 0) {
+                    container.innerHTML = data.projects.map(project => `
+                        <a href="/projects/${project.id}" class="project-item">
+                            <div class="project-cover">
+                                ${project.cover_image ?
+                                    `<img src="/uploads/covers/${project.cover_image}" alt="${project.title}" onerror="this.onerror=null;this.parentElement.innerHTML='<div class=\\'no-cover\\'>${project.title.charAt(0)}</div>'">` :
+                                    `<div class="no-cover">${project.title.charAt(0)}</div>`
+                                }
+                            </div>
+                            <div class="project-info">
+                                <h3 class="project-title">${project.title}</h3>
+                                <div class="project-meta">
+                                    <span>${project.episode_count || 0} 集</span>
+                                    <span>${new Date(project.updated_at).toLocaleDateString()}</span>
+                                </div>
+                            </div>
+                        </a>
+                    `).join('');
+                } else {
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            <i class="fas fa-film"></i>
+                            <p>还没有项目，开始创建第一个吧！</p>
+                            <button class="btn btn-primary" onclick="location.href='/projects/create'">
+                                创建项目
+                            </button>
+                        </div>
+                    `;
+                }
+            }
+        } catch (error) {
+            console.error('加载项目失败:', error);
+            container.innerHTML = `
+                <div class="error-state">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <p>加载失败，请刷新重试</p>
+                </div>
+            `;
+        }
+    }
+
+    // 加载最近活动
+    async function loadActivities() {
+        const container = document.getElementById('activityList');
+        
+        try {
+            const response = await fetch('/api/dashboard/activities');
+            if (response.ok) {
+                const data = await response.json();
+                
+                if (data.activities && data.activities.length > 0) {
+                    container.innerHTML = data.activities.map(activity => `
+                        <div class="activity-item">
+                            <div class="activity-icon">
+                                <i class="fas ${activity.icon}"></i>
+                            </div>
+                            <div class="activity-content">
+                                <p>${activity.title} <strong>${activity.description}</strong></p>
+                                <span class="activity-time">${activity.time_display}</span>
+                            </div>
+                        </div>
+                    `).join('');
+                } else {
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            <i class="fas fa-history"></i>
+                            <p>暂无活动记录</p>
+                            <p class="text-muted">创建项目、添加角色等操作会在这里显示</p>
+                        </div>
+                    `;
+                }
+            }
+        } catch (error) {
+            console.error('加载活动记录失败:', error);
+            container.innerHTML = `
+                <div class="error-state">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <p>加载失败，请刷新重试</p>
+                </div>
+            `;
+        }
+    }
+
+    // 调用初始化
+    document.addEventListener('DOMContentLoaded', initPage);
+</script>
+{% endblock %}

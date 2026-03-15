@@ -1,0 +1,890 @@
+<!-- templates/profile_modal.html -->
+<div class="modal" id="profileModal">
+    <div class="modal-content modal-lg">
+        <div class="modal-header">
+            <h3 class="modal-title">个人资料</h3>
+            <button class="modal-close">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="profile-container">
+                <!-- 头像和基本信息 -->
+                <div class="profile-header">
+                    <div class="profile-avatar-section">
+                        <div class="avatar-container">
+                            <div class="avatar-preview" id="avatarPreview">
+                                {% if current_user.avatar %}
+                                <img src="{{ url_for('uploads.serve_avatar', filename=current_user.avatar) }}" alt="用户头像">
+                                {% else %}
+                                <div class="avatar-placeholder">
+                                    <span>{{ current_user.username[0].upper() }}</span>
+                                </div>
+                                {% endif %}
+                            </div>
+                            <div class="avatar-actions">
+                                <button class="btn btn-outline btn-sm" id="changeAvatarBtn">
+                                    <i class="fas fa-camera"></i> 更换头像
+                                </button>
+                                <input type="file" id="avatarUpload" accept="image/*" style="display: none;">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="profile-info-section">
+                        <h4 class="profile-username">{{ current_user.username }}</h4>
+                        <p class="profile-email">{{ current_user.email }}</p>
+                        <div class="profile-stats">
+                            <div class="stat-item">
+                                <div class="stat-value" id="projectsCount">0</div>
+                                <div class="stat-label">项目</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value" id="episodesCount">0</div>
+                                <div class="stat-label">分集</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value" id="followersCount">0</div>
+                                <div class="stat-label">粉丝</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 标签页导航 -->
+                <div class="profile-tabs">
+                    <button class="profile-tab active" data-tab="basic">基本信息</button>
+                    <button class="profile-tab" data-tab="security">账户安全</button>
+                    <button class="profile-tab" data-tab="preferences">偏好设置</button>
+                    <button class="profile-tab" data-tab="social">社交绑定</button>
+                </div>
+
+                <!-- 基本信息 -->
+                <div class="tab-content active" id="basicTab">
+                    <form id="basicInfoForm" class="profile-form">
+                        <div class="form-group">
+                            <label for="profileUsername" class="form-label">用户名</label>
+                            <input type="text" id="profileUsername" name="username" class="form-control" value="{{ current_user.username }}">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="profileBio" class="form-label">个人简介</label>
+                            <textarea id="profileBio" name="bio" class="form-control" rows="4">{{ current_user.bio or '' }}</textarea>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="profileGender" class="form-label">性别</label>
+                                <select id="profileGender" name="gender" class="form-control">
+                                    <option value="">请选择</option>
+                                    <option value="male">男</option>
+                                    <option value="female">女</option>
+                                    <option value="other">其他</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="profileLocation" class="form-label">所在地</label>
+                                <input type="text" id="profileLocation" name="location" class="form-control" placeholder="例如：北京">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="profileWebsite" class="form-label">个人网站</label>
+                            <input type="url" id="profileWebsite" name="website" class="form-control" placeholder="https://example.com">
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-primary">保存更改</button>
+                            <button type="button" class="btn btn-outline modal-cancel">取消</button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- 账户安全 -->
+                <div class="tab-content" id="securityTab">
+                    <form id="securityForm" class="profile-form">
+                        <div class="form-group">
+                            <label for="currentPassword" class="form-label">当前密码</label>
+                            <input type="password" id="currentPassword" name="current_password" class="form-control" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="newPassword" class="form-label">新密码</label>
+                            <input type="password" id="newPassword" name="new_password" class="form-control" required>
+                            <div class="form-text">至少8个字符，包含字母和数字</div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="confirmPassword" class="form-label">确认新密码</label>
+                            <input type="password" id="confirmPassword" name="confirm_password" class="form-control" required>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-primary">修改密码</button>
+                        </div>
+                    </form>
+
+                    <div class="security-section">
+                        <h4 class="section-title">登录设备</h4>
+                        <div class="devices-list" id="devicesList">
+                            <!-- 登录设备将通过JavaScript加载 -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 偏好设置 -->
+                <div class="tab-content" id="preferencesTab">
+                    <form id="preferencesForm" class="profile-form">
+                        <div class="form-group">
+                            <label class="form-label">通知设置</label>
+                            <div class="preference-options">
+                                <label class="preference-checkbox">
+                                    <input type="checkbox" name="email_notifications" checked>
+                                    <span>邮件通知</span>
+                                    <small>重要更新和系统通知</small>
+                                </label>
+                                <label class="preference-checkbox">
+                                    <input type="checkbox" name="push_notifications" checked>
+                                    <span>推送通知</span>
+                                    <small>新消息和活动提醒</small>
+                                </label>
+                                <label class="preference-checkbox">
+                                    <input type="checkbox" name="newsletter" checked>
+                                    <span>订阅资讯</span>
+                                    <small>产品更新和教程推送</small>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="languageSelect" class="form-label">语言</label>
+                            <select id="languageSelect" name="language" class="form-control">
+                                <option value="zh-CN" selected>简体中文</option>
+                                <option value="en-US">English</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="timezoneSelect" class="form-label">时区</label>
+                            <select id="timezoneSelect" name="timezone" class="form-control">
+                                <option value="Asia/Shanghai" selected>亚洲/上海 (GMT+8)</option>
+                                <option value="America/New_York">美国/纽约 (GMT-5)</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">隐私设置</label>
+                            <div class="preference-options">
+                                <label class="preference-radio">
+                                    <input type="radio" name="privacy" value="public" checked>
+                                    <span>公开</span>
+                                    <small>所有人可以看到我的项目和资料</small>
+                                </label>
+                                <label class="preference-radio">
+                                    <input type="radio" name="privacy" value="private">
+                                    <span>私密</span>
+                                    <small>只有我可以看到我的项目和资料</small>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-primary">保存设置</button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- 社交绑定 -->
+                <div class="tab-content" id="socialTab">
+                    <div class="social-connections">
+                        <div class="connection-item">
+                            <div class="connection-info">
+                                <i class="fab fa-weixin"></i>
+                                <div>
+                                    <h4>微信</h4>
+                                    <p>绑定后可使用微信登录</p>
+                                </div>
+                            </div>
+                            <button class="btn btn-outline btn-sm">绑定</button>
+                        </div>
+
+                        <div class="connection-item">
+                            <div class="connection-info">
+                                <i class="fab fa-qq"></i>
+                                <div>
+                                    <h4>QQ</h4>
+                                    <p>绑定后可使用QQ登录</p>
+                                </div>
+                            </div>
+                            <button class="btn btn-outline btn-sm">绑定</button>
+                        </div>
+
+                        <div class="connection-item">
+                            <div class="connection-info">
+                                <i class="fab fa-weibo"></i>
+                                <div>
+                                    <h4>微博</h4>
+                                    <p>绑定后可使用微博登录</p>
+                                </div>
+                            </div>
+                            <button class="btn btn-outline btn-sm">绑定</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* 模态框样式 */
+    .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.5);
+        z-index: 1000;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .modal.show {
+        display: flex;
+    }
+
+    .modal-content {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        animation: modalSlideUp 0.3s ease;
+        max-height: 90vh;
+        overflow-y: auto;
+    }
+
+    .modal-lg {
+        width: 90% !important;
+        max-width: 1000px !important;
+    }
+
+    .modal-content {
+        max-width: 1000px !important;
+    }
+
+    .modal-header {
+        padding: 20px 30px;
+        border-bottom: 1px solid var(--border-color);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .modal-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin: 0;
+    }
+
+    .modal-close {
+        background: none;
+        border: none;
+        font-size: 1.8rem;
+        color: var(--text-secondary);
+        cursor: pointer;
+        padding: 5px;
+        line-height: 1;
+    }
+
+    .modal-body {
+        padding: 30px;
+    }
+
+    .profile-container {
+        max-width: 600px;
+        margin: 0 auto;
+    }
+
+    /* 头部样式 */
+    .profile-header {
+        display: grid;
+        grid-template-columns: auto 1fr;
+        gap: 30px;
+        margin-bottom: 30px;
+        align-items: center;
+    }
+
+    .avatar-container {
+        text-align: center;
+    }
+
+    .avatar-preview {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        overflow: hidden;
+        margin: 0 auto 15px;
+        border: 4px solid var(--primary-light);
+        background: var(--gray-100);
+    }
+
+    .avatar-preview img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .avatar-placeholder {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+        color: white;
+        font-size: 3rem;
+        font-weight: 600;
+    }
+
+    .profile-username {
+        font-size: 1.8rem;
+        font-weight: 700;
+        margin-bottom: 5px;
+        color: var(--text-primary);
+    }
+
+    .profile-email {
+        color: var(--text-secondary);
+        margin-bottom: 20px;
+    }
+
+    .profile-stats {
+        display: flex;
+        gap: 30px;
+    }
+
+    .stat-item {
+        text-align: center;
+    }
+
+    .stat-value {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--primary);
+        margin-bottom: 5px;
+    }
+
+    .stat-label {
+        font-size: 0.9rem;
+        color: var(--text-secondary);
+    }
+
+    /* 标签页样式 */
+    .profile-tabs {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 30px;
+        border-bottom: 1px solid var(--border-color);
+        padding-bottom: 10px;
+    }
+
+    .profile-tab {
+        padding: 10px 20px;
+        background: none;
+        border: none;
+        border-radius: 8px;
+        color: var(--text-secondary);
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .profile-tab:hover {
+        background: var(--bg-tertiary);
+        color: var(--text-primary);
+    }
+
+    .profile-tab.active {
+        background: var(--primary);
+        color: white;
+    }
+
+    .modal .tab-content {
+        display: none;
+        animation: fadeIn 0.3s ease;
+    }
+
+    .modal .tab-content.active {
+        display: block;
+    }
+
+    /* 表单样式 */
+    .profile-form {
+        max-width: 500px;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-label {
+        display: block;
+        font-weight: 500;
+        margin-bottom: 8px;
+        color: var(--text-primary);
+        font-size: 0.95rem;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 10px 15px;
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+    }
+
+    .form-text {
+        margin-top: 5px;
+        font-size: 0.85rem;
+        color: var(--text-tertiary);
+    }
+
+    .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+    }
+
+    .form-actions {
+        display: flex;
+        gap: 15px;
+        margin-top: 30px;
+    }
+
+    /* 偏好设置样式 */
+    .preference-options {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .preference-checkbox,
+    .preference-radio {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        cursor: pointer;
+        padding: 15px;
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        transition: all 0.3s ease;
+    }
+
+    .preference-checkbox:hover,
+    .preference-radio:hover {
+        border-color: var(--primary);
+        background: rgba(79, 70, 229, 0.05);
+    }
+
+    .preference-checkbox input,
+    .preference-radio input {
+        margin-top: 3px;
+    }
+
+    .preference-checkbox div,
+    .preference-radio div {
+        flex: 1;
+    }
+
+    .preference-checkbox span,
+    .preference-radio span {
+        display: block;
+        font-weight: 500;
+        color: var(--text-primary);
+        margin-bottom: 3px;
+    }
+
+    .preference-checkbox small,
+    .preference-radio small {
+        display: block;
+        color: var(--text-secondary);
+        font-size: 0.85rem;
+    }
+
+    /* 社交绑定样式 */
+    .social-connections {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .connection-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px;
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+    }
+
+    .connection-info {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .connection-info i {
+        font-size: 2rem;
+        color: var(--text-secondary);
+    }
+
+    .connection-info h4 {
+        margin: 0 0 5px;
+        font-size: 1.1rem;
+        color: var(--text-primary);
+    }
+
+    .connection-info p {
+        margin: 0;
+        font-size: 0.9rem;
+        color: var(--text-secondary);
+    }
+
+    /* 登录设备样式 */
+    .security-section {
+        margin-top: 40px;
+        padding-top: 30px;
+        border-top: 1px solid var(--border-color);
+    }
+
+    .section-title {
+        font-size: 1.3rem;
+        font-weight: 600;
+        margin-bottom: 20px;
+        color: var(--text-primary);
+    }
+
+    .devices-list {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .device-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px;
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+    }
+
+    .device-info {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .device-icon {
+        font-size: 1.5rem;
+        color: var(--text-tertiary);
+    }
+
+    .device-details h5 {
+        margin: 0 0 3px;
+        font-size: 1rem;
+        color: var(--text-primary);
+    }
+
+    .device-details p {
+        margin: 0;
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+    }
+
+    .device-current {
+        color: var(--primary);
+        font-size: 0.85rem;
+        font-weight: 500;
+    }
+
+    @keyframes modalSlideUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+
+    @media (max-width: 768px) {
+        .profile-header {
+            grid-template-columns: 1fr;
+            text-align: center;
+        }
+
+        .form-row {
+            grid-template-columns: 1fr;
+        }
+
+        .form-actions {
+            flex-direction: column;
+        }
+
+        .btn {
+            width: 100%;
+        }
+    }
+</style>
+
+<script>
+    // 显示个人资料模态框
+    function showProfileModal() {
+        const modal = document.getElementById('profileModal');
+        if (modal) {
+            modal.classList.add('show');
+            loadProfileData();
+            initProfileModal();
+        }
+    }
+
+    function initProfileModal() {
+        // 绑定标签页切换
+        document.querySelectorAll('.profile-tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                document.querySelectorAll('.profile-tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+
+                this.classList.add('active');
+                const tabId = this.dataset.tab;
+                document.getElementById(`${tabId}Tab`).classList.add('active');
+            });
+        });
+
+        // 头像上传
+        const avatarUpload = document.getElementById('avatarUpload');
+        const changeAvatarBtn = document.getElementById('changeAvatarBtn');
+        const avatarPreview = document.getElementById('avatarPreview');
+
+        changeAvatarBtn.addEventListener('click', () => avatarUpload.click());
+
+        avatarUpload.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                handleAvatarUpload(file);
+            }
+        });
+
+        // 表单提交
+        const basicInfoForm = document.getElementById('basicInfoForm');
+        if (basicInfoForm) {
+            basicInfoForm.addEventListener('submit', handleBasicInfoSubmit);
+        }
+
+        const securityForm = document.getElementById('securityForm');
+        if (securityForm) {
+            securityForm.addEventListener('submit', handleSecuritySubmit);
+        }
+
+        const preferencesForm = document.getElementById('preferencesForm');
+        if (preferencesForm) {
+            preferencesForm.addEventListener('submit', handlePreferencesSubmit);
+        }
+
+        // 关闭按钮
+        document.querySelectorAll('.modal-close, .modal-cancel').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.getElementById('profileModal').classList.remove('show');
+            });
+        });
+
+        // 点击模态框背景关闭
+        const modal = document.getElementById('profileModal');
+        modal.addEventListener('click', function(e) {
+            if (e.target === modal) {
+                modal.classList.remove('show');
+            }
+        });
+    }
+
+    // 关闭个人资料模态框
+    function closeProfileModal() {
+        const modal = document.getElementById('profileModal');
+        if (modal) {
+            modal.classList.remove('show');
+        }
+    }
+
+    async function loadProfileData() {
+        try {
+            // 加载用户统计
+            const response = await fetch('/api/auth/me');
+            if (response.ok) {
+                const data = await response.json();
+                const user = data.user;
+
+                // 更新统计数据
+                document.getElementById('projectsCount').textContent = user.project_count || 0;
+
+                // 这里可以添加更多统计数据加载
+            }
+        } catch (error) {
+            console.error('加载个人资料数据失败:', error);
+        }
+    }
+
+    async function handleAvatarUpload(file) {
+        const formData = new FormData();
+        formData.append('avatar', file);
+
+        try {
+            const response = await fetch('/api/auth/upload-avatar', {
+                method: 'POST',
+                body: formData
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+
+                // 更新头像预览
+                const avatarPreview = document.getElementById('avatarPreview');
+                avatarPreview.innerHTML = `<img src="${data.avatar_url}" alt="用户头像">`;
+
+                // 更新导航栏头像
+                const navAvatar = document.querySelector('.user-avatar img');
+                if (navAvatar) {
+                    navAvatar.src = data.avatar_url;
+                }
+
+                showNotification('头像上传成功', 'success');
+            } else {
+                const error = await response.json();
+                showNotification(error.error || '上传失败', 'error');
+            }
+        } catch (error) {
+            showNotification('上传失败，请重试', 'error');
+        }
+    }
+
+    async function handleBasicInfoSubmit(e) {
+        e.preventDefault();
+
+        const form = e.target;
+        const formData = new FormData(form);
+        const data = Object.fromEntries(formData.entries());
+
+        try {
+            const response = await fetch('/api/auth/profile', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
+            });
+
+            if (response.ok) {
+                const result = await response.json();
+                showNotification('个人信息更新成功', 'success');
+
+                // 更新页面显示的用户名
+                const userNameElements = document.querySelectorAll('.user-name');
+                userNameElements.forEach(element => {
+                    if (element.textContent !== result.user.username) {
+                        element.textContent = result.user.username;
+                    }
+                });
+
+                // 1秒后关闭模态框
+                setTimeout(() => {
+                    closeProfileModal();
+                }, 1000);
+            } else {
+                const error = await response.json();
+                showNotification(error.error || '更新失败', 'error');
+            }
+        } catch (error) {
+            showNotification('更新失败，请重试', 'error');
+        }
+    }
+
+    async function handleSecuritySubmit(e) {
+        e.preventDefault();
+
+        const form = e.target;
+        const formData = new FormData(form);
+        const data = Object.fromEntries(formData.entries());
+
+        // 验证两次输入的密码是否一致
+        if (data.new_password !== data.confirm_password) {
+            showNotification('两次输入的密码不一致', 'error');
+            return;
+        }
+
+        try {
+            const response = await fetch('/api/auth/profile', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    password: data.new_password
+                })
+            });
+
+        if (response.ok) {
+                showNotification('密码修改成功', 'success');
+                form.reset();
+                // 1秒后关闭模态框
+                setTimeout(() => {
+                    closeProfileModal();
+                }, 1000);
+            }
+        } catch (error) {
+            showNotification('修改失败，请重试', 'error');
+        }
+    }
+
+    async function handlePreferencesSubmit(e) {
+        e.preventDefault();
+
+        const form = e.target;
+        const formData = new FormData(form);
+        const data = Object.fromEntries(formData.entries());
+
+        try {
+            // 这里需要实现偏好设置API
+            showNotification('偏好设置已保存', 'success');
+            // 1秒后关闭模态框
+            setTimeout(() => {
+                closeProfileModal();
+            }, 1000);
+        } catch (error) {
+            showNotification('保存失败，请重试', 'error');
+        }
+    }
+
+    // 在layout.html的脚本部分添加以下代码
+    // 绑定个人资料链接点击事件
+    document.addEventListener('DOMContentLoaded', function() {
+        const profileLink = document.querySelector('a[href="{{ url_for("auth.profile") }}"]');
+        if (profileLink) {
+            profileLink.addEventListener('click', function(e) {
+                e.preventDefault();
+                showProfileModal();
+            });
+        }
+    });
+</script>

@@ -1,0 +1,275 @@
+2026-02-06 23:04:34 [INFO] [USER] User Action: 创建项目 | 创建项目: 斩仙台下
+2026-02-06 23:33:48 [INFO] [USER] User Action: 查看日志列表 | 查询条件: level=None, category=None
+2026-02-06 23:40:26 [INFO] [USER] User Action: 查看日志列表 | 查询条件: level=None, category=None
+2026-02-06 23:41:15 [INFO] [USER] User Action: 查看日志列表 | 查询条件: level=None, category=None
+2026-02-06 23:41:18 [INFO] [USER] User Action: 查看日志列表 | 查询条件: level=None, category=None
+2026-02-06 23:44:59 [INFO] [USER] User Action: 查看日志列表 | 查询条件: level=None, category=None
+2026-02-06 23:45:31 [INFO] [USER] User Action: 导出日志 | 导出了5条日志
+2026-02-07 15:07:13 [INFO] [USER] User Action: 创建项目 | 创建项目: 斩仙台下
+2026-02-07 16:24:35 [INFO] [USER] User Action: 创建项目 | 创建项目: 斩仙台下
+2026-02-07 18:20:38 [INFO] [USER] User Action: 创建项目 | 创建项目: 斩仙台下
+2026-02-07 18:33:03 [INFO] [USER] User Action: 创建项目 | 创建项目: 斩仙台下
+2026-02-07 18:54:48 [INFO] [USER] User Action: 更新分集 | 更新分集: 故事开端 (第1集)
+2026-02-07 19:01:45 [INFO] [USER] User Action: 更新分集 | 更新分集: 故事开端 (第1集)
+2026-02-07 19:01:48 [INFO] [USER] User Action: 更新分集 | 更新分集: 故事开端 (第1集)
+2026-02-07 19:56:45 [INFO] [USER] User Action: 更新分集 | 更新分集: 故事开端 (第1集)
+2026-02-07 20:01:18 [INFO] [USER] User Action: 发布分集 | 发布分集: 故事开端 (第1集)
+2026-02-08 08:46:40 [INFO] [USER] User Action: 更新项目 | 更新项目: 斩仙台下
+2026-02-08 08:56:07 [INFO] [USER] User Action: 更新分集 | 更新分集: 故事开端 (第1集)
+2026-02-20 20:53:35 [INFO] [USER] User Action: 创建项目 | 创建项目: 西游之开局拒绝大闹天宫
+2026-02-20 20:58:44 [INFO] [USER] User Action: 更新项目 | 更新项目: 西游之开局拒绝大闹天宫
+2026-02-20 21:51:00 [INFO] [AI] AI Call: 生成项目theme | Model: deepseek-chat | Status: success | Duration: 1935ms
+2026-02-20 21:51:36 [INFO] [AI] AI Call: 生成项目description | Model: deepseek-chat | Status: success | Duration: 11237ms
+2026-02-20 22:00:29 [INFO] [AI] AI Call: 生成项目theme | Model: deepseek-chat | Status: success | Duration: 1847ms
+2026-02-20 22:01:06 [INFO] [AI] AI Call: 生成项目description | Model: deepseek-chat | Status: success | Duration: 12408ms
+2026-02-20 22:01:46 [INFO] [AI] AI Call: 生成项目description | Model: deepseek-chat | Status: success | Duration: 16210ms
+2026-02-20 22:15:01 [INFO] [AI] AI Call: 生成项目theme | Model: deepseek-chat | Status: success | Duration: 2007ms
+2026-02-20 22:15:23 [INFO] [AI] AI Call: 生成项目description | Model: deepseek-chat | Status: success | Duration: 13753ms
+2026-02-20 22:16:22 [INFO] [AI] AI Call: 生成项目background | Model: deepseek-chat | Status: success | Duration: 28686ms
+2026-02-20 22:30:03 [INFO] [AI] AI Call: 生成项目theme | Model: deepseek-chat | Status: success | Duration: 1798ms
+2026-02-20 22:30:24 [INFO] [AI] AI Call: 生成项目description | Model: deepseek-chat | Status: success | Duration: 14504ms
+2026-02-20 22:31:12 [INFO] [AI] AI Call: 生成项目background | Model: deepseek-chat | Status: success | Duration: 33626ms
+2026-02-20 22:49:14 [INFO] [AI] AI Call: 生成项目theme | Model: deepseek-chat | Status: success | Duration: 2055ms
+2026-02-20 22:57:31 [INFO] [AI] AI Call: 生成项目theme | Model: deepseek-chat | Status: success | Duration: 2098ms
+2026-02-20 23:04:20 [INFO] [AI] AI Call: 生成项目theme | Model: deepseek-chat | Status: success | Duration: 1928ms
+2026-02-20 23:04:38 [INFO] [AI] AI Call: 生成项目theme | Model: deepseek-chat | Status: success | Duration: 1858ms
+2026-02-20 23:05:44 [INFO] [AI] AI Call: 生成项目theme | Model: deepseek-chat | Status: success | Duration: 1659ms
+2026-02-20 23:09:09 [INFO] [AI] AI Call: 生成项目theme | Model: deepseek-chat | Status: success | Duration: 2440ms
+2026-02-20 23:09:31 [INFO] [AI] AI Call: 生成项目description | Model: deepseek-chat | Status: success | Duration: 14059ms
+2026-02-20 23:15:10 [INFO] [AI] AI Call: 生成项目description | Model: deepseek-chat | Status: success | Duration: 10742ms
+2026-02-20 23:22:04 [INFO] [AI] AI Call: 生成项目theme | Model: deepseek-chat | Status: success | Duration: 2169ms
+2026-02-20 23:22:18 [INFO] [AI] AI Call: 生成项目description | Model: deepseek-chat | Status: success | Duration: 9572ms
+2026-02-20 23:30:41 [INFO] [AI] AI Call: 生成项目background | Model: deepseek-chat | Status: success | Duration: 22475ms
+2026-02-20 23:31:30 [INFO] [USER] User Action: 创建项目 | 创建项目: 西游之开局拒绝大闹天宫
+2026-02-21 00:06:46 [INFO] [AI] AI Call: 生成项目theme | Model: deepseek-chat | Status: success | Duration: 2165ms
+2026-02-21 00:07:00 [INFO] [AI] AI Call: 生成项目description | Model: deepseek-chat | Status: success | Duration: 9904ms
+2026-02-21 00:07:31 [INFO] [AI] AI Call: 生成项目theme | Model: deepseek-chat | Status: success | Duration: 2366ms
+2026-02-21 00:07:44 [INFO] [AI] AI Call: 生成项目description | Model: deepseek-chat | Status: success | Duration: 10609ms
+2026-02-21 00:08:15 [INFO] [AI] AI Call: 生成项目background | Model: deepseek-chat | Status: success | Duration: 26460ms
+2026-02-21 00:09:54 [INFO] [AI] AI Call: 生成项目theme | Model: deepseek-chat | Status: success | Duration: 1956ms
+2026-02-21 00:10:07 [INFO] [AI] AI Call: 生成项目description | Model: deepseek-chat | Status: success | Duration: 9197ms
+2026-02-21 00:10:50 [INFO] [AI] AI Call: 生成项目background | Model: deepseek-chat | Status: success | Duration: 25029ms
+2026-02-21 00:11:38 [INFO] [USER] User Action: 创建项目 | 创建项目: 西游之开局拒绝大闹天宫
+2026-02-21 00:24:37 [WARNING] [USER] User Action: 删除项目 | 删除项目: 斩仙台下
+2026-02-21 00:24:41 [WARNING] [USER] User Action: 删除项目 | 删除项目: 西游之开局拒绝大闹天宫
+2026-02-21 00:24:45 [WARNING] [USER] User Action: 删除项目 | 删除项目: 西游之开局拒绝大闹天宫
+2026-02-21 00:24:53 [WARNING] [USER] User Action: 删除项目 | 删除项目: 西游之开局拒绝大闹天宫
+2026-02-21 00:25:40 [INFO] [AI] AI Call: 生成项目theme | Model: deepseek-chat | Status: success | Duration: 2126ms
+2026-02-21 00:26:04 [INFO] [AI] AI Call: 生成项目description | Model: deepseek-chat | Status: success | Duration: 12920ms
+2026-02-21 00:33:00 [INFO] [AI] AI Call: 生成项目theme | Model: deepseek-chat | Status: success | Duration: 2066ms
+2026-02-21 00:33:14 [INFO] [AI] AI Call: 生成项目description | Model: deepseek-chat | Status: success | Duration: 9901ms
+2026-02-21 00:33:45 [INFO] [AI] AI Call: 生成项目background | Model: deepseek-chat | Status: success | Duration: 22396ms
+2026-02-21 00:34:00 [INFO] [AI] AI Call: 生成项目description | Model: deepseek-chat | Status: success | Duration: 9375ms
+2026-02-21 00:34:33 [INFO] [USER] User Action: 创建项目 | 创建项目: 西游之开局拒绝大闹天宫
+2026-02-21 00:46:53 [INFO] [USER] User Action: 更新项目 | 更新项目: 西游之开局拒绝大闹天宫
+2026-02-21 00:49:05 [INFO] [AI] AI Call: 生成项目episodes | Model: deepseek-chat | Status: success | Duration: 10759ms
+2026-02-21 00:49:37 [INFO] [AI] AI Call: 生成项目characters | Model: deepseek-chat | Status: success | Duration: 31941ms
+2026-02-21 00:49:37 [INFO] [USER] User Action: 创建项目 | 创建项目: 西游之开局拒绝大闹天宫
+2026-02-21 00:54:32 [WARNING] [USER] User Action: 删除项目 | 删除项目: 西游之开局拒绝大闹天宫
+2026-02-21 00:56:41 [INFO] [AI] AI Call: 生成项目episodes | Model: deepseek-chat | Status: success | Duration: 24609ms
+2026-02-21 00:57:13 [INFO] [AI] AI Call: 生成项目characters | Model: deepseek-chat | Status: success | Duration: 31363ms
+2026-02-21 00:57:13 [INFO] [USER] User Action: 创建项目 | 创建项目: 西游之开局拒绝大闹天宫
+2026-02-21 01:03:08 [INFO] [AI] AI Call: 生成项目episodes | Model: deepseek-chat | Status: success | Duration: 22684ms
+2026-02-21 01:03:43 [INFO] [AI] AI Call: 生成项目characters | Model: deepseek-chat | Status: success | Duration: 34395ms
+2026-02-21 01:03:43 [INFO] [USER] User Action: 创建项目 | 创建项目: 西游之开局拒绝大闹天宫
+2026-02-21 01:12:50 [INFO] [AI] AI Call: 生成项目episodes | Model: deepseek-chat | Status: success | Duration: 14079ms
+2026-02-21 01:13:19 [INFO] [AI] AI Call: 生成项目characters | Model: deepseek-chat | Status: success | Duration: 28839ms
+2026-02-21 01:13:19 [INFO] [USER] User Action: 创建项目 | 创建项目: 西游之开局拒绝大闹天宫
+2026-02-21 01:22:58 [INFO] [AI] AI Call: 生成项目theme | Model: deepseek-chat | Status: success | Duration: 2028ms
+2026-02-21 01:23:13 [INFO] [AI] AI Call: 生成项目description | Model: deepseek-chat | Status: success | Duration: 10488ms
+2026-02-21 01:23:25 [INFO] [AI] AI Call: 生成项目description | Model: deepseek-chat | Status: success | Duration: 9176ms
+2026-02-21 01:24:05 [INFO] [AI] AI Call: 生成项目background | Model: deepseek-chat | Status: success | Duration: 33677ms
+2026-02-21 01:25:01 [INFO] [AI] AI Call: 生成项目episodes | Model: deepseek-chat | Status: success | Duration: 15860ms
+2026-02-21 01:25:36 [INFO] [AI] AI Call: 生成项目characters | Model: deepseek-chat | Status: success | Duration: 35356ms
+2026-02-21 01:25:37 [INFO] [USER] User Action: 创建项目 | 创建项目: 西游之开局拒绝大闹天宫
+2026-02-21 01:33:59 [INFO] [AI] AI Call: 生成项目episodes | Model: deepseek-chat | Status: success | Duration: 20647ms
+2026-02-21 01:34:33 [INFO] [AI] AI Call: 生成项目characters | Model: deepseek-chat | Status: success | Duration: 34140ms
+2026-02-21 01:34:34 [INFO] [USER] User Action: 创建项目 | 创建项目: 西游之开局拒绝大闹天宫
+2026-02-21 02:05:38 [INFO] [USER] User Action: 创建分集 | 创建分集: 大闹天宫 (第3集)
+2026-02-21 02:17:27 [INFO] [AI] AI Call: 生成项目theme | Model: deepseek-chat | Status: success | Duration: 1769ms
+2026-02-21 02:17:39 [INFO] [AI] AI Call: 生成项目description | Model: deepseek-chat | Status: success | Duration: 9578ms
+2026-02-21 02:17:52 [INFO] [AI] AI Call: 生成项目description | Model: deepseek-chat | Status: success | Duration: 9952ms
+2026-02-21 02:18:08 [INFO] [AI] AI Call: 生成项目description | Model: deepseek-chat | Status: success | Duration: 11630ms
+2026-02-21 02:18:33 [INFO] [AI] AI Call: 生成项目theme | Model: deepseek-chat | Status: success | Duration: 2259ms
+2026-02-21 02:18:46 [INFO] [AI] AI Call: 生成项目description | Model: deepseek-chat | Status: success | Duration: 9900ms
+2026-02-21 02:19:25 [INFO] [AI] AI Call: 生成项目background | Model: deepseek-chat | Status: success | Duration: 34533ms
+2026-02-21 02:20:31 [INFO] [AI] AI Call: 生成项目episodes | Model: deepseek-chat | Status: success | Duration: 19413ms
+2026-02-21 02:21:02 [INFO] [AI] AI Call: 生成项目characters | Model: deepseek-chat | Status: success | Duration: 30513ms
+2026-02-21 02:21:03 [INFO] [USER] User Action: 创建项目 | 创建项目: 西游之开局拒绝大闹天宫
+2026-02-21 08:42:35 [INFO] [USER] User Action: 查看日志列表 | 查询条件: level=None, category=None
+2026-02-21 10:35:34 [INFO] [AI] AI Call: 生成项目theme | Model: deepseek-chat | Status: success | Duration: 2122ms
+2026-02-21 10:35:53 [INFO] [AI] AI Call: 生成项目description | Model: deepseek-chat | Status: success | Duration: 11165ms
+2026-02-21 10:36:08 [INFO] [AI] AI Call: 生成项目description | Model: deepseek-chat | Status: success | Duration: 10681ms
+2026-02-21 10:38:20 [INFO] [AI] AI Call: 生成项目theme | Model: deepseek-chat | Status: success | Duration: 1842ms
+2026-02-21 10:38:34 [INFO] [AI] AI Call: 生成项目description | Model: deepseek-chat | Status: success | Duration: 10047ms
+2026-02-21 10:38:55 [INFO] [AI] AI Call: 生成项目description | Model: deepseek-chat | Status: success | Duration: 7337ms
+2026-02-21 10:39:20 [INFO] [AI] AI Call: 生成项目background | Model: deepseek-chat | Status: success | Duration: 15619ms
+2026-02-21 10:39:55 [INFO] [AI] AI Call: 生成项目episodes | Model: deepseek-chat | Status: success | Duration: 17261ms
+2026-02-21 10:40:22 [INFO] [AI] AI Call: 生成项目characters | Model: deepseek-chat | Status: success | Duration: 26777ms
+2026-02-21 10:40:23 [INFO] [USER] User Action: 创建项目 | 创建项目: 西游之开局拒绝大闹天宫
+2026-02-21 11:17:10 [INFO] [AI] AI Call: 生成项目episodes | Model: deepseek-chat | Status: success | Duration: 13544ms
+2026-02-21 11:17:43 [INFO] [AI] AI Call: 生成项目characters | Model: deepseek-chat | Status: success | Duration: 32460ms
+2026-02-21 11:19:22 [INFO] [USER] User Action: 创建项目 | 创建项目: 西游之开局拒绝大闹天宫
+2026-02-21 12:48:02 [INFO] [AI] AI Call: 生成项目episodes | Model: deepseek-chat | Status: success | Duration: 19356ms
+2026-02-21 12:48:26 [INFO] [AI] AI Call: 生成项目characters | Model: deepseek-chat | Status: success | Duration: 23901ms
+2026-02-21 12:49:15 [INFO] [AI] AI Call: 生成项目episodes | Model: deepseek-chat | Status: success | Duration: 13926ms
+2026-02-21 12:49:40 [INFO] [AI] AI Call: 生成项目characters | Model: deepseek-chat | Status: success | Duration: 25011ms
+2026-02-21 12:52:26 [INFO] [USER] User Action: 创建项目 | 创建项目: 西游之开局拒绝大闹天宫
+2026-02-21 13:47:34 [WARNING] [USER] User Action: 删除项目 | 删除项目: 西游之开局拒绝大闹天宫
+2026-02-21 13:47:39 [WARNING] [USER] User Action: 删除项目 | 删除项目: 西游之开局拒绝大闹天宫
+2026-02-21 13:47:42 [WARNING] [USER] User Action: 删除项目 | 删除项目: 西游之开局拒绝大闹天宫
+2026-02-21 13:48:05 [INFO] [AI] AI Call: 生成项目theme | Model: deepseek-chat | Status: success | Duration: 1884ms
+2026-02-21 13:48:19 [INFO] [AI] AI Call: 生成项目description | Model: deepseek-chat | Status: success | Duration: 9277ms
+2026-02-21 13:48:50 [INFO] [AI] AI Call: 生成项目background | Model: deepseek-chat | Status: success | Duration: 26478ms
+2026-02-21 13:49:42 [INFO] [AI] AI Call: 生成项目episodes | Model: deepseek-chat | Status: success | Duration: 11600ms
+2026-02-21 13:50:17 [INFO] [AI] AI Call: 生成项目characters | Model: deepseek-chat | Status: success | Duration: 34528ms
+2026-02-21 13:50:58 [INFO] [AI] AI Call: 生成项目episodes | Model: deepseek-chat | Status: success | Duration: 12493ms
+2026-02-21 13:51:29 [INFO] [AI] AI Call: 生成项目characters | Model: deepseek-chat | Status: success | Duration: 30663ms
+2026-02-21 13:53:51 [INFO] [USER] User Action: 创建项目 | 创建项目: 西游之开局拒绝大闹天宫
+2026-02-21 13:57:24 [WARNING] [USER] User Action: 删除项目 | 删除项目: 西游之开局拒绝大闹天宫
+2026-02-21 13:59:02 [INFO] [AI] AI Call: 生成项目episodes | Model: deepseek-chat | Status: success | Duration: 13655ms
+2026-02-21 13:59:27 [INFO] [AI] AI Call: 生成项目characters | Model: deepseek-chat | Status: success | Duration: 24669ms
+2026-02-21 14:02:13 [WARNING] [USER] User Action: 删除项目 | 删除项目: 西游之开局拒绝大闹天宫
+2026-02-21 14:02:30 [INFO] [AI] AI Call: 生成项目theme | Model: deepseek-chat | Status: success | Duration: 1926ms
+2026-02-21 14:02:48 [INFO] [AI] AI Call: 生成项目description | Model: deepseek-chat | Status: success | Duration: 9023ms
+2026-02-21 14:03:25 [INFO] [AI] AI Call: 生成项目background | Model: deepseek-chat | Status: success | Duration: 32281ms
+2026-02-21 14:04:01 [INFO] [AI] AI Call: 生成项目episodes | Model: deepseek-chat | Status: success | Duration: 7289ms
+2026-02-21 14:04:28 [INFO] [AI] AI Call: 生成项目characters | Model: deepseek-chat | Status: success | Duration: 26804ms
+2026-02-21 14:09:37 [INFO] [USER] User Action: 创建项目 | 创建项目: 西游之开局拒绝大闹天宫
+2026-02-21 14:19:49 [INFO] [AI] AI Call: 生成项目theme | Model: deepseek-chat | Status: success | Duration: 2147ms
+2026-02-21 14:20:04 [INFO] [AI] AI Call: 生成项目description | Model: deepseek-chat | Status: success | Duration: 11690ms
+2026-02-21 14:20:31 [INFO] [AI] AI Call: 生成项目background | Model: deepseek-chat | Status: success | Duration: 23672ms
+2026-02-21 14:20:57 [INFO] [AI] AI Call: 生成项目episodes | Model: deepseek-chat | Status: success | Duration: 8989ms
+2026-02-21 14:21:21 [INFO] [AI] AI Call: 生成项目characters | Model: deepseek-chat | Status: success | Duration: 23472ms
+2026-02-21 14:21:24 [INFO] [USER] User Action: 创建项目 | 创建项目: 西游之开局拒绝大闹天宫
+2026-02-21 14:25:51 [INFO] [AI] AI Call: 生成项目episodes | Model: deepseek-chat | Status: success | Duration: 7870ms
+2026-02-21 14:26:10 [INFO] [AI] AI Call: 生成项目characters | Model: deepseek-chat | Status: success | Duration: 19218ms
+2026-02-21 14:31:04 [INFO] [USER] User Action: 创建项目 | 创建项目: 西游之开局拒绝大闹天宫
+2026-02-21 15:03:47 [INFO] [AI] AI Call: 生成项目episodes | Model: deepseek-chat | Status: success | Duration: 10112ms
+2026-02-21 15:04:12 [INFO] [AI] AI Call: 生成项目characters | Model: deepseek-chat | Status: success | Duration: 25760ms
+2026-02-21 15:04:39 [INFO] [AI] AI Call: 生成项目episodes | Model: deepseek-chat | Status: success | Duration: 8217ms
+2026-02-21 15:04:58 [INFO] [AI] AI Call: 生成项目characters | Model: deepseek-chat | Status: success | Duration: 18638ms
+2026-02-21 15:10:03 [INFO] [USER] User Action: 创建项目 | 创建项目: 西游之开局拒绝大闹天宫
+2026-02-21 15:20:33 [WARNING] [USER] User Action: 删除项目 | 删除项目: 西游之开局拒绝大闹天宫
+2026-02-21 15:20:36 [WARNING] [USER] User Action: 删除项目 | 删除项目: 西游之开局拒绝大闹天宫
+2026-02-21 15:20:40 [WARNING] [USER] User Action: 删除项目 | 删除项目: 西游之开局拒绝大闹天宫
+2026-02-21 15:20:43 [WARNING] [USER] User Action: 删除项目 | 删除项目: 西游之开局拒绝大闹天宫
+2026-02-21 15:21:12 [INFO] [AI] AI Call: 生成项目theme | Model: deepseek-chat | Status: success | Duration: 1825ms
+2026-02-21 15:21:23 [INFO] [AI] AI Call: 生成项目description | Model: deepseek-chat | Status: success | Duration: 8735ms
+2026-02-21 15:21:51 [INFO] [AI] AI Call: 生成项目background | Model: deepseek-chat | Status: success | Duration: 25945ms
+2026-02-21 15:22:40 [INFO] [AI] AI Call: 生成项目episodes | Model: deepseek-chat | Status: success | Duration: 15497ms
+2026-02-21 15:23:11 [INFO] [AI] AI Call: 生成项目characters | Model: deepseek-chat | Status: success | Duration: 30645ms
+2026-02-21 15:28:11 [INFO] [USER] User Action: 创建项目 | 创建项目: 西游开局之拒绝大闹天宫
+2026-02-21 15:59:10 [INFO] [AI] AI Call: 生成项目theme | Model: deepseek-chat | Status: success | Duration: 1813ms
+2026-02-21 15:59:22 [INFO] [AI] AI Call: 生成项目description | Model: deepseek-chat | Status: success | Duration: 9246ms
+2026-02-21 15:59:35 [INFO] [AI] AI Call: 生成项目description | Model: deepseek-chat | Status: success | Duration: 8464ms
+2026-02-21 16:00:06 [INFO] [AI] AI Call: 生成项目background | Model: deepseek-chat | Status: success | Duration: 28338ms
+2026-02-21 16:00:57 [INFO] [AI] AI Call: 生成项目episodes | Model: deepseek-chat | Status: success | Duration: 9548ms
+2026-02-21 16:01:24 [INFO] [AI] AI Call: 生成项目characters | Model: deepseek-chat | Status: success | Duration: 27091ms
+2026-02-21 16:06:24 [INFO] [USER] User Action: 创建项目 | 创建项目: 西游开局之拒绝大闹天宫
+2026-02-21 17:23:46 [WARNING] [USER] User Action: 删除项目 | 删除项目: 西游开局之拒绝大闹天宫
+2026-02-21 18:38:11 [INFO] [AI] AI Call: 生成项目theme | Model: deepseek-chat | Status: success | Duration: 2221ms
+2026-02-21 18:38:22 [INFO] [AI] AI Call: 生成项目description | Model: deepseek-chat | Status: success | Duration: 9123ms
+2026-02-21 18:38:49 [INFO] [AI] AI Call: 生成项目background | Model: deepseek-chat | Status: success | Duration: 23847ms
+2026-02-21 18:39:36 [INFO] [AI] AI Call: 生成项目episodes | Model: deepseek-chat | Status: success | Duration: 29074ms
+2026-02-21 18:40:05 [INFO] [AI] AI Call: 生成项目episodes | Model: deepseek-chat | Status: success | Duration: 28273ms
+2026-02-21 18:40:39 [INFO] [AI] AI Call: 生成项目characters | Model: deepseek-chat | Status: success | Duration: 33531ms
+2026-02-21 18:43:36 [INFO] [AI] AI Call: 生成项目episodes | Model: deepseek-chat | Status: success | Duration: 32816ms
+2026-02-21 18:44:00 [INFO] [AI] AI Call: 生成项目characters | Model: deepseek-chat | Status: success | Duration: 23564ms
+2026-02-21 20:11:37 [WARNING] [USER] User Action: 删除项目 | 删除项目: 西游开局之拒绝大闹天宫
+2026-02-21 20:11:42 [WARNING] [USER] User Action: 删除项目 | 删除项目: 西游开局之拒绝大闹天宫
+2026-02-21 20:11:45 [WARNING] [USER] User Action: 删除项目 | 删除项目: 西游开局之拒绝大闹天宫
+2026-02-21 20:12:26 [INFO] [AI] AI Call: 生成项目theme | Model: deepseek-chat | Status: success | Duration: 1793ms
+2026-02-21 20:12:40 [INFO] [AI] AI Call: 生成项目description | Model: deepseek-chat | Status: success | Duration: 10769ms
+2026-02-21 20:13:06 [INFO] [AI] AI Call: 生成项目background | Model: deepseek-chat | Status: success | Duration: 22668ms
+2026-02-21 20:13:50 [INFO] [AI] AI Call: 生成项目episodes | Model: deepseek-chat | Status: success | Duration: 24186ms
+2026-02-21 20:14:20 [INFO] [AI] AI Call: 生成项目characters | Model: deepseek-chat | Status: success | Duration: 29381ms
+2026-02-21 20:15:36 [INFO] [AI] AI Call: 生成项目episodes | Model: deepseek-chat | Status: success | Duration: 27259ms
+2026-02-21 20:16:03 [INFO] [AI] AI Call: 生成项目characters | Model: deepseek-chat | Status: success | Duration: 27005ms
+2026-02-21 20:25:39 [WARNING] [USER] User Action: 删除项目 | 删除项目: 西游开局之拒绝大闹天宫
+2026-02-21 20:25:43 [WARNING] [USER] User Action: 删除项目 | 删除项目: 西游开局之拒绝大闹天宫
+2026-02-21 20:26:16 [INFO] [AI] AI Call: 生成项目theme | Model: deepseek-chat | Status: success | Duration: 1672ms
+2026-02-21 20:26:38 [INFO] [AI] AI Call: 生成项目description | Model: deepseek-chat | Status: success | Duration: 8859ms
+2026-02-21 20:26:52 [INFO] [AI] AI Call: 生成项目description | Model: deepseek-chat | Status: success | Duration: 10511ms
+2026-02-21 20:27:25 [INFO] [AI] AI Call: 生成项目background | Model: deepseek-chat | Status: success | Duration: 28692ms
+2026-02-21 20:28:03 [INFO] [AI] AI Call: 生成项目episodes | Model: deepseek-chat | Status: success | Duration: 16751ms
+2026-02-21 20:28:33 [INFO] [AI] AI Call: 生成项目characters | Model: deepseek-chat | Status: success | Duration: 30236ms
+2026-02-21 20:33:35 [INFO] [USER] User Action: 创建项目 | 创建项目: 西游开局之拒绝大闹天宫
+2026-02-21 21:42:44 [INFO] [USER] User Action: 更新项目 | 更新项目: 西游开局之拒绝大闹天宫
+2026-03-01 08:57:36 [INFO] [AI] AI Call: 生成项目theme | Model: deepseek-chat | Status: success | Duration: 1448ms
+2026-03-01 08:57:49 [INFO] [AI] AI Call: 生成项目description | Model: deepseek-chat | Status: success | Duration: 9272ms
+2026-03-01 08:58:38 [INFO] [AI] AI Call: 生成项目background | Model: deepseek-chat | Status: success | Duration: 43008ms
+2026-03-01 08:59:25 [INFO] [AI] AI Call: 生成项目episodes | Model: deepseek-chat | Status: success | Duration: 14658ms
+2026-03-01 08:59:25 [INFO] [USER] User Action: 创建项目 | 创建项目: 西游之拒绝大闹天宫
+2026-03-01 15:36:38 [INFO] [USER] User Action: 更新分集 | 更新分集: 弼马温的疑云 (第1集)
+2026-03-01 15:36:57 [INFO] [USER] User Action: 发布分集 | 发布分集: 弼马温的疑云 (第1集)
+2026-03-01 15:41:46 [INFO] [USER] User Action: 更新分集 | 更新分集: 弼马温的疑云 (第1集)
+2026-03-01 16:26:34 [INFO] [AI] AI Call: 生成项目theme | Model: deepseek-chat | Status: success | Duration: 2364ms
+2026-03-01 16:26:51 [INFO] [AI] AI Call: 生成项目description | Model: deepseek-chat | Status: success | Duration: 13858ms
+2026-03-01 16:27:53 [INFO] [AI] AI Call: 生成项目background | Model: deepseek-chat | Status: success | Duration: 58599ms
+2026-03-08 17:38:14 [INFO] [USER] User Action: 添加角色到角色库 | 添加了 6 个角色
+2026-03-08 17:38:17 [INFO] [USER] User Action: 添加角色到角色库 | 添加了 6 个角色
+2026-03-08 18:06:08 [INFO] [USER] User Action: 查看日志列表 | 查询条件: level=None, category=None
+2026-03-08 18:07:40 [INFO] [USER] User Action: 添加角色到角色库 | 添加了 6 个角色
+2026-03-10 00:05:38 [INFO] [USER] User Action: 添加角色到角色库 | 添加了 6 个角色
+2026-03-11 21:42:37 [INFO] [USER] User Action: 更新项目 | 更新项目: 西游之拒绝大闹天宫
+2026-03-14 21:35:28 [INFO] [AI] AI Call: 生成项目theme | Model: deepseek-chat | Status: success | Duration: 3627ms
+2026-03-14 21:35:57 [INFO] [AI] AI Call: 生成项目description | Model: deepseek-chat | Status: success | Duration: 21747ms
+2026-03-14 21:37:02 [INFO] [AI] AI Call: 生成项目background | Model: deepseek-chat | Status: success | Duration: 58559ms
+2026-03-14 21:38:19 [INFO] [AI] AI Call: 生成项目background | Model: deepseek-chat | Status: success | Duration: 72025ms
+2026-03-14 21:39:45 [INFO] [AI] AI Call: 生成项目background | Model: deepseek-chat | Status: success | Duration: 69226ms
+2026-03-14 21:40:21 [INFO] [AI] AI Call: 生成项目theme | Model: deepseek-chat | Status: success | Duration: 2519ms
+2026-03-14 21:40:50 [INFO] [AI] AI Call: 生成项目description | Model: deepseek-chat | Status: success | Duration: 20625ms
+2026-03-14 21:42:12 [INFO] [AI] AI Call: 生成项目background | Model: deepseek-chat | Status: success | Duration: 62721ms
+2026-03-14 21:43:35 [INFO] [AI] AI Call: 生成项目episodes | Model: deepseek-chat | Status: success | Duration: 48980ms
+2026-03-14 21:43:35 [INFO] [USER] User Action: 创建项目 | 创建项目: 2050年，极端严寒来袭，末日降临
+2026-03-14 22:29:05 [INFO] [USER] User Action: 添加角色到角色库 | 添加了 5 个角色
+2026-03-14 22:40:22 [INFO] [USER] User Action: 添加角色到角色库 | 添加了 5 个角色
+2026-03-14 23:01:32 [INFO] [USER] User Action: 添加角色到角色库 | 添加了 5 个角色
+2026-03-14 23:02:00 [INFO] [USER] User Action: 添加角色到角色库 | 添加了 4 个角色
+2026-03-14 23:02:05 [INFO] [USER] User Action: 添加角色到角色库 | 添加了 4 个角色
+2026-03-14 23:02:07 [INFO] [USER] User Action: 添加角色到角色库 | 添加了 4 个角色
+2026-03-14 23:16:55 [INFO] [USER] User Action: 添加角色到角色库 | 添加了 4 个角色
+2026-03-14 23:16:58 [INFO] [USER] User Action: 添加角色到角色库 | 添加了 4 个角色
+2026-03-14 23:17:04 [INFO] [USER] User Action: 添加角色到角色库 | 添加了 4 个角色
+2026-03-14 23:17:06 [INFO] [USER] User Action: 添加角色到角色库 | 添加了 4 个角色
+2026-03-15 00:36:36 [INFO] [USER] User Action: 查看日志列表 | 查询条件: level=None, category=None
+2026-03-15 00:39:03 [INFO] [USER] User Action: 查看日志列表 | 查询条件: level=None, category=None
+2026-03-15 09:25:25 [INFO] [USER] User Action: 添加角色到角色库 | 添加了 4 个角色
+2026-03-15 10:08:12 [INFO] [USER] User Action: 添加角色到角色库 | 添加了 4 个角色
+2026-03-15 10:08:21 [INFO] [USER] User Action: 添加角色到角色库 | 添加了 4 个角色
+2026-03-15 10:08:45 [INFO] [USER] User Action: 添加角色到角色库 | 添加了 4 个角色
+2026-03-15 10:28:27 [INFO] [USER] User Action: 添加角色到角色库 | 添加了 5 个角色
+2026-03-15 10:28:46 [INFO] [USER] User Action: 添加角色到角色库 | 添加了 4 个角色
+2026-03-15 10:28:51 [INFO] [USER] User Action: 添加角色到角色库 | 添加了 4 个角色
+2026-03-15 10:36:20 [INFO] [USER] User Action: 添加角色到角色库 | 添加了 5 个角色
+2026-03-15 10:36:21 [INFO] [USER] User Action: 添加角色到角色库 | 添加了 5 个角色
+2026-03-15 10:53:03 [INFO] [USER] User Action: 添加角色到角色库 | 添加了 4 个角色
+2026-03-15 10:56:53 [INFO] [USER] User Action: 添加角色到角色库 | 添加了 5 个角色
+2026-03-15 10:56:54 [INFO] [USER] User Action: 添加角色到角色库 | 添加了 5 个角色
+2026-03-15 10:56:57 [INFO] [USER] User Action: 添加角色到角色库 | 添加了 5 个角色
+2026-03-15 10:57:09 [INFO] [USER] User Action: 添加角色到角色库 | 添加了 5 个角色
+2026-03-15 10:57:32 [INFO] [USER] User Action: 添加角色到角色库 | 添加了 5 个角色
+2026-03-15 10:57:43 [INFO] [USER] User Action: 添加角色到角色库 | 添加了 5 个角色
+2026-03-15 11:32:50 [INFO] [USER] User Action: 添加角色到角色库 | 添加了 4 个角色
+2026-03-15 11:32:52 [INFO] [USER] User Action: 添加角色到角色库 | 添加了 4 个角色
+2026-03-15 11:32:57 [INFO] [USER] User Action: 添加角色到角色库 | 添加了 4 个角色
+2026-03-15 11:37:14 [INFO] [USER] User Action: 添加角色到角色库 | 添加了 5 个角色
+2026-03-15 11:37:15 [INFO] [USER] User Action: 添加角色到角色库 | 添加了 5 个角色
+2026-03-15 11:37:19 [INFO] [USER] User Action: 添加角色到角色库 | 添加了 5 个角色
+2026-03-15 11:38:09 [INFO] [USER] User Action: 添加角色到角色库 | 添加了 5 个角色
+2026-03-15 11:38:10 [INFO] [USER] User Action: 添加角色到角色库 | 添加了 5 个角色
+2026-03-15 12:16:35 [INFO] [USER] User Action: 添加角色到角色库 | 添加了 4 个角色
+2026-03-15 12:20:45 [INFO] [USER] User Action: 添加角色到角色库 | 添加了 5 个角色
+2026-03-15 12:20:46 [INFO] [USER] User Action: 添加角色到角色库 | 添加了 5 个角色
+2026-03-15 12:24:10 [INFO] [USER] User Action: 添加角色到角色库 | 添加了 4 个角色
+2026-03-15 12:24:12 [INFO] [USER] User Action: 添加角色到角色库 | 添加了 4 个角色
+2026-03-15 12:24:29 [INFO] [USER] User Action: 添加角色到角色库 | 添加了 4 个角色
+2026-03-15 12:24:51 [INFO] [USER] User Action: 添加角色到角色库 | 添加了 4 个角色
+2026-03-15 12:29:12 [INFO] [USER] User Action: 添加角色到角色库 | 添加了 5 个角色
+2026-03-15 12:31:30 [INFO] [USER] User Action: 添加角色到角色库 | 添加了 5 个角色
+2026-03-15 12:34:56 [INFO] [USER] User Action: 添加角色到角色库 | 添加了 5 个角色
+2026-03-15 12:40:09 [INFO] [USER] User Action: 添加角色到角色库 | 添加了 5 个角色
+2026-03-15 12:48:35 [INFO] [USER] User Action: 添加角色到角色库 | 添加了 5 个角色
+2026-03-15 12:48:50 [INFO] [USER] User Action: 添加角色到角色库 | 添加了 4 个角色
+2026-03-15 15:25:52 [INFO] [USER] User Action: 添加角色到角色库 | 添加了 6 个角色

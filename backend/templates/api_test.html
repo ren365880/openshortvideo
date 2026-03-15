@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>API Test</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <h1>API v1 Test</h1>
+    <button id="testBtn">Test Create Task</button>
+    <div id="result"></div>
+    
+    <script>
+        $('#testBtn').click(function() {
+            $('#result').html('Sending request...');
+            
+            $.ajax({
+                url: '/api/v1/tasks',
+                method: 'POST',
+                contentType: 'application/json',
+                dataType: 'json',
+                data: JSON.stringify({
+                    idea: 'A cat and a dog playing',
+                    user_requirement: 'Test',
+                    style: 'Cartoon',
+                    mode: 'stepwise',
+                    work_dir: 'test_dir'
+                }),
+                success: function(response, textStatus, jqXHR) {
+                    console.log('Success:', response);
+                    console.log('Status:', textStatus);
+                    console.log('HTTP Code:', jqXHR.status);
+                    $('#result').html('<pre>Success!\n' + JSON.stringify(response, null, 2) + '</pre>');
+                },
+                error: function(xhr, textStatus, errorThrown) {
+                    console.error('Error:', xhr);
+                    console.error('Status:', textStatus);
+                    console.error('Error thrown:', errorThrown);
+                    console.error('Response text:', xhr.responseText);
+                    
+                    var errorMsg = 'Unknown error';
+                    try {
+                        if (xhr.responseJSON && xhr.responseJSON.message) {
+                            errorMsg = xhr.responseJSON.message;
+                        } else if (xhr.responseText) {
+                            var resp = JSON.parse(xhr.responseText);
+                            errorMsg = resp.message || resp.error || 'Unknown error';
+                        }
+                    } catch (e) {
+                        errorMsg = xhr.statusText || 'Server error';
+                    }
+                    
+                    $('#result').html('<pre>Error: ' + errorMsg + '\nStatus: ' + textStatus + '\nHTTP: ' + xhr.status + '</pre>');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

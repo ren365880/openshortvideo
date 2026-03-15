@@ -1,0 +1,2543 @@
+{% extends "layout.html" %}
+
+{% block title %}灵犀Agent - 灵犀剧能{% endblock %}
+
+{% block styles %}
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, minimum-scale=0.1">
+    <link rel="icon" href="static/images/favicon.ico" type="image/png">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/lingxi_agent.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --lx-primary: #4F46E5;
+            --lx-primary-hover: #4338CA;
+            --lx-background: #ffffff;
+            --lx-foreground: #111827;
+            --lx-muted-foreground: #6B7280;
+            --lx-border: #e5e7eb;
+            --lx-card: #ffffff;
+            --lx-card-foreground: #111827;
+            --lx-input: #ffffff;
+            --lx-ring: #4F46E5;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
+            min-height: 100vh;
+        }
+
+        .lx-page-wrapper {
+            display: flex;
+            flex-direction: column;
+            min-height: calc(100vh - 70px);
+        }
+
+        .lx-main-content {
+            flex: 1;
+            padding: 0;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+
+        .lx-bg {
+            background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
+        }
+
+        .lx-section {
+            padding: 3rem 1.5rem;
+        }
+
+        @media (min-width: 768px) {
+            .lx-section {
+                padding: 4rem 2rem;
+            }
+        }
+
+        .lx-max-w-3xl {
+            max-width: 48rem;
+        }
+
+        .lx-max-w-5xl {
+            max-width: 64rem;
+        }
+
+        .lx-max-w-6xl {
+            max-width: 72rem;
+        }
+
+        .lx-mx-auto {
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .lx-text-center {
+            text-align: center;
+        }
+
+        .lx-mb-6 {
+            margin-bottom: 1.5rem;
+        }
+
+        .lx-mb-2 {
+            margin-bottom: 0.5rem;
+        }
+
+        .lx-mb-8 {
+            margin-bottom: 2rem;
+        }
+
+        .lx-px-4 {
+            padding-left: 1rem;
+            padding-right: 1rem;
+        }
+
+        .lx-pt-16 {
+            padding-top: 4rem;
+        }
+
+        .lx-pb-8 {
+            padding-bottom: 2rem;
+        }
+
+        @media (min-width: 768px) {
+            .lx-pt-24 {
+                padding-top: 6rem;
+            }
+            .lx-pb-12 {
+                padding-bottom: 3rem;
+            }
+        }
+
+        .lx-text-2xl {
+            font-size: 1.5rem;
+        }
+
+        .lx-text-3xl {
+            font-size: 1.875rem;
+        }
+
+        @media (min-width: 768px) {
+            .lx-text-3xl {
+                font-size: 2.25rem;
+            }
+            .lx-text-4xl {
+                font-size: 2.5rem;
+            }
+        }
+
+        .lx-font-semibold {
+            font-weight: 600;
+        }
+
+        .lx-font-bold {
+            font-weight: 700;
+        }
+
+        .lx-leading-relaxed {
+            line-height: 1.625;
+        }
+
+        .lx-text-foreground {
+            color: var(--lx-foreground);
+        }
+
+        .lx-text-muted-foreground {
+            color: var(--lx-muted-foreground);
+        }
+
+        .lx-w-full {
+            width: 100%;
+        }
+
+        .lx-rounded-2xl {
+            border-radius: 1rem;
+        }
+
+        .lx-rounded-lg {
+            border-radius: 0.5rem;
+        }
+
+        .lx-rounded-full {
+            border-radius: 9999px;
+        }
+
+        .lx-border {
+            border: 1px solid var(--lx-border);
+        }
+
+        .lx-bg-card {
+            background-color: var(--lx-card);
+        }
+
+        .lx-shadow-sm {
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+        }
+
+        .lx-shadow-md {
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        .lx-shadow-lg {
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+
+        .lx-transition-all {
+            transition: all 0.3s ease;
+        }
+
+        .lx-duration-300 {
+            transition-duration: 0.3s;
+        }
+
+        .lx-flex {
+            display: flex;
+        }
+
+        .lx-items-center {
+            align-items: center;
+        }
+
+        .lx-justify-center {
+            justify-content: center;
+        }
+
+        .lx-justify-between {
+            justify-content: space-between;
+        }
+
+        .lx-gap-2 {
+            gap: 0.5rem;
+        }
+
+        .lx-gap-3 {
+            gap: 0.75rem;
+        }
+
+        .lx-gap-4 {
+            gap: 1rem;
+        }
+
+        .lx-flex-col {
+            flex-direction: column;
+        }
+
+        .lx-flex-1 {
+            flex: 1 1 0%;
+        }
+
+        .lx-shrink-0 {
+            flex-shrink: 0;
+        }
+
+        .lx-grid {
+            display: grid;
+        }
+
+        .lx-grid-cols-1 {
+            grid-template-columns: repeat(1, minmax(0, 1fr));
+        }
+
+        @media (min-width: 640px) {
+            .lx-grid-cols-2 {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .lx-grid-cols-3 {
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+            }
+        }
+
+        .lx-aspect-9-12 {
+            aspect-ratio: 9 / 12;
+        }
+
+        .lx-relative {
+            position: relative;
+        }
+
+        .lx-absolute {
+            position: absolute;
+        }
+
+        .lx-inset-0 {
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+        }
+
+        .lx-overflow-hidden {
+            overflow: hidden;
+        }
+
+        .lx-object-cover {
+            object-fit: cover;
+        }
+
+        .lx-cursor-pointer {
+            cursor: pointer;
+        }
+
+        .lx-hover-scale-102:hover {
+            transform: scale(1.02);
+        }
+
+        .lx-group:hover .lx-group-hover-scale-105 {
+            transform: scale(1.05);
+        }
+
+        .lx-transform {
+            transform: translateZ(0);
+        }
+
+        .lx-transition-transform {
+            transition: transform 0.3s ease;
+        }
+
+        .lx-bg-gradient-to-t {
+            background: linear-gradient(to top, var(--tw-gradient-to), transparent);
+        }
+
+        .lx-from-black-70 {
+            --tw-gradient-from: rgba(0, 0, 0, 0.7);
+            --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, rgba(0, 0, 0, 0));
+        }
+
+        .lx-to-transparent {
+            --tw-gradient-to: transparent;
+        }
+
+        .lx-text-white {
+            color: white;
+        }
+
+        .lx-text-sm {
+            font-size: 0.875rem;
+        }
+
+        .lx-font-medium {
+            font-weight: 500;
+        }
+
+        .lx-p-3 {
+            padding: 0.75rem;
+        }
+
+        .lx-p-4 {
+            padding: 1rem;
+        }
+
+        .lx-line-clamp-2 {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .lx-bg-black-30 {
+            background-color: rgba(0, 0, 0, 0.3);
+        }
+
+        .lx-opacity-0 {
+            opacity: 0;
+        }
+
+        .lx-group:hover .lx-group-hover-opacity-100 {
+            opacity: 1;
+        }
+
+        .lx-transition-opacity {
+            transition: opacity 0.3s ease;
+        }
+
+        .lx-h-14 {
+            height: 3.5rem;
+        }
+
+        .lx-w-14 {
+            width: 3.5rem;
+        }
+
+        .lx-bg-white-90 {
+            background-color: rgba(255, 255, 255, 0.9);
+        }
+
+        .lx-hover-scale-110:hover {
+            transform: scale(1.1);
+        }
+
+        .lx-transition-scale {
+            transition: transform 0.3s ease;
+        }
+
+        .lx-h-9 {
+            height: 2.25rem;
+        }
+
+        .lx-w-9 {
+            width: 2.25rem;
+        }
+
+        .lx-rounded-xl {
+            border-radius: 0.75rem;
+        }
+
+        .lx-bg-muted {
+            background-color: #f1f5f9;
+        }
+
+        .lx-animate-pulse {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.5;
+            }
+        }
+
+        .lx-leading-relaxed {
+            line-height: 1.625;
+        }
+
+        .lx-line-clamp-1 {
+            display: -webkit-box;
+            -webkit-line-clamp: 1;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .lx-hover-border-primary-30:hover {
+            border-color: rgba(79, 70, 229, 0.3);
+        }
+
+        .lx-whitespace-nowrap {
+            white-space: nowrap;
+        }
+
+        .lx-flex-wrap {
+            flex-wrap: wrap;
+        }
+
+        .lx-h-6 {
+            height: 1.5rem;
+        }
+
+        .lx-w-6 {
+            width: 1.5rem;
+        }
+
+        .lx-rounded-full {
+            border-radius: 9999px;
+        }
+
+        .lx-object-contain {
+            object-fit: contain;
+        }
+
+        .lx-hover-opacity-80:hover {
+            opacity: 0.8;
+        }
+
+        .lx-transition-all {
+            transition: all 0.2s ease;
+        }
+
+        .lx-text-base {
+            font-size: 1rem;
+        }
+
+        .lx-min-h-\[80px\] {
+            min-height: 80px;
+        }
+
+        .lx-resize-none {
+            resize: none;
+        }
+
+        .lx-outline-none {
+            outline: none;
+        }
+
+        .lx-bg-transparent {
+            background-color: transparent;
+        }
+
+        .lx-placeholder-text-muted-foreground::placeholder {
+            color: var(--lx-muted-foreground);
+        }
+
+        .lx-border-none {
+            border: none;
+        }
+
+        .lx-w-8 {
+            width: 2rem;
+        }
+
+        .lx-h-8 {
+            height: 2rem;
+        }
+
+        .lx-w-10 {
+            width: 2.5rem;
+        }
+
+        .lx-h-10 {
+            height: 2.5rem;
+        }
+
+        .lx-bg-primary {
+            background-color: var(--lx-primary);
+        }
+
+        .lx-hover-bg-primary-90:hover {
+            background-color: rgba(79, 70, 229, 0.9);
+        }
+
+        .lx-text-primary-foreground {
+            color: white;
+        }
+
+        .lx-sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border-width: 0;
+        }
+
+        .lx-inline-flex {
+            display: inline-flex;
+        }
+
+        .lx-whitespace-nowrap {
+            white-space: nowrap;
+        }
+
+        .lx-disabled-opacity-50 {
+            opacity: 0.5;
+        }
+
+        .lx-disabled-cursor-not-allowed {
+            cursor: not-allowed;
+        }
+
+        .lx-pointer-events-none {
+            pointer-events: none;
+        }
+
+        .lx-overflow-x-auto {
+            overflow-x: auto;
+        }
+
+        .lx-overflow-hidden {
+            overflow: hidden;
+        }
+
+        .lx-snap-x {
+            scroll-snap-type: x var(--scroll-snap-strictness);
+        }
+
+        .lx-snap-center {
+            scroll-snap-align: center;
+        }
+
+        .lx-snap-mandatory {
+            --scroll-snap-strictness: mandatory;
+        }
+
+        .lx-scrollbar-hide {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        .lx-scrollbar-hide::-webkit-scrollbar {
+            display: none;
+        }
+
+        .lx-h-\[180px\] {
+            height: 180px;
+        }
+
+        @media (min-width: 768px) {
+            .lx-h-\[160px\] {
+                height: 160px;
+            }
+        }
+
+        .lx-backdrop-blur-md {
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+
+        .lx-bg-white-95 {
+            background-color: rgba(255, 255, 255, 0.95);
+        }
+
+        .lx-h-full {
+            height: 100%;
+        }
+
+        .lx-min-w-0 {
+            min-width: 0;
+        }
+
+        .lx-hidden {
+            display: none;
+        }
+
+        @media (min-width: 768px) {
+            .lx-md-flex {
+                display: flex;
+            }
+            .lx-md-hidden {
+                display: none;
+            }
+            .lx-md-block {
+                display: block;
+            }
+            .lx-md-items-end {
+                align-items: flex-end;
+            }
+            .lx-md-justify-between {
+                justify-content: space-between;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .lx-lg-grid-cols-3 {
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+            }
+            .lx-lg-gap-4 {
+                gap: 1rem;
+            }
+        }
+
+        .lx-example-card {
+            position: relative;
+            overflow: hidden;
+            border-radius: 0.5rem;
+            background: var(--lx-card);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            height: 100%;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .lx-example-card:hover {
+            transform: scale(1.02);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        }
+
+        .lx-example-card img,
+        .lx-example-card video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .lx-example-card:hover img,
+        .lx-example-card:hover video {
+            transform: scale(1.05);
+        }
+
+        .lx-example-card .lx-play-overlay {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0,0,0,0.3);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .lx-example-card:hover .lx-play-overlay {
+            opacity: 1;
+        }
+
+        .lx-example-card .lx-play-button {
+            width: 3.5rem;
+            height: 3.5rem;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transform: scale(0.9);
+            transition: transform 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .lx-example-card:hover .lx-play-button {
+            transform: scale(1);
+        }
+
+        .lx-example-card .lx-card-title {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 0.75rem;
+            background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);
+            color: white;
+            font-size: 0.875rem;
+            font-weight: 500;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        /* Function Button Styles */
+        .lx-function-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            padding: 0.75rem 0;
+            margin-top: 0.5rem;
+            border-top: 1px solid var(--lx-border);
+        }
+
+        .lx-function-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .lx-func-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.375rem;
+            padding: 0.375rem 0.75rem;
+            font-size: 0.8125rem;
+            font-weight: 500;
+            color: var(--lx-muted-foreground);
+            background: #f8fafc;
+            border: 1px solid var(--lx-border);
+            border-radius: 9999px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .lx-func-btn:hover {
+            background: #f1f5f9;
+            border-color: rgba(79, 70, 229, 0.3);
+            color: var(--lx-foreground);
+        }
+
+        .lx-func-btn i {
+            font-size: 0.75rem;
+        }
+
+        .lx-func-btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: transparent;
+        }
+
+        .lx-func-btn-primary:hover {
+            background: linear-gradient(135deg, #5a6fd6 0%, #6a4190 100%);
+            color: white;
+            border-color: transparent;
+        }
+
+        .lx-func-btn-more {
+            background: white;
+            border-style: dashed;
+        }
+
+        .lx-func-btn-more:hover {
+            background: #f8fafc;
+            border-color: var(--lx-primary);
+            color: var(--lx-primary);
+        }
+
+        /* Modal Styles */
+        .lx-modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(4px);
+        }
+
+        .lx-modal-overlay.active {
+            display: flex;
+        }
+
+        .lx-modal-content {
+            background: linear-gradient(135deg, #1e293b, #0f172a);
+            border-radius: 1rem;
+            width: 90%;
+            max-width: 400px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 16px 32px rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            animation: lxModalAppear 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes lxModalAppear {
+            from {
+                opacity: 0;
+                transform: translateY(40px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .lx-modal-header {
+            padding: 1.375rem;
+            background: rgba(30, 41, 59, 0.8);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top-left-radius: 1rem;
+            border-top-right-radius: 1rem;
+        }
+
+        .lx-modal-header h2 {
+            font-size: 1.125rem;
+            color: #4facfe;
+            display: flex;
+            align-items: center;
+            gap: 0.625rem;
+        }
+
+        .lx-modal-close {
+            background: transparent;
+            border: none;
+            color: #94a3b8;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: color 0.3s;
+            width: 2.25rem;
+            height: 2.25rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .lx-modal-close:hover {
+            color: #f87171;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .lx-modal-body {
+            padding: 1.25rem 0;
+        }
+
+        .lx-more-feature-item {
+            display: flex;
+            align-items: center;
+            padding: 1.25rem 1.5625rem;
+            transition: all 0.3s ease;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            cursor: pointer;
+        }
+
+        .lx-more-feature-item:last-child {
+            border-bottom: none;
+        }
+
+        .lx-more-feature-item:hover {
+            background: rgba(30, 41, 59, 0.7);
+        }
+
+        .lx-more-feature-icon {
+            font-size: 1.125rem;
+            width: 3.125rem;
+            color: #4facfe;
+            text-align: center;
+        }
+
+        .lx-more-feature-text {
+            flex: 1;
+        }
+
+        .lx-more-feature-title {
+            font-size: 1rem;
+            color: #e2e8f0;
+        }
+
+        .lx-feature-card {
+            border-radius: 0.75rem;
+            border: 1px solid var(--lx-border);
+            background: var(--lx-card);
+            padding: 1rem;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            min-width: 280px;
+            scroll-snap-align: center;
+        }
+
+        .lx-feature-card:hover {
+            border-color: rgba(79, 70, 229, 0.3);
+        }
+
+        .lx-feature-icon {
+            width: 2.25rem;
+            height: 2.25rem;
+            border-radius: 0.5rem;
+            background: #f1f5f9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--lx-muted-foreground);
+        }
+
+        .lx-feature-title {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--lx-card-foreground);
+            line-height: 1.25rem;
+        }
+
+        .lx-feature-desc {
+            font-size: 0.75rem;
+            color: var(--lx-muted-foreground);
+            line-height: 1.375;
+        }
+
+        .lx-features-scroll {
+            display: flex;
+            gap: 1rem;
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            padding-bottom: 0.5rem;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+        }
+
+        .lx-features-scroll::-webkit-scrollbar {
+            display: none;
+        }
+
+        .lx-nav-btn {
+            width: 2rem;
+            height: 2rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 1px solid var(--lx-border);
+            background: white;
+            color: var(--lx-muted-foreground);
+            flex-shrink: 0;
+        }
+
+        .lx-nav-btn:hover {
+            background: #f1f5f9;
+            border-color: var(--lx-primary);
+            color: var(--lx-primary);
+        }
+
+        .lx-platform-icon {
+            width: 1.5rem;
+            height: 1.5rem;
+            border-radius: 50%;
+            object-fit: contain;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .lx-platform-icon:hover {
+            transform: scale(1.1);
+            opacity: 0.8;
+        }
+
+        .lx-send-btn {
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 50%;
+            background: var(--lx-primary);
+            color: white;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            flex-shrink: 0;
+        }
+
+        .lx-send-btn:hover {
+            background: var(--lx-primary-hover);
+            transform: scale(1.05);
+        }
+
+        .lx-attach-btn {
+            width: 2rem;
+            height: 2rem;
+            border-radius: 50%;
+            border: 1px solid var(--lx-border);
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            color: var(--lx-muted-foreground);
+        }
+
+        .lx-attach-btn:hover {
+            background: #f1f5f9;
+            border-color: var(--lx-primary);
+            color: var(--lx-primary);
+        }
+
+        .lx-input-area {
+            background: white;
+            border-radius: 1rem;
+            border: 1px solid var(--lx-border);
+            padding: 1rem;
+            transition: all 0.3s ease;
+            position: relative;
+            z-index: 10;
+        }
+
+        .lx-input-area:hover {
+            border-color: rgba(0,0,0,0.1);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        }
+
+        .lx-user-input {
+            width: 100%;
+            min-height: 80px;
+            border: none;
+            outline: none;
+            resize: none;
+            font-size: 1rem;
+            line-height: 1.5;
+            background: transparent;
+            color: var(--lx-foreground);
+        }
+
+        .lx-user-input::placeholder {
+            color: var(--lx-muted-foreground);
+        }
+
+        .lx-platform-bar {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding-top: 0.75rem;
+            margin-top: 0.25rem;
+            border-top: 1px solid var(--lx-border);
+            flex-wrap: wrap;
+        }
+
+        .lx-platform-label {
+            font-size: 0.875rem;
+            color: var(--lx-muted-foreground);
+            white-space: nowrap;
+        }
+
+        .lx-example-grid {
+            display: grid;
+            grid-template-columns: repeat(1, 1fr);
+            gap: 0.5rem;
+        }
+
+        @media (min-width: 640px) {
+            .lx-example-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 1rem;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .lx-example-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        .lx-hero-section {
+            min-height: 60vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .lx-section-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--lx-foreground);
+            margin-bottom: 0.5rem;
+        }
+
+        @media (min-width: 768px) {
+            .lx-section-title {
+                font-size: 1.875rem;
+            }
+        }
+
+        .lx-section-desc {
+            font-size: 0.875rem;
+            color: var(--lx-muted-foreground);
+        }
+
+        @media (min-width: 768px) {
+            .lx-section-desc {
+                font-size: 1rem;
+            }
+        }
+
+        .lx-workflow-section {
+            padding: 4rem 1rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        @media (min-width: 768px) {
+            .lx-workflow-section {
+                padding: 6rem 2rem;
+            }
+        }
+
+        .lx-workflow-card {
+            background: white;
+            border-radius: 1.5rem;
+            padding: 2rem 1.5rem;
+            position: relative;
+            z-index: 10;
+            backdrop-filter: blur(12px);
+            background: rgba(255,255,255,0.95);
+        }
+
+        @media (min-width: 768px) {
+            .lx-workflow-card {
+                padding: 3rem 2rem;
+            }
+        }
+
+        .lx-workflow-title {
+            text-align: center;
+            margin-bottom: 3rem;
+            color: var(--lx-muted-foreground);
+            font-size: 1rem;
+        }
+
+        @media (min-width: 768px) {
+            .lx-workflow-title {
+                font-size: 1.125rem;
+            }
+        }
+
+        .lx-content-maker {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            margin: 0 auto 2rem;
+        }
+
+        @media (min-width: 768px) {
+            .lx-content-maker {
+                width: 280px;
+                height: 280px;
+            }
+        }
+
+        .lx-maker-ring {
+            position: absolute;
+            inset: -20px;
+            border-radius: 50%;
+            border: 1px dashed rgba(59, 130, 246, 0.3);
+            animation: spin 60s linear infinite;
+        }
+
+        .lx-maker-center {
+            position: absolute;
+            inset: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #eff6ff 0%, #f5f3ff 50%, #ecfeff 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid rgba(59, 130, 246, 0.2);
+        }
+
+        .lx-maker-text {
+            font-weight: 600;
+            color: var(--lx-foreground);
+            font-size: 0.875rem;
+            text-align: center;
+        }
+
+        .lx-maker-btn {
+            position: absolute;
+            padding: 0.5rem 1.25rem;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            border: 1px solid var(--lx-border);
+            background: white;
+            color: var(--lx-foreground);
+        }
+
+        .lx-maker-btn:hover {
+            transform: scale(1.05);
+            border-color: var(--lx-primary);
+            box-shadow: 0 6px 20px rgba(79, 70, 229, 0.2);
+        }
+
+        .lx-maker-btn.active {
+            background: var(--lx-primary);
+            color: white;
+            border-color: var(--lx-primary);
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(79, 70, 229, 0.3);
+        }
+
+        .lx-maker-btn.pos-1 { top: -10%; left: 50%; transform: translateX(-50%); }
+        .lx-maker-btn.pos-2 { top: -10%; right: -30%; }
+        .lx-maker-btn.pos-3 { bottom: 20%; right: -40%; }
+        .lx-maker-btn.pos-4 { bottom: -15%; right: -10%; }
+        .lx-maker-btn.pos-5 { bottom: -15%; left: -10%; }
+        .lx-maker-btn.pos-6 { bottom: 20%; left: -40%; }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .lx-flow-arrow {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            color: var(--lx-muted-foreground);
+            font-size: 0.875rem;
+            margin: 1rem 0;
+        }
+
+        .lx-flow-arrow svg {
+            width: 1.25rem;
+            height: 1.25rem;
+        }
+
+        .lx-flow-dot {
+            width: 0.5rem;
+            height: 0.5rem;
+            border-radius: 50%;
+            background: var(--lx-primary);
+            box-shadow: 0 0 6px 2px rgba(79, 70, 229, 0.4);
+            animation: energyFlow 1.5s ease-in-out infinite;
+        }
+
+        @keyframes energyFlow {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(0.8); }
+        }
+
+        .lx-demand-card {
+            position: relative;
+            width: 160px;
+            height: 160px;
+            margin: 0 auto;
+        }
+
+        .lx-demand-center {
+            position: absolute;
+            inset: 0;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #fdf4ff 0%, #fae8ff 50%, #ffedd5 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid rgba(168, 85, 247, 0.2);
+        }
+
+        .lx-demand-text {
+            font-weight: 600;
+            color: var(--lx-foreground);
+            font-size: 0.875rem;
+            text-align: center;
+            padding: 0.5rem;
+        }
+
+        .lx-content-list {
+            max-width: 56rem;
+            margin: 0 auto;
+            background: white;
+            border-radius: 1rem;
+            padding: 1.5rem 1rem;
+            backdrop-filter: blur(12px);
+            background: rgba(255,255,255,0.95);
+        }
+
+        @media (min-width: 768px) {
+            .lx-content-list {
+                padding: 2rem 1.5rem;
+            }
+        }
+
+        .lx-content-list-title {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .lx-content-list-title .lx-dot {
+            width: 0.5rem;
+            height: 0.5rem;
+            border-radius: 50%;
+            background: var(--lx-primary);
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        .lx-content-list-title h3 {
+            font-weight: 600;
+            color: var(--lx-foreground);
+        }
+
+        .lx-content-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+            margin-bottom: 0.5rem;
+            color: var(--lx-muted-foreground);
+        }
+
+        .lx-content-item .lx-bullet {
+            color: var(--lx-primary);
+            flex-shrink: 0;
+            margin-top: 0.125rem;
+        }
+
+        .lx-dots {
+            display: flex;
+            justify-content: center;
+            gap: 0.375rem;
+            margin-top: 1rem;
+        }
+
+        .lx-dot-item {
+            width: 0.5rem;
+            height: 0.5rem;
+            border-radius: 50%;
+            background: #e5e7eb;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: none;
+            padding: 0;
+        }
+
+        .lx-dot-item.active {
+            background: var(--lx-primary);
+            width: 1.5rem;
+            border-radius: 9999px;
+        }
+
+        .lx-dot-item:hover {
+            background: var(--lx-primary);
+            opacity: 0.7;
+        }
+
+        /* Back to Top Button */
+        .lx-back-to-top {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 3rem;
+            height: 3rem;
+            border-radius: 50%;
+            background: var(--lx-primary);
+            color: white;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 15px rgba(79, 70, 229, 0.3);
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.3s ease;
+            z-index: 100;
+        }
+
+        .lx-back-to-top.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .lx-back-to-top:hover {
+            background: var(--lx-primary-hover);
+            transform: translateY(-2px);
+        }
+
+        .lx-message {
+            max-width: 80%;
+            margin-bottom: 1rem;
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .lx-message.user {
+            margin-left: auto;
+            flex-direction: row-reverse;
+        }
+
+        .lx-message-avatar {
+            width: 2.25rem;
+            height: 2.25rem;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 0.875rem;
+            flex-shrink: 0;
+        }
+
+        .lx-message.user .lx-message-avatar {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        .lx-message-content {
+            background: white;
+            padding: 0.75rem 1rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            line-height: 1.5;
+            max-width: calc(100% - 3.5rem);
+            word-wrap: break-word;
+        }
+
+        .lx-message.user .lx-message-content {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .lx-message.bot .lx-message-content {
+            color: var(--lx-foreground);
+        }
+
+        .lx-loading {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--lx-muted-foreground);
+            font-size: 0.875rem;
+        }
+
+        .lx-loading-dots {
+            display: flex;
+            gap: 0.25rem;
+        }
+
+        .lx-loading-dots span {
+            width: 0.5rem;
+            height: 0.5rem;
+            border-radius: 50%;
+            background: var(--lx-primary);
+            animation: loadingBounce 1.4s ease-in-out infinite;
+        }
+
+        .lx-loading-dots span:nth-child(2) {
+            animation-delay: 0.16s;
+        }
+
+        .lx-loading-dots span:nth-child(3) {
+            animation-delay: 0.32s;
+        }
+
+        @keyframes loadingBounce {
+            0%, 80%, 100% { transform: scale(0.6); opacity: 0.5; }
+            40% { transform: scale(1); opacity: 1; }
+        }
+
+        .lx-media-container {
+            margin-top: 0.5rem;
+            border-radius: 0.5rem;
+            overflow: hidden;
+            background: #f1f5f9;
+        }
+
+        .lx-media-container img,
+        .lx-media-container video {
+            max-width: 100%;
+            display: block;
+        }
+
+        /* Chat Container Styles - DeepSeek style */
+        .lx-chat-container {
+            background: white;
+            border: 1px solid var(--lx-border);
+            border-radius: 1rem;
+            margin-bottom: 1rem;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+
+        .lx-chat-messages {
+            max-height: 400px;
+            overflow-y: auto;
+            padding: 1rem;
+        }
+
+        .lx-chat-messages .lx-message {
+            margin-bottom: 1rem;
+        }
+
+        .lx-chat-messages .lx-message:last-child {
+            margin-bottom: 0;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+<div class="lx-page-wrapper">
+    <main class="lx-main-content lx-bg" id="main-content">
+        <div class="lx-bg">
+            <!-- Hero Section with Chat -->
+            <section class="lx-hero-section lx-px-4">
+                <div class="lx-w-full lx-max-w-3xl lx-mx-auto">
+                    <div class="lx-text-center lx-mb-6 lx-px-4">
+                        <h1 class="lx-text-2xl lx-sm-text-3xl lx-text-4xl lx-text-foreground lx-font-semibold lx-leading-relaxed">灵犀agent</h1>
+                    </div>
+
+                    <!-- Chat Container - Above Input -->
+                    <div id="lx-chat-container" class="lx-chat-container" style="display: none;">
+                        <div id="lx-chat-messages" class="lx-chat-messages"></div>
+                    </div>
+
+                    <!-- Chat Input Area -->
+                    <div class="lx-w-full lx-rounded-2xl lx-border lx-bg-card lx-transition-all lx-duration-300 lx-hover-shadow-md lx-p-4" style="position: relative; z-index: 2;">
+                        <div class="lx-flex-1">
+                            <textarea
+                                id="lx-user-input"
+                                class="lx-user-input"
+                                placeholder="为我们的新品寿司拼盘制作一个8秒的竖屏宣传视频。使用欢快的爵士乐，新鲜三文鱼的特写镜头，生成字幕，最后展示我们的logo。"
+                                rows="3"
+                            ></textarea>
+                        </div>
+                        <div class="lx-mt-3 lx-flex lx-items-center lx-justify-between lx-gap-2">
+                            <div class="lx-flex lx-items-center lx-gap-2">
+                                <button class="lx-attach-btn" aria-label="上传媒体" onclick="document.getElementById('lx-file-input').click()">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M5 12h14"></path>
+                                        <path d="M12 5v14"></path>
+                                    </svg>
+                                </button>
+                                <input type="file" id="lx-file-input" accept="*/*" multiple class="lx-hidden">
+                            </div>
+                            <button class="lx-send-btn" onclick="lxSendMessage()" aria-label="发送">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="m5 12 7-7 7 7"></path>
+                                    <path d="M12 19V5"></path>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Function Buttons -->
+                    <div class="lx-function-bar">
+                        <div class="lx-function-buttons">
+                            <button class="lx-func-btn lx-func-btn-primary" onclick="lxInsertFunc('#图片生成 ')">
+                                <i class="fas fa-image"></i>
+                                图片生成
+                            </button>
+                            <button class="lx-func-btn lx-func-btn-primary" onclick="lxInsertFunc('#视频生成 ')">
+                                <i class="fas fa-video"></i>
+                                视频生成
+                            </button>
+                            <button class="lx-func-btn lx-func-btn-primary" onclick="lxInsertFunc('#广告生成 ')">
+                                <i class="fas fa-video"></i>
+                                广告生成
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+                        <div class="lx-flex lx-items-center lx-gap-1.5 lx-flex-wrap">
+                </div>
+            </section>
+
+
+            <!-- Featured Examples Section -->
+            <section class="lx-mb-10 lx-px-4 lx-md-px-6 lx-lg-px-8">
+                <div class="lx-w-full lx-max-w-5xl lx-mx-auto">
+                    <div class="lx-mb-6 lx-text-center lx-sm-mb-8">
+                        <h2 class="lx-section-title">精选示例</h2>
+                        <p class="lx-section-desc">探索精选示例，一键应用快速开始创作</p>
+                    </div>
+                        <div class="lx-example-grid">
+                        <div class="lx-aspect-9-12">
+                            <div class="lx-example-card" onclick="lxUseExample('#广告生成  中国美女正在介绍欧莱雅香水')">
+                                <div class="lx-video-container" style="position:relative;width:100%;height:100%;">
+                                    <video class="lx-demo-video" src="https://backend.appmiaoda.com/projects/supabase268304199530360832/storage/v1/object/public/app-8u3vvyt9el8h_videos/cd0c9a9a-f88f-4037-ac4d-67787035d7c0/1773323753725_r2c3tw.mp4" preload="none" poster="https://backend.appmiaoda.com/projects/supabase268304199530360832/storage/v1/object/public/app-8u3vvyt9el8h_images/cd0c9a9a-f88f-4037-ac4d-67787035d7c0/1773324521162_ojdqlk.png" onclick="this.play()" onended="this.poster=this.getAttribute('poster')"></video>
+                                    <div class="lx-play-icon-overlay" onclick="var v=this.previousElementSibling;v.play();v.controls=true;this.style.display='none';" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;cursor:pointer;background:rgba(0,0,0,0.2);">
+                                        <div class="lx-play-button" style="width:3.5rem;height:3.5rem;border-radius:50%;background:rgba(255,255,255,0.9);display:flex;align-items:center;justify-content:center;box-shadow:0 4px 15px rgba(0,0,0,0.2);">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M5 5a2 2 0 0 1 3.008-1.728l11.997 6.998a2 2 0 0 1 .003 3.458l-12 7A2 2 0 0 1 5 19z"></path></svg>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="lx-card-title">香水宣传视频</div>
+                            </div>
+                        </div>
+                        <div class="lx-aspect-9-12">
+                            <div class="lx-example-card" onclick="lxUseExample('#广告生成  荣耀magic6介绍')">
+                                <div class="lx-video-container" style="position:relative;width:100%;height:100%;">
+                                    <video class="lx-demo-video" src="https://backend.appmiaoda.com/projects/supabase268304199530360832/storage/v1/object/public/app-8u3vvyt9el8h_videos/cd0c9a9a-f88f-4037-ac4d-67787035d7c0/1773330341244_taria9.mp4" preload="none" poster="https://backend.appmiaoda.com/projects/supabase268304199530360832/storage/v1/object/public/app-8u3vvyt9el8h_images/cd0c9a9a-f88f-4037-ac4d-67787035d7c0/1773330316098_e8ztnq.png" onclick="this.play()" onended="this.poster=this.getAttribute('poster')"></video>
+                                    <div class="lx-play-icon-overlay" onclick="var v=this.previousElementSibling;v.play();v.controls=true;this.style.display='none';" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;cursor:pointer;background:rgba(0,0,0,0.2);">
+                                        <div class="lx-play-button" style="width:3.5rem;height:3.5rem;border-radius:50%;background:rgba(255,255,255,0.9);display:flex;align-items:center;justify-content:center;box-shadow:0 4px 15px rgba(0,0,0,0.2);">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M5 5a2 2 0 0 1 3.008-1.728l11.997 6.998a2 2 0 0 1 .003 3.458l-12 7A2 2 0 0 1 5 19z"></path></svg>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="lx-card-title">电商产品展示视频</div>
+                            </div>
+                        </div>
+                        <div class="lx-aspect-9-12">
+                            <div class="lx-example-card" onclick="lxUseExample('制作一个餐厅开业宣传片')">
+                                <img alt="餐厅宣传片" loading="lazy" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='533' viewBox='0 0 400 533'%3E%3Crect fill='%23e2e8f0' width='400' height='533'/%3E%3Ctext fill='%2394a3b8' font-family='sans-serif' font-size='20' x='50%25' y='50%25' text-anchor='middle' dominant-baseline='middle'%3E示例图片 3%3C/text%3E%3C/svg%3E">
+                                <div class="lx-play-overlay">
+                                    <div class="lx-play-button">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                                            <path d="M5 5a2 2 0 0 1 3.008-1.728l11.997 6.998a2 2 0 0 1 .003 3.458l-12 7A2 2 0 0 1 5 19z"></path>
+                                        </svg>
+                                    </div>
+                                </div>
+                                <div class="lx-card-title">餐厅开业宣传片</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Key Features Section -->
+            <section class="lx-py-10 lx-px-4 lx-md-px-6 lx-lg-px-8">
+                <div class="lx-w-full lx-max-w-5xl lx-mx-auto">
+                    <div class="lx-mb-8 lx-text-center">
+                        <h2 class="lx-section-title">灵犀Agent 关键特性</h2>
+                        <p class="lx-section-desc">我们的特色功能，一键触达</p>
+                    </div>
+
+                    <div class="lx-flex lx-items-center lx-gap-2 lx-mb-8 lx-md-flex lx-md-items-end lx-md-justify-between">
+                        <div></div>
+                        <div class="lx-hidden lx-md-flex lx-items-center lx-gap-2">
+                            <button class="lx-nav-btn" onclick="lxScrollFeatures('left')">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="m15 18-6-6 6-6"></path>
+                                </svg>
+                            </button>
+                            <button class="lx-nav-btn" onclick="lxScrollFeatures('right')">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="m9 18 6-6-6-6"></path>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="lx-features-scroll" id="lx-features-scroll">
+                        <div class="lx-feature-card">
+                            <div class="lx-flex lx-items-center lx-gap-3 lx-mb-2">
+                                <div class="lx-feature-icon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"></path>
+                                        <path d="M9 18h6"></path>
+                                        <path d="M10 22h4"></path>
+                                    </svg>
+                                </div>
+                                <h4 class="lx-feature-title lx-line-clamp-1">创意灵感</h4>
+                            </div>
+                            <p class="lx-feature-desc lx-line-clamp-2">基于账号特性与热点自动生成选题与创意模板，快速产出话题清单</p>
+                        </div>
+
+                        <div class="lx-feature-card">
+                            <div class="lx-flex lx-items-center lx-gap-3 lx-mb-2">
+                                <div class="lx-feature-icon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z"></path>
+                                        <path d="M14 2v5a1 1 0 0 0 1 1h5"></path>
+                                    </svg>
+                                </div>
+                                <h4 class="lx-feature-title lx-line-clamp-1">一键生成脚本</h4>
+                            </div>
+                            <p class="lx-feature-desc lx-line-clamp-2">从关键词或提示自动生成短视频/图文脚本与分镜要点</p>
+                        </div>
+
+                        <div class="lx-feature-card">
+                            <div class="lx-flex lx-items-center lx-gap-3 lx-mb-2">
+                                <div class="lx-feature-icon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <rect width="18" height="18" x="3" y="3" rx="2" ry="2"></rect>
+                                        <circle cx="9" cy="9" r="2"></circle>
+                                        <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"></path>
+                                    </svg>
+                                </div>
+                                <h4 class="lx-feature-title lx-line-clamp-1">图片生成</h4>
+                            </div>
+                            <p class="lx-feature-desc lx-line-clamp-2">根据提示词生成高质量图像，支持多风格与多张输出</p>
+                        </div>
+
+                        <div class="lx-feature-card">
+                            <div class="lx-flex lx-items-center lx-gap-3 lx-mb-2">
+                                <div class="lx-feature-icon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="m16 13 5.223 3.482a.5.5 0 0 0 .777-.416V7.87a.5.5 0 0 0-.752-.432L16 10.5"></path>
+                                        <rect x="2" y="6" width="14" height="12" rx="2"></rect>
+                                    </svg>
+                                </div>
+                                <h4 class="lx-feature-title lx-line-clamp-1">视频生成</h4>
+                            </div>
+                            <p class="lx-feature-desc lx-line-clamp-2">从脚本或提示自动生成短视频草稿，含配乐与镜头建议</p>
+                        </div>
+
+                        <div class="lx-feature-card">
+                            <div class="lx-flex lx-items-center lx-gap-3 lx-mb-2">
+                                <div class="lx-feature-icon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <circle cx="6" cy="6" r="3"></circle>
+                                        <path d="M8.12 8.12 12 12"></path>
+                                        <path d="M20 4 8.12 15.88"></path>
+                                        <circle cx="6" cy="18" r="3"></circle>
+                                    </svg>
+                                </div>
+                                <h4 class="lx-feature-title lx-line-clamp-1">高光剪辑</h4>
+                            </div>
+                            <p class="lx-feature-desc lx-line-clamp-2">智能识别高能片段并按模板生成短视频高光</p>
+                        </div>
+
+                        <div class="lx-feature-card">
+                            <div class="lx-flex lx-items-center lx-gap-3 lx-mb-2">
+                                <div class="lx-feature-icon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <rect width="18" height="18" x="3" y="3" rx="2"></rect>
+                                        <path d="M3 9h18"></path>
+                                    </svg>
+                                </div>
+                                <h4 class="lx-feature-title lx-line-clamp-1">分镜设计</h4>
+                            </div>
+                            <p class="lx-feature-desc lx-line-clamp-2">自动产出时间轴、台词与拍摄清单，支持导出脚本</p>
+                        </div>
+
+                        <div class="lx-feature-card">
+                            <div class="lx-flex lx-items-center lx-gap-3 lx-mb-2">
+                                <div class="lx-feature-icon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="m5 8 6 6"></path>
+                                        <path d="m4 14 6-6 2-3"></path>
+                                        <path d="M2 5h12"></path>
+                                        <path d="M7 2h1"></path>
+                                        <path d="m22 22-5-10-5 10"></path>
+                                        <path d="M14 18h6"></path>
+                                    </svg>
+                                </div>
+                                <h4 class="lx-feature-title lx-line-clamp-1">视频翻译</h4>
+                            </div>
+                            <p class="lx-feature-desc lx-line-clamp-2">支持面容级口型匹配、音色克隆与嵌入/软字幕导出</p>
+                        </div>
+
+                        <div class="lx-feature-card">
+                            <div class="lx-flex lx-items-center lx-gap-3 lx-mb-2">
+                                <div class="lx-feature-icon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z"></path>
+                                        <path d="m21.854 2.147-10.94 10.939"></path>
+                                    </svg>
+                                </div>
+                                <h4 class="lx-feature-title lx-line-clamp-1">多平台一键分发</h4>
+                            </div>
+                            <p class="lx-feature-desc lx-line-clamp-2">统一配置后自动同步并发布到多个渠道</p>
+                        </div>
+
+                        <div class="lx-feature-card">
+                            <div class="lx-flex lx-items-center lx-gap-3 lx-mb-2">
+                                <div class="lx-feature-icon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M22 12h-2.48a2 2 0 0 0-1.93 1.46l-2.35 8.36a.25.25 0 0 1-.48 0L9.24 2.18a.25.25 0 0 0-.48 0l-2.35 8.36A2 2 0 0 1 4.49 12H2"></path>
+                                    </svg>
+                                </div>
+                                <h4 class="lx-feature-title lx-line-clamp-1">流式任务执行</h4>
+                            </div>
+                            <p class="lx-feature-desc lx-line-clamp-2">任务实时流式生成，中途可查看增量结果并中断</p>
+                        </div>
+
+                        <div class="lx-feature-card">
+                            <div class="lx-flex lx-items-center lx-gap-3 lx-mb-2">
+                                <div class="lx-feature-icon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M3 7V5a2 2 0 0 1 2-2h2"></path>
+                                        <path d="M17 3h2a2 2 0 0 1 2 2v2"></path>
+                                        <path d="M21 17v2a2 2 0 0 1-2 2h-2"></path>
+                                        <path d="M7 21H5a2 2 0 0 1-2-2v-2"></path>
+                                        <circle cx="12" cy="12" r="1"></circle>
+                                    </svg>
+                                </div>
+                                <h4 class="lx-feature-title lx-line-clamp-1">视频理解</h4>
+                            </div>
+                            <p class="lx-feature-desc lx-line-clamp-2">自动识别情绪、人物与事件，生成标签、章节与结构化摘要</p>
+                        </div>
+
+                        <div class="lx-feature-card">
+                            <div class="lx-flex lx-items-center lx-gap-3 lx-mb-2">
+                                <div class="lx-feature-icon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M3 3v16a2 2 0 0 0 2 2h16"></path>
+                                        <path d="M18 17V9"></path>
+                                        <path d="M13 17V5"></path>
+                                        <path d="M8 17v-3"></path>
+                                    </svg>
+                                </div>
+                                <h4 class="lx-feature-title lx-line-clamp-1">运营报告</h4>
+                            </div>
+                            <p class="lx-feature-desc lx-line-clamp-2">自动生成发布效果与增长建议，便于复盘与优化</p>
+                        </div>
+                    </div>
+
+                    <div class="lx-flex lx-justify-center lx-gap-1.5 lx-mt-6 lx-md-hidden">
+                        <button class="lx-nav-btn" onclick="lxScrollFeatures('left')">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="m15 18-6-6 6-6"></path>
+                            </svg>
+                        </button>
+                        <button class="lx-nav-btn" onclick="lxScrollFeatures('right')">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="m9 18 6-6-6-6"></path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Workflow Section -->
+            <section class="lx-workflow-section lx-pt-16" style="background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);">
+                <div class="lx-max-w-6xl lx-mx-auto">
+                    <div class="lx-text-center lx-mb-10">
+                        <h2 class="lx-section-title lx-mb-2">AI驱动的内容创作与变现生态闭环</h2>
+                        <p class="lx-text-muted-foreground">一站式解决内容创作、分发、分析难题</p>
+                    </div>
+
+                    <!-- Modern Step Flow -->
+                    <div class="lx-relative lx-rounded-3xl lx-overflow-hidden lx-bg-white lx-shadow-lg">
+                        <!-- Desktop Steps -->
+                        <div class="lx-hidden lx-md-block lx-p-8">
+                            <div class="lx-flex lx-items-center lx-justify-between lx-gap-2">
+                                <!-- Step 1 -->
+                                <div class="lx-flex lx-flex-col lx-items-center lx-flex-1" onclick="lxGoToSlide(0)" style="cursor: pointer;">
+                                    <div class="lx-w-16 lx-h-16 lx-rounded-full lx-bg-gradient-to-br lx-from-indigo-500 lx-to-purple-600 lx-flex lx-items-center lx-justify-center lx-shadow-lg lx-mb-3" id="lx-step-icon-0">
+                                        <svg class="lx-w-8 lx-h-8 lx-text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+                                        </svg>
+                                    </div>
+                                    <h3 class="lx-font-semibold lx-text-foreground lx-mb-1">智能创作</h3>
+                                    <p class="lx-text-xs lx-text-muted-foreground lx-text-center">AI生成视频、图片</p>
+                                </div>
+                                
+                                <!-- Arrow -->
+                                <div class="lx-flex-shrink-0 lx-text-indigo-300">
+                                    <svg class="lx-w-4 lx-h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
+                                    </svg>
+                                </div>
+
+                                <!-- Step 2 -->
+                                <div class="lx-flex lx-flex-col lx-items-center lx-flex-1" onclick="lxGoToSlide(1)" style="cursor: pointer;">
+                                    <div class="lx-w-16 lx-h-16 lx-rounded-full lx-bg-gradient-to-br lx-from-blue-500 lx-to-cyan-500 lx-flex lx-items-center lx-justify-center lx-shadow-lg lx-mb-3" id="lx-step-icon-1">
+                                        <svg class="lx-w-8 lx-h-8 lx-text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
+                                        </svg>
+                                    </div>
+                                    <h3 class="lx-font-semibold lx-text-foreground lx-mb-1">一键分发</h3>
+                                    <p class="lx-text-xs lx-text-muted-foreground lx-text-center">多平台同步发布</p>
+                                </div>
+
+                                <!-- Arrow -->
+                                <div class="lx-flex-shrink-0 lx-text-indigo-300">
+                                    <svg class="lx-w-4 lx-h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
+                                    </svg>
+                                </div>
+
+                                <!-- Step 3 -->
+                                <div class="lx-flex lx-flex-col lx-items-center lx-flex-1" onclick="lxGoToSlide(2)" style="cursor: pointer;">
+                                    <div class="lx-w-16 lx-h-16 lx-rounded-full lx-bg-gradient-to-br lx-from-green-500 lx-to-emerald-500 lx-flex lx-items-center lx-justify-center lx-shadow-lg lx-mb-3" id="lx-step-icon-2">
+                                        <svg class="lx-w-8 lx-h-8 lx-text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/>
+                                        </svg>
+                                    </div>
+                                    <h3 class="lx-font-semibold lx-text-foreground lx-mb-1">素材管理</h3>
+                                    <p class="lx-text-xs lx-text-muted-foreground lx-text-center">高效整理与复用</p>
+                                </div>
+
+                                <!-- Arrow -->
+                                <div class="lx-flex-shrink-0 lx-text-indigo-300">
+                                    <svg class="lx-w-4 lx-h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
+                                    </svg>
+                                </div>
+
+                                <!-- Step 4 -->
+                                <div class="lx-flex lx-flex-col lx-items-center lx-flex-1" onclick="lxGoToSlide(3)" style="cursor: pointer;">
+                                    <div class="lx-w-16 lx-h-16 lx-rounded-full lx-bg-gradient-to-br lx-from-orange-500 lx-to-red-500 lx-flex lx-items-center lx-justify-center lx-shadow-lg lx-mb-3" id="lx-step-icon-3">
+                                        <svg class="lx-w-8 lx-h-8 lx-text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                                        </svg>
+                                    </div>
+                                    <h3 class="lx-font-semibold lx-text-foreground lx-mb-1">数据分析</h3>
+                                    <p class="lx-text-xs lx-text-muted-foreground lx-text-center">洞察运营效果</p>
+                                </div>
+
+                                <!-- Arrow -->
+                                <div class="lx-flex-shrink-0 lx-text-indigo-300">
+                                    <svg class="lx-w-4 lx-h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
+                                    </svg>
+                                </div>
+
+                                <!-- Step 5 -->
+                                <div class="lx-flex lx-flex-col lx-items-center lx-flex-1" onclick="lxGoToSlide(4)" style="cursor: pointer;">
+                                    <div class="lx-w-16 lx-h-16 lx-rounded-full lx-bg-gradient-to-br lx-from-pink-500 lx-to-rose-500 lx-flex lx-items-center lx-justify-center lx-shadow-lg lx-mb-3" id="lx-step-icon-4">
+                                        <svg class="lx-w-8 lx-h-8 lx-text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z"/>
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z"/>
+                                        </svg>
+                                    </div>
+                                    <h3 class="lx-font-semibold lx-text-foreground lx-mb-1">数据看板</h3>
+                                    <p class="lx-text-xs lx-text-muted-foreground lx-text-center">全局可视化掌控</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Mobile Steps -->
+                        <div class="lx-md-hidden lx-p-6">
+                            <div class="lx-grid lx-grid-cols-2 lx-gap-4 lx-mb-6">
+                                <div class="lx-flex lx-flex-col lx-items-center lx-p-3 lx-rounded-xl lx-bg-indigo-50" onclick="lxGoToSlide(0)" style="cursor: pointer;">
+                                    <div class="lx-w-12 lx-h-12 lx-rounded-full lx-bg-gradient-to-br lx-from-indigo-500 lx-to-purple-600 lx-flex lx-items-center lx-justify-center lx-mb-2">
+                                        <svg class="lx-w-6 lx-h-6 lx-text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+                                        </svg>
+                                    </div>
+                                    <span class="lx-text-sm lx-font-medium">智能创作</span>
+                                </div>
+                                <div class="lx-flex lx-flex-col lx-items-center lx-p-3 lx-rounded-xl lx-bg-blue-50" onclick="lxGoToSlide(1)" style="cursor: pointer;">
+                                    <div class="lx-w-12 lx-h-12 lx-rounded-full lx-bg-gradient-to-br lx-from-blue-500 lx-to-cyan-500 lx-flex lx-items-center lx-justify-center lx-mb-2">
+                                        <svg class="lx-w-6 lx-h-6 lx-text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
+                                        </svg>
+                                    </div>
+                                    <span class="lx-text-sm lx-font-medium">一键分发</span>
+                                </div>
+                                <div class="lx-flex lx-flex-col lx-items-center lx-p-3 lx-rounded-xl lx-bg-green-50" onclick="lxGoToSlide(2)" style="cursor: pointer;">
+                                    <div class="lx-w-12 lx-h-12 lx-rounded-full lx-bg-gradient-to-br lx-from-green-500 lx-to-emerald-500 lx-flex lx-items-center lx-justify-center lx-mb-2">
+                                        <svg class="lx-w-6 lx-h-6 lx-text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/>
+                                        </svg>
+                                    </div>
+                                    <span class="lx-text-sm lx-font-medium">素材管理</span>
+                                </div>
+                                <div class="lx-flex lx-flex-col lx-items-center lx-p-3 lx-rounded-xl lx-bg-orange-50" onclick="lxGoToSlide(3)" style="cursor: pointer;">
+                                    <div class="lx-w-12 lx-h-12 lx-rounded-full lx-bg-gradient-to-br lx-from-orange-500 lx-to-red-500 lx-flex lx-items-center lx-justify-center lx-mb-2">
+                                        <svg class="lx-w-6 lx-h-6 lx-text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                                        </svg>
+                                    </div>
+                                    <span class="lx-text-sm lx-font-medium">数据分析</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Content Carousel -->
+                        <div class="lx-relative lx-px-6 lx-pt-6 lx-pb-8 lx-max-w-4xl lx-mx-auto lx-mt-4">
+                            <div class="lx-rounded-2xl lx-transition-all lx-duration-500 lx-h-[240px] lx-md-h-[200px] lx-bg-gradient-to-br lx-from-slate-50 lx-to-indigo-50 lx-border lx-border-indigo-100 lx-p-4 lx-md-p-6 lx-shadow-inner" onmouseenter="lxStopCarousel()" onmouseleave="lxStartCarousel()">
+                                <div class="lx-h-full lx-flex lx-flex-col lx-overflow-hidden" id="lx-carousel-content">
+                                </div>
+                            </div>
+
+                            <!-- Carousel Dots -->
+                            <div class="lx-flex lx-justify-center lx-gap-2 lx-mt-5">
+                                <button class="lx-dot-item active" onclick="lxGoToSlide(0)"></button>
+                                <button class="lx-dot-item" onclick="lxGoToSlide(1)"></button>
+                                <button class="lx-dot-item" onclick="lxGoToSlide(2)"></button>
+                                <button class="lx-dot-item" onclick="lxGoToSlide(3)"></button>
+                                <button class="lx-dot-item" onclick="lxGoToSlide(4)"></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Back to Top Button -->
+            <button class="lx-back-to-top" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" id="lx-back-to-top">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="m5 12 7-7 7 7"></path>
+                    <path d="M12 19V5"></path>
+                </svg>
+            </button>
+        </div>
+    </main>
+</div>
+
+<!-- Initialize Carousel on Load -->
+<script>
+    // Initialize carousel
+    document.addEventListener('DOMContentLoaded', function() {
+        lxUpdateCarousel();
+        lxStartCarousel();
+
+        // Back to top button
+        window.addEventListener('scroll', function() {
+            const btn = document.getElementById('lx-back-to-top');
+            if (window.scrollY > 300) {
+                btn.classList.add('show');
+            } else {
+                btn.classList.remove('show');
+            }
+        });
+    });
+</script>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/2.3.3/purify.min.js"></script>
+<script>
+    // Send message function
+    function lxSendMessage() {
+        const input = document.getElementById('lx-user-input');
+        const message = input.value.trim();
+        if (!message) return;
+
+        // Show chat container
+        const chatContainer = document.getElementById('lx-chat-container');
+        chatContainer.style.display = 'block';
+
+        // Get chat messages area
+        const chatMessages = document.getElementById('lx-chat-messages');
+
+        // Add user message
+        lxAddMessageToChat(message, 'user');
+
+        // Clear input
+        input.value = '';
+
+        // Check for media generation commands
+        const isImageGen = message.includes('#图片生成');
+        const isVideoGen = message.includes('#视频生成');
+        const isAdGen = message.includes('#广告生成');
+        
+        if (isImageGen || isVideoGen || isAdGen) {
+            // Call media generation API
+            let endpoint, type;
+            if (isImageGen) {
+                endpoint = '/api/generate-image';
+                type = 'image';
+            } else if (isAdGen) {
+                endpoint = '/api/ad-generate-video';
+                type = 'video';
+            } else {
+                endpoint = '/api/generate-video';
+                type = 'video';
+            }
+            lxGenerateMedia(endpoint, message, type);
+        } else {
+            // Show loading and send to backend via SSE
+            lxAddLoadingToChat();
+            lxSendToBackend(message);
+        }
+    }
+
+    // Generate media (image/video)
+    function lxGenerateMedia(endpoint, prompt, type) {
+        const chatMessages = document.getElementById('lx-chat-messages');
+        const messageId = Date.now().toString(36) + Math.random().toString(36).substr(2);
+        
+        // Add loading message
+        const loadingDiv = document.createElement('div');
+        loadingDiv.className = 'lx-message bot';
+        loadingDiv.id = 'lx-loading-message';
+        loadingDiv.innerHTML = `
+            <div class="lx-message-avatar">AI</div>
+            <div class="lx-message-content">
+                <div class="lx-loading">
+                    <div class="lx-loading-dots">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                    <span>正在生成${type === 'image' ? '图片' : '视频'}...</span>
+                </div>
+            </div>
+        `;
+        chatMessages.appendChild(loadingDiv);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+
+        // Call API
+        let requestBody = {
+            prompt: prompt,
+            messageId: messageId
+        };
+        
+        fetch('http://192.168.2.15:5001' + endpoint, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(requestBody)
+        })
+        .then(response => response.json())
+        .then(data => {
+            const loadingMsg = document.getElementById('lx-loading-message');
+            if (!loadingMsg) return;
+            
+            // 如果是广告生成，使用SSE监听进度
+            if (endpoint === '/api/ad-generate-video' && data.success && data.taskId) {
+                loadingMsg.querySelector('.lx-message-content').innerHTML = '<div id="ad-progress-content"><p>正在准备生成...</p></div>';
+                
+                const eventSource = new EventSource('http://192.168.2.15:5001/api/ad-generate-progress/' + data.taskId);
+                
+                eventSource.onmessage = function(event) {
+                    const progress = JSON.parse(event.data);
+                    const contentDiv = document.getElementById('ad-progress-content');
+                    
+                    if (progress.stage === 'analyzing') {
+                        contentDiv.innerHTML += '<p>🔍 ' + progress.message + '</p>';
+                    } else if (progress.stage === 'storyboard') {
+                        contentDiv.innerHTML += '<p>📝 ' + progress.message + '</p>' +
+                            '<div style="background:#f5f5f5;padding:10px;border-radius:8px;margin-top:8px;font-size:12px;max-height:150px;overflow-y:auto;">' +
+                            '<strong>创意分析：</strong><br>' + (progress.data?.prompts || '').substring(0, 500) + '...</div>';
+                    } else if (progress.stage === 'image_generated') {
+                        const imgPath = progress.data?.image_path || '';
+                        const imgUrl = 'http://192.168.2.15:5001/api/v1/generate/file?work_dir=' + 
+                            encodeURIComponent(imgPath.replace('generation_shortvideo/', '').replace(/\\/g, '/').split('/').slice(0, -1).join('/')) + 
+                            '&path=' + encodeURIComponent(imgPath.split('/').pop()) + '&t=' + Date.now();
+                        contentDiv.innerHTML += '<p>🖼️ ' + progress.message + '</p>' +
+                            '<img src="' + imgUrl + '" style="max-width:100%;border-radius:8px;margin-top:8px;">';
+                    } else if (progress.stage === 'completed') {
+                        const videoPath = progress.data?.video_path || '';
+                        const videoDir = videoPath.replace('generation_shortvideo/', '').replace(/\\/g, '/');
+                        const lastSlash = videoDir.lastIndexOf('/');
+                        const videoWorkDir = videoDir.substring(0, lastSlash);
+                        const videoFileName = videoDir.substring(lastSlash + 1);
+                        const videoUrl = 'http://192.168.2.15:5001/api/v1/generate/file?work_dir=' + 
+                            encodeURIComponent(videoWorkDir) + '&path=' + encodeURIComponent(videoFileName) + '&t=' + Date.now();
+                        
+                        contentDiv.innerHTML += '<p>✅ ' + progress.message + '</p>' +
+                            '<video src="' + videoUrl + '" controls preload="metadata" style="max-width:100%;border-radius:8px;margin-top:8px;background:#000;">您的浏览器不支持 video 标签</video>' +
+                            '<p style="margin-top:8px;font-size:12px;color:#666;">文件路径: ' + videoPath + '</p>';
+                        eventSource.close();
+                        loadingMsg.removeAttribute('id');
+                    } else if (progress.stage === 'error') {
+                        contentDiv.innerHTML += '<p style="color:red;">❌ ' + progress.message + '</p>';
+                        eventSource.close();
+                        loadingMsg.removeAttribute('id');
+                    } else if (progress.stage === 'done') {
+                        eventSource.close();
+                        loadingMsg.removeAttribute('id');
+                    }
+                    
+                    chatMessages.scrollTop = chatMessages.scrollHeight;
+                };
+                
+                eventSource.onerror = function() {
+                    eventSource.close();
+                };
+                return;
+            }
+            
+            // 普通图片/视频生成
+            if (data.success) {
+                let mediaUrl;
+                if (data.videoUrl) {
+                    mediaUrl = data.videoUrl;
+                } else if (data.filePath) {
+                    let filePath = data.filePath;
+                    filePath = filePath.replace(/^backend\//, '');
+                    const lastSlashIndex = filePath.lastIndexOf('/');
+                    const workDir = filePath.substring(0, lastSlashIndex);
+                    const fileName = filePath.substring(lastSlashIndex + 1);
+                    const actualWorkDir = workDir.replace(/^generation_shortvideo\//, '');
+                    mediaUrl = `http://192.168.2.15:5001/api/v1/generate/file?work_dir=${encodeURIComponent(actualWorkDir)}&path=${encodeURIComponent(fileName)}&t=${Date.now()}`;
+                } else {
+                    mediaUrl = '';
+                }
+                
+                let mediaHtml;
+                if (type === 'image') {
+                    mediaHtml = '<img src="' + mediaUrl + '" alt="生成图片" style="max-width: 100%; border-radius: 8px; margin-top: 8px;">';
+                } else {
+                    mediaHtml = '<video src="' + mediaUrl + '" controls preload="metadata" style="max-width: 100%; border-radius: 8px; margin-top: 8px; background: #000;">您的浏览器不支持 video 标签</video>';
+                }
+                
+                loadingMsg.querySelector('.lx-message-content').innerHTML = `
+                    <p>已为您生成${type === 'image' ? '图片' : '视频'}：</p>
+                    ${mediaHtml}
+                    <p style="margin-top: 8px; font-size: 12px; color: #666;">文件路径: ${data.filePath}</p>
+                `;
+                loadingMsg.removeAttribute('id');
+            } else {
+                loadingMsg.querySelector('.lx-message-content').innerHTML = `生成失败: ${data.error || '未知错误'}`;
+                loadingMsg.removeAttribute('id');
+            }
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            const loadingMsg = document.getElementById('lx-loading-message');
+            if (loadingMsg) {
+                loadingMsg.querySelector('.lx-message-content').innerHTML = '生成服务暂时不可用，请稍后重试';
+                loadingMsg.removeAttribute('id');
+            }
+        });
+    }
+
+    function lxAddMessageToChat(content, sender) {
+        const chatMessages = document.getElementById('lx-chat-messages');
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `lx-message ${sender}`;
+        messageDiv.innerHTML = `
+            <div class="lx-message-avatar">${sender === 'user' ? '你' : 'AI'}</div>
+            <div class="lx-message-content">${content}</div>
+        `;
+        chatMessages.appendChild(messageDiv);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    function lxAddLoadingToChat() {
+        const chatMessages = document.getElementById('lx-chat-messages');
+        const loadingDiv = document.createElement('div');
+        loadingDiv.className = 'lx-message bot';
+        loadingDiv.id = 'lx-loading-message';
+        loadingDiv.innerHTML = `
+            <div class="lx-message-avatar">AI</div>
+            <div class="lx-message-content">
+                <div class="lx-loading">
+                    <div class="lx-loading-dots">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                    <span>正在生成...</span>
+                </div>
+            </div>
+        `;
+        chatMessages.appendChild(loadingDiv);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    function lxSendToBackend(message) {
+        const timestamp = new Date().getTime();
+        const eventSource = new EventSource(
+            `http://192.168.2.15:5001/chat?message=${encodeURIComponent(message)}&t=${timestamp}`
+        );
+
+        let buffer = '';
+
+        eventSource.onmessage = (e) => {
+            if (e.data === '[DONE]') {
+                eventSource.close();
+                const loadingMsg = document.getElementById('lx-loading-message');
+                if (loadingMsg) {
+                    // Replace loading with final content
+                    const contentDiv = loadingMsg.querySelector('.lx-message-content');
+                    let finalContent = buffer;
+                    if (typeof marked !== 'undefined' && marked.parse) {
+                        finalContent = marked.parse(buffer);
+                    }
+                    contentDiv.innerHTML = finalContent;
+                    // Remove the ID so it doesn't interfere with future messages
+                    loadingMsg.removeAttribute('id');
+                }
+                return;
+            }
+            
+            buffer += e.data.replace(/<!--n-->/g, '\n');
+            // Find the loading message - should be the last message in the chat
+            const chatMessages = document.getElementById('lx-chat-messages');
+            const messages = chatMessages.querySelectorAll('.lx-message.bot');
+            const loadingMsg = messages[messages.length - 1]; // Get the last bot message
+            
+            if (loadingMsg) {
+                const contentDiv = loadingMsg.querySelector('.lx-message-content');
+                if (typeof marked !== 'undefined' && marked.parse) {
+                    contentDiv.innerHTML = marked.parse(buffer + '█');
+                } else {
+                    contentDiv.innerHTML = buffer + '█';
+                }
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+        };
+
+        eventSource.onerror = (err) => {
+            console.error('Error:', err);
+            eventSource.close();
+            const chatMessages = document.getElementById('lx-chat-messages');
+            const messages = chatMessages.querySelectorAll('.lx-message.bot');
+            const loadingMsg = messages[messages.length - 1];
+            if (loadingMsg) {
+                loadingMsg.querySelector('.lx-message-content').innerHTML = '对话服务暂时不可用，请稍后重试';
+                loadingMsg.removeAttribute('id');
+            }
+        };
+    }
+
+    // Use example prompt
+    function lxUseExample(prompt) {
+        const input = document.getElementById('lx-user-input');
+        input.value = prompt;
+        input.focus();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // Scroll features
+    function lxScrollFeatures(direction) {
+        const container = document.getElementById('lx-features-scroll');
+        const scrollAmount = 300;
+
+        if (direction === 'left') {
+            container.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
+        } else {
+            container.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+        }
+    }
+
+    // Workflow Carousel
+    let lxCurrentSlide = 0;
+    const lxSlides = [
+        {
+            title: '智能创作',
+            icon: 'video',
+            items: [
+                'AI视频生成：Veo3.1、Sora-2',
+                '图片生成：Nano banana Pro、GPT-image-1.5',
+                '智能剪辑：合成、混编、分割、变速',
+                '视频翻译：音色克隆、口型匹配'
+            ]
+        },
+        {
+            title: '一键分发',
+            icon: 'upload',
+            items: [
+                '多平台发布：抖音、小红书、B站等',
+                '定时排期：支持单次/循环设置',
+                '智能推荐发布：基于数据优化时间',
+                '平台适配：自动调整内容格式'
+            ]
+        },
+        {
+            title: '素材管理',
+            icon: 'folder',
+            items: [
+                '素材库：视频、图片、文案一站式管理',
+                '项目协作：团队成员高效配合',
+                '版本控制：记录每次修改历史',
+                '智能标签：快速检索所需素材'
+            ]
+        },
+        {
+            title: '数据分析',
+            icon: 'chart',
+            items: [
+                { text: '播放分析', sub: '播放量、完播率、互动率', icon: 'play' },
+                { text: '受众画像', sub: '年龄、性别、地域分布', icon: 'user' },
+                { text: '内容优化', sub: '基于数据给出改进建议', icon: 'lightbulb' },
+                { text: '竞品对比', sub: '分析同类型账号表现', icon: 'chart-bar' }
+            ]
+        },
+        {
+            title: '数据看板',
+            icon: 'dashboard',
+            items: [
+                { text: '全局概览', sub: '一屏掌控所有数据', icon: 'grid' },
+                { text: '多维统计', sub: '按时间/平台/内容类型', icon: 'chart-pie' },
+                { text: '报表导出', sub: '支持Excel/PDF格式', icon: 'download' },
+                { text: '自定义视图', sub: '按需配置展示内容', icon: 'cog' }
+            ]
+        }
+    ];
+
+    function lxUpdateCarousel() {
+        const slide = lxSlides[lxCurrentSlide];
+        const contentList = document.getElementById('lx-carousel-content');
+        const dots = document.querySelectorAll('.lx-dot-item');
+
+        // Color schemes and SVG icons for each slide
+        const colorSchemes = [
+            { bg: 'from-indigo-500 to-purple-600', text: 'text-indigo-600', dot: 'bg-indigo-500', iconSvg: '<svg class="lx-w-5 lx-h-5 lx-text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>' },
+            { bg: 'from-blue-500 to-cyan-500', text: 'text-blue-600', dot: 'bg-blue-500', iconSvg: '<svg class="lx-w-5 lx-h-5 lx-text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>' },
+            { bg: 'from-green-500 to-emerald-500', text: 'text-green-600', dot: 'bg-green-500', iconSvg: '<svg class="lx-w-5 lx-h-5 lx-text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/></svg>' },
+            { bg: 'from-orange-500 to-red-500', text: 'text-orange-600', dot: 'bg-orange-500', iconSvg: '<svg class="lx-w-5 lx-h-5 lx-text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>' },
+            { bg: 'from-pink-500 to-rose-500', text: 'text-pink-600', dot: 'bg-pink-500', iconSvg: '<svg class="lx-w-5 lx-h-5 lx-text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z"/><path stroke-linecap="round" stroke-linejoin="round" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z"/></svg>' }
+        ];
+        const colors = colorSchemes[lxCurrentSlide];
+
+        // Update content with improved styling - 卡片形式展示
+        let itemsHtml;
+        if (typeof slide.items[0] === 'object') {
+            // 新格式：带图标的卡片
+            const iconMap = {
+                play: '<svg class="lx-w-5 lx-h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>',
+                user: '<svg class="lx-w-5 lx-h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>',
+                lightbulb: '<svg class="lx-w-5 lx-h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>',
+                'chart-bar': '<svg class="lx-w-5 lx-h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>',
+                grid: '<svg class="lx-w-5 lx-h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>',
+                'chart-pie': '<svg class="lx-w-5 lx-h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z"/><path stroke-linecap="round" stroke-linejoin="round" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z"/></svg>',
+                download: '<svg class="lx-w-5 lx-h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>',
+                cog: '<svg class="lx-w-5 lx-h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>'
+            };
+            itemsHtml = `<div class="lx-grid lx-grid-cols-2 lx-gap-3 lx-h-full lx-overflow-auto">`;
+            slide.items.forEach(item => {
+                itemsHtml += `
+                    <div class="lx-flex lx-items-start lx-gap-3 lx-p-3 lx-rounded-xl lx-bg-white lx-shadow-sm lx-border lx-border-slate-100 hover:lx-shadow-md lx-transition-shadow">
+                        <div class="lx-w-10 lx-h-10 lx-rounded-lg lx-bg-gradient-to-br ${colors.bg} lx-flex lx-items-center lx-justify-center lx-text-white lx-shrink-0">
+                            ${iconMap[item.icon] || iconMap.play}
+                        </div>
+                        <div class="lx-min-w-0">
+                            <div class="lx-font-semibold lx-text-sm lx-text-slate-800">${item.text}</div>
+                            <div class="lx-text-xs lx-text-slate-500 lx-truncate">${item.sub}</div>
+                        </div>
+                    </div>`;
+            });
+            itemsHtml += `</div>`;
+        } else {
+            // 旧格式：简单列表
+            itemsHtml = slide.items.map(item => `
+                <div class="lx-flex lx-items-start lx-gap-2 lx-py-1 lx-text-sm">
+                    <span class="${colors.dot} lx-shrink-0 lx-mt-1 lx-w-1.5 lx-h-1.5 lx-rounded-full"></span>
+                    <span class="lx-text-slate-600">${item}</span>
+                </div>
+            `).join('');
+        }
+
+        contentList.innerHTML = `
+            <div class="lx-flex lx-items-center lx-gap-3 lx-mb-3 lx-shrink-0">
+                <div class="lx-w-10 lx-h-10 lx-rounded-xl lx-bg-gradient-to-br ${colors.bg} lx-flex lx-items-center lx-justify-center lx-shadow-md">
+                    ${colors.iconSvg}
+                </div>
+                <h3 class="lx-text-xl lx-font-bold ${colors.text}">${slide.title}</h3>
+            </div>
+            <div class="lx-h-full lx-overflow-hidden">
+                ${itemsHtml}
+            </div>
+        `;
+
+        // Update dots
+        dots.forEach((dot, index) => {
+            dot.classList.toggle('active', index === lxCurrentSlide);
+        });
+
+        // Update step icons - highlight the active step
+        for (let i = 0; i < 5; i++) {
+            const iconEl = document.getElementById(`lx-step-icon-${i}`);
+            if (iconEl) {
+                if (i === lxCurrentSlide) {
+                    iconEl.classList.add('lx-ring-4', 'lx-ring-indigo-200', 'lx-shadow-xl');
+                    iconEl.classList.remove('lx-shadow-lg');
+                } else {
+                    iconEl.classList.remove('lx-ring-4', 'lx-ring-indigo-200', 'lx-shadow-xl');
+                    iconEl.classList.add('lx-shadow-lg');
+                }
+            }
+        }
+    }
+
+    function lxGoToSlide(index) {
+        lxCurrentSlide = index;
+        lxUpdateCarousel();
+    }
+
+    function lxNextSlide() {
+        lxCurrentSlide = (lxCurrentSlide + 1) % lxSlides.length;
+        lxUpdateCarousel();
+    }
+
+    function lxPrevSlide() {
+        lxCurrentSlide = (lxCurrentSlide - 1 + lxSlides.length) % lxSlides.length;
+        lxUpdateCarousel();
+    }
+
+    // Auto-advance carousel
+    let lxCarouselInterval;
+    function lxStartCarousel() {
+        lxCarouselInterval = setInterval(lxNextSlide, 5000);
+    }
+
+    function lxStopCarousel() {
+        clearInterval(lxCarouselInterval);
+    }
+
+    // Enter key to send
+    document.getElementById('lx-user-input').addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            lxSendMessage();
+        }
+    });
+
+    // Insert function prompt
+    function lxInsertFunc(text) {
+        const input = document.getElementById('lx-user-input');
+        input.value = text + ' ';
+        input.focus();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // Add click handlers for more feature items
+    document.querySelectorAll('.lx-more-feature-item').forEach(item => {
+        item.addEventListener('click', function() {
+            const text = this.getAttribute('data-text');
+            lxInsertFunc(text);
+            lxCloseMoreModal();
+        });
+    });
+
+    // Initialize carousel
+    lxUpdateCarousel();
+    lxStartCarousel();
+
+    // Back to top button scroll handler
+    window.addEventListener('scroll', function() {
+        const btn = document.getElementById('lx-back-to-top');
+        if (btn) {
+            if (window.scrollY > 300) {
+                btn.classList.add('show');
+            } else {
+                btn.classList.remove('show');
+            }
+        }
+    });
+</script>
+{% endblock %}

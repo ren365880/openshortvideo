@@ -1,0 +1,777 @@
+{% extends "layout.html" %}
+
+{% block title %}角色库 - 灵犀剧能{% endblock %}
+
+{% block content %}
+<div class="characters-container">
+    <!-- 页面标题和操作 -->
+    <div class="page-header">
+        <div class="header-content">
+            <h1 class="page-title">
+                <i class="fas fa-users" style="margin-right: 8px;"></i>角色库
+            </h1>
+            <p class="page-subtitle">管理所有保存的角色，支持三视图预览</p>
+        </div>
+        <div class="header-actions">
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" id="searchInput" placeholder="搜索角色名称或特征..." class="search-input">
+            </div>
+            <select id="sortSelect" class="sort-select">
+                <option value="newest">最新创建</option>
+                <option value="oldest">最早创建</option>
+                <option value="name_asc">名称 A-Z</option>
+                <option value="name_desc">名称 Z-A</option>
+            </select>
+            <button class="btn btn-primary" id="createCharacterBtn">
+                <i class="fas fa-plus"></i> 新建角色
+            </button>
+        </div>
+    </div>
+
+    <!-- 角色网格 -->
+    <div class="characters-grid" id="charactersGrid">
+        <!-- 将通过JavaScript动态加载 -->
+        <div class="loading-placeholder">
+            <div class="spinner"></div>
+            <p>正在加载角色库...</p>
+        </div>
+    </div>
+
+    <!-- 空状态 -->
+    <div class="empty-state" id="emptyState" style="display: none;">
+        <div class="empty-icon">
+            <i class="fas fa-user-slash"></i>
+        </div>
+        <h3 class="empty-title">暂无角色</h3>
+        <p class="empty-description">
+            在生成视频时，可以将角色一键保存到角色库。
+        </p>
+        <button class="btn btn-outline" onclick="loadCharacters()">
+            <i class="fas fa-sync-alt"></i> 刷新
+        </button>
+    </div>
+
+    <!-- 分页控件 (暂不启用，保留结构) -->
+    <div class="pagination" id="pagination" style="display: none;"></div>
+</div>
+
+<!-- 角色操作菜单模态框 -->
+<div class="modal" id="characterMenuModal">
+    <div class="modal-content modal-sm">
+        <div class="modal-header">
+            <h3 class="modal-title">角色操作</h3>
+            <button class="modal-close" id="closeModalBtn">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="menu-list">
+                <button class="menu-item" data-action="edit">
+                    <i class="fas fa-edit"></i> 编辑角色
+                </button>
+                <div class="menu-divider"></div>
+                <button class="menu-item text-danger" data-action="delete">
+                    <i class="fas fa-trash"></i> 删除角色
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block styles %}
+<style>
+    /* 角色库专用样式扩展 (复用项目页面的CSS变量和基础类) */
+    .characters-container {
+        max-width: 1400px;
+        margin: 0 auto;
+    }
+
+    /* 页面标题与项目页面保持一致，无需重复定义，仅微调 */
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: var(--spacing-2xl);
+        flex-wrap: wrap;
+        gap: var(--spacing-lg);
+    }
+
+    .page-title {
+        font-size: var(--font-size-3xl);
+        font-weight: 700;
+        color: var(--text-primary);
+        margin-bottom: var(--spacing-xs);
+    }
+
+    .page-subtitle {
+        color: var(--text-secondary);
+        font-size: var(--font-size-base);
+    }
+
+    .header-actions {
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-lg);
+        flex-wrap: wrap;
+    }
+
+    .search-box {
+        position: relative;
+        width: 260px;
+    }
+
+    .search-box i {
+        position: absolute;
+        left: var(--spacing-lg);
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--text-tertiary);
+    }
+
+    .search-input {
+        width: 100%;
+        padding: var(--spacing-md) var(--spacing-lg) var(--spacing-md) calc(var(--spacing-lg) * 2 + 12px);
+        border: 1px solid var(--border-color);
+        border-radius: 40px;
+        font-size: var(--font-size-sm);
+        background: var(--bg-primary);
+        transition: all var(--transition-base);
+    }
+
+    .search-input:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+    }
+
+    .sort-select {
+        padding: var(--spacing-sm) var(--spacing-lg);
+        border: 1px solid var(--border-color);
+        border-radius: 40px;
+        font-size: var(--font-size-sm);
+        background-color: var(--bg-primary);
+        color: var(--text-primary);
+        cursor: pointer;
+        min-width: 140px;
+    }
+
+    .btn-primary {
+        background: var(--primary);
+        color: white;
+        padding: 10px 20px;
+        border-radius: 40px;
+        border: none;
+        font-weight: 500;
+        cursor: pointer;
+        transition: var(--transition-base);
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .btn-primary:hover {
+        background: var(--primary-light);
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-lg);
+    }
+
+    .btn-outline {
+        background: transparent;
+        border: 1px solid var(--border-color);
+        color: var(--text-secondary);
+        padding: 8px 16px;
+        border-radius: 40px;
+        cursor: pointer;
+        transition: var(--transition-base);
+    }
+
+    .btn-outline:hover {
+        background: var(--bg-tertiary);
+        border-color: var(--text-tertiary);
+    }
+
+    /* 角色网格 */
+    .characters-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+        gap: var(--spacing-lg);
+        margin: var(--spacing-2xl) 0;
+    }
+
+    /* 角色卡片 */
+    .character-card {
+        background-color: var(--bg-primary);
+        border: 1px solid var(--border-color);
+        border-radius: var(--border-radius-lg);
+        padding: var(--spacing-lg);
+        position: relative;
+        transition: all var(--transition-base);
+        box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+    }
+
+    .character-card:hover {
+        transform: translateY(-4px);
+        box-shadow: var(--shadow-lg);
+        border-color: var(--primary-light);
+    }
+
+    /* 复选框 */
+    .character-checkbox {
+        position: absolute;
+        top: 16px;
+        left: 16px;
+        width: 20px;
+        height: 20px;
+        cursor: pointer;
+        z-index: 10;
+        accent-color: var(--primary);
+    }
+
+    /* 右上角操作菜单 */
+    .character-actions {
+        position: absolute;
+        top: 12px;
+        right: 12px;
+        display: flex;
+        gap: 4px;
+        opacity: 0;
+        transition: opacity var(--transition-base);
+        z-index: 15;
+    }
+
+    .character-card:hover .character-actions {
+        opacity: 1;
+    }
+
+    .action-btn {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background-color: rgba(255, 255, 255, 0.9);
+        backdrop-filter: blur(4px);
+        border: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--text-primary);
+        cursor: pointer;
+        transition: all var(--transition-base);
+        box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+
+    .action-btn:hover {
+        background-color: white;
+        color: var(--primary);
+        transform: scale(1.1);
+    }
+
+    /* 角色头部 (左内边距避开复选框) */
+    .character-header {
+        padding-left: 30px;
+        margin-bottom: 12px;
+    }
+
+    .character-name {
+        font-size: var(--font-size-xl);
+        font-weight: 600;
+        color: var(--text-primary);
+        line-height: 1.3;
+        margin-bottom: 4px;
+    }
+
+    .role-badge {
+        background: var(--primary);
+        color: white;
+        padding: 4px 12px;
+        border-radius: 30px;
+        font-size: var(--font-size-xs);
+        font-weight: 500;
+        display: inline-block;
+    }
+
+    /* 特征描述 */
+    .character-features {
+        margin: 16px 0;
+    }
+
+    .feature-item {
+        font-size: var(--font-size-sm);
+        color: var(--text-secondary);
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        margin-bottom: 6px;
+    }
+
+    .feature-item strong {
+        color: var(--text-primary);
+        font-weight: 600;
+        margin-right: 6px;
+    }
+
+    /* 三视图图片网格 */
+    .character-images {
+        display: flex;
+        gap: 8px;
+        margin: 16px 0 8px;
+    }
+
+    .image-preview {
+        flex: 1;
+        aspect-ratio: 1 / 1;
+        border-radius: var(--border-radius);
+        overflow: hidden;
+        background: var(--gray-100);
+        cursor: pointer;
+        border: 1px solid var(--border-color);
+        transition: transform var(--transition-base);
+    }
+
+    .image-preview:hover {
+        transform: scale(1.02);
+        border-color: var(--primary);
+    }
+
+    .image-preview img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .image-placeholder {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--gray-100);
+        color: var(--text-tertiary);
+        font-size: 20px;
+    }
+
+    /* 卡片底部 */
+    .character-footer {
+        display: flex;
+        justify-content: space-between;
+        font-size: var(--font-size-xs);
+        color: var(--text-tertiary);
+        margin-top: 12px;
+        border-top: 1px solid var(--border-color);
+        padding-top: 10px;
+    }
+
+    .project-source i {
+        margin-right: 4px;
+    }
+
+    /* 空状态 / 加载 */
+    .loading-placeholder {
+        grid-column: 1 / -1;
+        text-align: center;
+        padding: var(--spacing-3xl);
+        color: var(--text-secondary);
+    }
+
+    .spinner {
+        border: 3px solid var(--gray-200);
+        border-top-color: var(--primary);
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+        margin: 0 auto var(--spacing-md);
+    }
+
+    @keyframes spin {
+        to { transform: rotate(360deg); }
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: var(--spacing-3xl);
+        max-width: 400px;
+        margin: var(--spacing-2xl) auto;
+    }
+
+    .empty-icon {
+        width: 80px;
+        height: 80px;
+        background-color: var(--gray-100);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: var(--font-size-3xl);
+        color: var(--text-tertiary);
+        margin: 0 auto var(--spacing-lg);
+    }
+
+    /* 模态框 (复用项目页面样式) */
+    .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 2000;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .modal.show {
+        display: flex;
+    }
+
+    .modal-content {
+        background-color: var(--bg-primary);
+        border-radius: var(--border-radius-lg);
+        box-shadow: var(--shadow-2xl);
+        animation: modalSlideUp 0.3s ease;
+        width: 90%;
+        max-width: 380px;
+    }
+
+    .modal-header {
+        padding: var(--spacing-lg);
+        border-bottom: 1px solid var(--border-color);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .modal-title {
+        font-size: var(--font-size-lg);
+        font-weight: 600;
+        color: var(--text-primary);
+        margin: 0;
+    }
+
+    .modal-close {
+        background: none;
+        border: none;
+        font-size: var(--font-size-xl);
+        color: var(--text-secondary);
+        cursor: pointer;
+        padding: var(--spacing-xs);
+        line-height: 1;
+    }
+
+    .modal-body {
+        padding: var(--spacing-lg);
+    }
+
+    .menu-list {
+        display: flex;
+        flex-direction: column;
+        gap: var(--spacing-xs);
+    }
+
+    .menu-item {
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-lg);
+        padding: var(--spacing-md) var(--spacing-lg);
+        background: none;
+        border: none;
+        border-radius: var(--border-radius);
+        color: var(--text-primary);
+        font-size: var(--font-size-base);
+        cursor: pointer;
+        transition: all var(--transition-base);
+        text-align: left;
+        width: 100%;
+    }
+
+    .menu-item:hover {
+        background-color: var(--bg-tertiary);
+    }
+
+    .menu-item.text-danger {
+        color: var(--danger);
+    }
+
+    .menu-item.text-danger:hover {
+        background-color: rgba(239, 68, 68, 0.1);
+    }
+
+    .menu-divider {
+        height: 1px;
+        background-color: var(--border-color);
+        margin: var(--spacing-sm) 0;
+    }
+
+    @keyframes modalSlideUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @media (max-width: 768px) {
+        .page-header {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .header-actions {
+            flex-direction: column;
+        }
+
+        .search-box {
+            width: 100%;
+        }
+
+        .characters-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    (function() {
+        // ---------- 全局变量 ----------
+        let allCharacters = [];
+        let filteredCharacters = [];
+        let currentSearch = '';
+        let currentSort = 'newest';
+        let selectedCharacterId = null;
+
+        // DOM 元素
+        const gridEl = document.getElementById('charactersGrid');
+        const emptyStateEl = document.getElementById('emptyState');
+        const searchInput = document.getElementById('searchInput');
+        const sortSelect = document.getElementById('sortSelect');
+        const modal = document.getElementById('characterMenuModal');
+        const closeModalBtn = document.getElementById('closeModalBtn');
+        const createBtn = document.getElementById('createCharacterBtn');
+
+        // ---------- 辅助函数 ----------
+        function debounce(func, delay) {
+            let timer;
+            return function (...args) {
+                clearTimeout(timer);
+                timer = setTimeout(() => func.apply(this, args), delay);
+            };
+        }
+
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            const now = new Date();
+            const diffTime = now - date;
+            const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+            if (diffDays === 0) return '今天';
+            if (diffDays === 1) return '昨天';
+            if (diffDays <= 7) return `${diffDays}天前`;
+            return date.toLocaleDateString('zh-CN', { month: 'short', day: 'numeric' });
+        }
+
+        function escapeHtml(unsafe) {
+            if (!unsafe) return unsafe;
+            return unsafe.replace(/[&<>"]/g, function(m) {
+                if (m === '&') return '&amp;';
+                if (m === '<') return '&lt;';
+                if (m === '>') return '&gt;';
+                if (m === '"') return '&quot;';
+                return m;
+            });
+        }
+
+        function showNotification(msg, type = 'info') {
+            alert(`[${type}] ${msg}`); // 简易提示，可替换为更美观的组件
+        }
+
+        window.showImagePreview = function(src, alt) {
+            if (!src) return;
+            window.open(src, '_blank');
+        };
+
+        // ---------- 加载角色数据 (模拟API) ----------
+        window.loadCharacters = async function() {
+            gridEl.innerHTML = `<div class="loading-placeholder"><div class="spinner"></div><p>正在加载角色库...</p></div>`;
+            emptyStateEl.style.display = 'none';
+
+            try {
+                // 实际使用时请替换为真实API
+                const response = await fetch('/api/character-library/list');
+                const data = await response.json();
+
+                if (data.success && Array.isArray(data.characters)) {
+                    allCharacters = data.characters.map(c => ({
+                        id: c.id,
+                        name: c.name || '未命名角色',
+                        role: c.role || '角色',
+                        description: c.description || '',
+                        appearance: c.appearance || '',
+                        avatar: c.avatar || '',
+                        avatar_side: c.avatar_side || '',
+                        avatar_back: c.avatar_back || '',
+                        project_id: c.project_id || '-',
+                        created_at: c.created_at || new Date().toISOString()
+                    }));
+                    applyFilterAndSort();
+                } else {
+                    throw new Error(data.error || '数据格式错误');
+                }
+            } catch (err) {
+                console.error('加载角色库失败:', err);
+                gridEl.innerHTML = `
+                    <div class="error-state">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <p>加载失败，请重试</p>
+                        <button class="btn btn-outline btn-sm" onclick="loadCharacters()">
+                            <i class="fas fa-redo-alt"></i> 重试
+                        </button>
+                    </div>
+                `;
+            }
+        };
+
+        // 过滤 + 排序
+        function applyFilterAndSort() {
+            let filtered = allCharacters;
+
+            if (currentSearch.trim()) {
+                const term = currentSearch.trim().toLowerCase();
+                filtered = filtered.filter(c =>
+                    c.name.toLowerCase().includes(term) ||
+                    c.static_features.toLowerCase().includes(term) ||
+                    c.dynamic_features.toLowerCase().includes(term)
+                );
+            }
+
+            filtered.sort((a, b) => {
+                switch (currentSort) {
+                    case 'newest': return new Date(b.created_at) - new Date(a.created_at);
+                    case 'oldest': return new Date(a.created_at) - new Date(b.created_at);
+                    case 'name_asc': return a.name.localeCompare(b.name);
+                    case 'name_desc': return b.name.localeCompare(a.name);
+                    default: return 0;
+                }
+            });
+
+            filteredCharacters = filtered;
+            renderCharacters();
+        }
+
+        // 渲染卡片
+        function renderCharacters() {
+            if (filteredCharacters.length === 0) {
+                gridEl.innerHTML = '';
+                emptyStateEl.style.display = 'block';
+                return;
+            }
+
+            emptyStateEl.style.display = 'none';
+            gridEl.innerHTML = filteredCharacters.map(char => {
+                const frontImg = char.avatar ? `<img src="${char.avatar}" alt="正面" onerror="this.parentElement.innerHTML='<div class=\\'image-placeholder\\'><i class=\\'fas fa-image\\'></i></div>';">` : '<div class="image-placeholder"><i class="fas fa-user"></i></div>';
+                const sideImg = char.avatar_side ? `<img src="${char.avatar_side}" alt="侧面" onerror="this.parentElement.innerHTML='<div class=\\'image-placeholder\\'><i class=\\'fas fa-image\\'></i></div>';">` : '<div class="image-placeholder"><i class="fas fa-user"></i></div>';
+                const backImg = char.avatar_back ? `<img src="${char.avatar_back}" alt="背面" onerror="this.parentElement.innerHTML='<div class=\\'image-placeholder\\'><i class=\\'fas fa-image\\'></i></div>';">` : '<div class="image-placeholder"><i class="fas fa-user"></i></div>';
+
+                return `
+                    <div class="character-card" data-character-id="${char.id}">
+                        <input type="checkbox" class="character-checkbox" value="${char.id}" onclick="event.stopPropagation();">
+                        <div class="character-actions">
+                            <button class="action-btn" onclick="event.stopPropagation(); showCharacterMenu(${char.id});">
+                                <i class="fas fa-ellipsis-h"></i>
+                            </button>
+                        </div>
+                        <div class="character-header">
+                            <h3 class="character-name">${escapeHtml(char.name)}</h3>
+                            <span class="role-badge">${escapeHtml(char.role) || '角色'}</span>
+                        </div>
+                        <div class="character-features">
+                            <div class="feature-item"><strong>描述:</strong> ${escapeHtml(char.description) || '无'}</div>
+                            <div class="feature-item"><strong>外貌:</strong> ${escapeHtml(char.appearance) || '无'}</div>
+                        </div>
+                        <div class="character-images">
+                            <div class="image-preview" onclick="event.stopPropagation(); showImagePreview('${char.avatar || ''}', '${char.name} 正面')">${frontImg}</div>
+                            <div class="image-preview" onclick="event.stopPropagation(); showImagePreview('${char.avatar_side || ''}', '${char.name} 侧面')">${sideImg}</div>
+                            <div class="image-preview" onclick="event.stopPropagation(); showImagePreview('${char.avatar_back || ''}', '${char.name} 背面')">${backImg}</div>
+                        </div>
+                        <div class="character-footer">
+                            <span class="project-source"><i class="fas fa-folder"></i> 项目 ${char.project_id}</span>
+                            <span><i class="far fa-clock"></i> ${formatDate(char.created_at)}</span>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // 显示操作菜单
+        window.showCharacterMenu = function(id) {
+            selectedCharacterId = id;
+            modal.classList.add('show');
+        };
+
+        function closeModal() {
+            modal.classList.remove('show');
+        }
+
+        // 处理菜单操作
+        function handleMenuAction(action) {
+            if (!selectedCharacterId) return;
+            if (action === 'edit') {
+                showNotification('编辑功能开发中', 'info');
+            } else if (action === 'delete') {
+                deleteCharacter(selectedCharacterId);
+            }
+            closeModal();
+        }
+
+        async function deleteCharacter(id) {
+            if (!confirm('确定要删除这个角色吗？此操作不可恢复。')) return;
+            try {
+                const response = await fetch(`/api/character-library/${id}`, { method: 'DELETE' });
+                const data = await response.json();
+                if (data.success) {
+                    showNotification('角色已删除', 'success');
+                    loadCharacters();
+                } else {
+                    showNotification(data.error || '删除失败', 'error');
+                }
+            } catch (err) {
+                showNotification('删除请求失败', 'error');
+            }
+        }
+
+        // ---------- 事件绑定 ----------
+        searchInput.addEventListener('input', debounce(function(e) {
+            currentSearch = e.target.value;
+            applyFilterAndSort();
+        }, 300));
+
+        sortSelect.addEventListener('change', function(e) {
+            currentSort = e.target.value;
+            applyFilterAndSort();
+        });
+
+        closeModalBtn.addEventListener('click', closeModal);
+        window.addEventListener('click', (e) => {
+            if (e.target === modal) closeModal();
+        });
+
+        document.querySelectorAll('.menu-item').forEach(item => {
+            item.addEventListener('click', (e) => {
+                const action = e.currentTarget.dataset.action;
+                handleMenuAction(action);
+            });
+        });
+
+        createBtn.addEventListener('click', () => {
+            showNotification('新建角色功能开发中', 'info');
+        });
+
+        // 初始化加载
+        loadCharacters();
+    })();
+</script>
+{% endblock %}

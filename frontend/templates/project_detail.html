@@ -1,0 +1,2621 @@
+<!-- templates/project_detail.html -->
+{% extends "layout.html" %}
+
+{% block title %}项目详情 - 灵犀剧能{% endblock %}
+
+{% block content %}
+<div class="project-detail-container">
+    <!-- 页面标题和操作 -->
+    <div class="page-header">
+        <div class="header-content">
+            <button class="btn btn-outline btn-sm" onclick="location.href='/projects'">
+                <i class="fas fa-arrow-left"></i> 返回项目列表
+            </button>
+            <h1 class="page-title" id="projectTitle">加载中...</h1>
+            <p class="page-subtitle" id="projectCategory">加载中...</p>
+        </div>
+        <div class="header-actions">
+            <button class="btn btn-outline" id="editProjectBtn">
+                <i class="fas fa-edit"></i> 编辑项目
+            </button>
+            <button class="btn btn-primary" id="createEpisodeBtn">
+                <i class="fas fa-plus"></i> 创建分集
+            </button>
+        </div>
+    </div>
+
+    <!-- 项目封面和基本信息 -->
+    <div class="project-header-section">
+        <div class="project-cover-large" id="projectCover">
+            <div class="cover-placeholder">
+                <i class="fas fa-film"></i>
+                <p>暂无封面</p>
+            </div>
+        </div>
+
+        <div class="project-info-card">
+            <div class="project-meta-grid">
+                <div class="meta-item">
+                    <div class="meta-label">状态</div>
+                    <div class="meta-value">
+                        <span class="status-badge" id="projectStatus">草稿</span>
+                    </div>
+                </div>
+                <div class="meta-item">
+                    <div class="meta-label">可见性</div>
+                    <div class="meta-value" id="projectVisibility">私密</div>
+                </div>
+                <div class="meta-item">
+                    <div class="meta-label">创建时间</div>
+                    <div class="meta-value" id="projectCreatedAt">--</div>
+                </div>
+                <div class="meta-item">
+                    <div class="meta-label">更新时间</div>
+                    <div class="meta-value" id="projectUpdatedAt">--</div>
+                </div>
+                <div class="meta-item">
+                    <div class="meta-label">分集数</div>
+                    <div class="meta-value" id="projectEpisodeCount">0</div>
+                </div>
+                <div class="meta-item">
+                    <div class="meta-label">角色数</div>
+                    <div class="meta-value" id="projectCharacterCount">0</div>
+                </div>
+            </div>
+
+            <div class="project-tags" id="projectTags">
+                <!-- 标签将通过JavaScript动态加载 -->
+            </div>
+
+            <div class="project-description-section">
+                <h3 class="section-title">项目描述</h3>
+                <div class="project-description-content" id="projectDescription">
+                    暂无描述
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 选项卡导航 -->
+    <div class="project-tabs">
+        <div class="tabs-container">
+            <button class="tab-btn active" data-tab="episodes">
+                <i class="fas fa-film"></i> 分集列表
+            </button>
+            <button class="tab-btn" data-tab="characters">
+                <i class="fas fa-users"></i> 角色管理
+            </button>
+            <button class="tab-btn" data-tab="settings">
+                <i class="fas fa-cog"></i> 项目设置
+            </button>
+        </div>
+    </div>
+
+    <!-- 选项卡内容 -->
+    <div class="tab-content">
+        <!-- 分集列表 -->
+        <div class="tab-pane active" id="episodesTab">
+            <div class="episodes-header">
+                <h2 class="tab-content-title">分集列表</h2>
+                <button class="btn btn-primary" id="addEpisodeBtn">
+                    <i class="fas fa-plus"></i> 添加分集
+                </button>
+            </div>
+
+            <div class="episodes-grid" id="episodesGrid">
+                <div class="loading-placeholder">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    <p>加载分集中...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 角色管理 -->
+        <div class="tab-pane" id="charactersTab">
+            <div class="characters-header">
+                <h2 class="tab-content-title">角色管理</h2>
+                <div style="display: flex; gap: 8px;">
+                    <button class="btn btn-danger" id="deleteAllCharactersBtn" onclick="deleteAllCharacters()" style="display: none;">
+                        <i class="fas fa-trash-alt"></i> 全部删除
+                    </button>
+                    <button class="btn btn-primary" id="addCharacterBtn">
+                        <i class="fas fa-plus"></i> 添加角色
+                    </button>
+                </div>
+            </div>
+
+            <div class="characters-grid" id="charactersGrid">
+                <div class="loading-placeholder">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    <p>加载角色中...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 项目设置 -->
+        <div class="tab-pane" id="settingsTab">
+            <div class="settings-header">
+                <h2 class="tab-content-title">项目设置</h2>
+            </div>
+
+            <div class="settings-form" id="projectSettingsForm">
+                <div class="loading-placeholder">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    <p>加载设置中...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 简单的图片预览模态框 -->
+<div class="modal" id="imagePreviewModal" style="display: none;">
+    <div class="modal-content" style="max-width: 600px; padding: 20px; background: white; border-radius: 12px; position: relative; margin: auto;">
+        <button onclick="closeImagePreview()" style="position: absolute; top: 10px; right: 10px; border: none; background: none; font-size: 24px; cursor: pointer; color: #666;">&times;</button>
+        <h4 id="imagePreviewTitle" style="margin: 0 0 15px 0; font-size: 16px; color: #333;"></h4>
+        <div id="imagePreviewContent" style="text-align: center;"></div>
+    </div>
+</div>
+
+<div class="modal fade" id="previewModal" tabindex="-1" aria-labelledby="previewModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+        <div class="modal-content">
+            <!-- 模态框头部 -->
+            <div class="modal-header">
+                <div class="modal-title-wrapper">
+                    <i class="fas fa-play-circle me-2"></i>
+                    <h5 class="modal-title" id="previewModalLabel">分集预览</h5>
+                </div>
+                <div class="modal-header-actions">
+                    <span class="episode-status-badge" id="episodeStatusBadge"></span>
+                    <button type="button" class="btn-close" onclick="closePreviewModal()" aria-label="关闭"></button>
+                </div>
+            </div>
+
+            <!-- 模态框主体 -->
+            <div class="modal-body">
+                <div class="preview-container">
+                    <div class="preview-main">
+                        <!-- 视频播放器区域 -->
+                        <div class="video-player-section">
+                            <div class="video-container" id="videoContainer">
+                                <!-- 加载状态 -->
+                                <div class="video-loading" id="videoLoading">
+                                    <div class="spinner">
+                                        <div class="spinner-circle"></div>
+                                    </div>
+                                    <p>正在加载视频...</p>
+                                </div>
+
+                                <!-- 视频播放器 -->
+                                <div class="video-wrapper" id="videoWrapper" style="display: none;">
+                                    <video id="previewVideoPlayer" class="video-player" controls>
+                                        <p class="video-fallback">
+                                            您的浏览器不支持HTML5视频，请使用现代浏览器如Chrome、Firefox或Edge
+                                        </p>
+                                    </video>
+                                </div>
+
+                                <!-- 无视频提示 -->
+                                <div class="no-video-message" id="noVideoMessage" style="display: none;">
+                                    <div class="no-video-icon">
+                                        <i class="fas fa-video-slash"></i>
+                                    </div>
+                                    <h4>暂无视频内容</h4>
+                                    <p>该分集尚未上传视频文件</p>
+                                    <button class="btn btn-primary mt-3" id="goToEditBtn">
+                                        <i class="fas fa-edit me-2"></i>前往编辑
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- 自定义视频控制条 -->
+                            <div class="custom-controls" id="customControls" style="display: none;">
+                                <div class="controls-left">
+                                    <button class="control-btn" onclick="togglePlayPause()" id="playPauseBtn">
+                                        <i class="fas fa-play"></i>
+                                    </button>
+                                    <button class="control-btn" onclick="toggleMute()" id="muteBtn">
+                                        <i class="fas fa-volume-up"></i>
+                                    </button>
+                                    <div class="volume-container">
+                                        <input type="range" class="volume-slider" id="volumeSlider"
+                                               min="0" max="100" step="1" value="100">
+                                    </div>
+                                    <span class="time-display">
+                                        <span id="currentTime">00:00</span> /
+                                        <span id="durationTime">00:00</span>
+                                    </span>
+                                </div>
+                                <div class="controls-right">
+                                    <button class="control-btn" onclick="toggleFullscreen()">
+                                        <i class="fas fa-expand"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 分集信息区域 -->
+                        <div class="episode-info-section">
+                            <div class="episode-header">
+                                <h4 id="episodeTitle" class="episode-title"></h4>
+                                <div class="episode-meta">
+                                    <span class="episode-number" id="episodeNumber"></span>
+                                    <span class="episode-duration" id="episodeDuration"></span>
+                                </div>
+                            </div>
+
+                            <div class="episode-stats">
+                                <div class="stat-item">
+                                    <i class="fas fa-calendar"></i>
+                                    <span>创建: <span id="episodeCreatedAt">--</span></span>
+                                </div>
+                                <div class="stat-item">
+                                    <i class="fas fa-eye"></i>
+                                    <span>浏览: <span id="episodeViews">0</span></span>
+                                </div>
+                                <div class="stat-item">
+                                    <i class="fas fa-heart"></i>
+                                    <span>点赞: <span id="episodeLikes">0</span></span>
+                                </div>
+                                <div class="stat-item">
+                                    <i class="fas fa-comment"></i>
+                                    <span>评论: <span id="episodeComments">0</span></span>
+                                </div>
+                            </div>
+
+                            <div class="episode-content-section">
+                                <div class="content-group">
+                                    <h6><i class="fas fa-align-left me-2"></i>分集描述</h6>
+                                    <div class="content-box" id="episodeDescription">
+                                        <p class="text-muted">暂无描述</p>
+                                    </div>
+                                </div>
+
+                                <div class="content-group">
+                                    <h6><i class="fas fa-file-alt me-2"></i>分集内容</h6>
+                                    <div class="content-box scrollable-content" id="episodeContent">
+                                        <p class="text-muted">暂无内容</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="episode-actions">
+                                <button class="btn btn-primary" id="editEpisodeBtn">
+                                    <i class="fas fa-edit me-2"></i> 编辑分集
+                                </button>
+                                <button class="btn btn-outline-primary" id="generateEpisodeBtn">
+                                    <i class="fas fa-magic me-2"></i> 生成视频
+                                </button>
+                                <button class="btn btn-outline-success" id="publishEpisodeBtn">
+                                    <i class="fas fa-paper-plane me-2"></i> 发布分集
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 模态框底部 -->
+            <div class="modal-footer">
+                <div class="footer-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closePreviewModal()">
+                        <i class="fas fa-times me-2"></i> 关闭
+                    </button>
+                    <button type="button" class="btn btn-outline-primary" onclick="downloadVideo()" id="downloadBtn" style="display: none;">
+                        <i class="fas fa-download me-2"></i> 下载视频
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 发布确认模态框 -->
+<div class="modal fade" id="publishConfirmModal" tabindex="-1" aria-labelledby="publishConfirmModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="publishConfirmModalLabel">
+                    <i class="fas fa-paper-plane me-2 text-success"></i>确认发布
+                </h5>
+                <button type="button" class="btn-close" onclick="closePublishModal()" aria-label="关闭"></button>
+            </div>
+            <div class="modal-body">
+                <div class="text-center mb-4">
+                    <div class="publish-icon mb-3">
+                        <i class="fas fa-globe-asia" style="font-size: 3rem; color: #28a745;"></i>
+                    </div>
+                    <h5 class="mb-2">确定要发布这个分集吗？</h5>
+                    <p class="text-muted mb-0">发布后视频将在<strong>发现页面</strong>对所有观众可见</p>
+                </div>
+                <div class="publish-info alert alert-light border">
+                    <div class="d-flex align-items-center mb-2">
+                        <i class="fas fa-video me-2 text-primary"></i>
+                        <strong>分集信息</strong>
+                    </div>
+                    <div id="publishEpisodeInfo" class="ps-4 text-muted">
+                        <small>正在加载...</small>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closePublishModal()">
+                    <i class="fas fa-times me-2"></i>取消
+                </button>
+                <button type="button" class="btn btn-success" id="confirmPublishBtn">
+                    <i class="fas fa-check me-2"></i>确认发布
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block styles %}
+<style>
+    /* Bootstrap 模态框自定义样式 - 确保正确显示和居中 */
+    .modal.fade {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 1050;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+    }
+
+    .modal.fade.show {
+        display: flex !important;
+    }
+
+    .modal-dialog {
+        width: 100%;
+        max-width: 500px;
+        margin: 0 auto;
+        pointer-events: auto;
+    }
+
+    .modal-dialog.modal-lg {
+        max-width: 800px;
+    }
+
+    .modal-dialog.modal-xl {
+        max-width: 1140px;
+    }
+
+    .modal-dialog-centered {
+        display: flex;
+        align-items: center;
+        min-height: calc(100% - 40px);
+    }
+
+    .modal-content {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        width: 100%;
+        animation: modalSlideUp 0.3s ease;
+        border: none;
+    }
+
+    .modal-header {
+        padding: 16px 20px;
+        border-bottom: 1px solid #e9ecef;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-radius: 12px 12px 0 0;
+    }
+
+    .modal-title {
+        margin: 0;
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #1a1a2e;
+    }
+
+    .modal-body {
+        padding: 20px;
+    }
+
+    .modal-footer {
+        padding: 16px 20px;
+        border-top: 1px solid #e9ecef;
+        border-radius: 0 0 12px 12px;
+        display: flex;
+        justify-content: flex-end;
+        gap: 12px;
+    }
+
+    .btn-close {
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        color: #6c757d;
+        cursor: pointer;
+        padding: 0;
+        width: 30px;
+        height: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0.7;
+        transition: opacity 0.2s;
+    }
+
+    .btn-close:hover {
+        opacity: 1;
+    }
+
+    @keyframes modalSlideUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @media (max-width: 576px) {
+        .modal-dialog {
+            max-width: 100%;
+            margin: 10px;
+        }
+
+        .modal.fade {
+            padding: 10px;
+        }
+
+        .modal-body {
+            padding: 16px;
+        }
+    }
+
+    /* 项目详情容器 */
+    .project-detail-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 30px 20px;
+    }
+
+    .project-header-section {
+        display: grid;
+        grid-template-columns: 1fr 2fr;
+        gap: 40px;
+        margin: 40px 0;
+        background: white;
+        border-radius: 12px;
+        padding: 30px;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    }
+
+    @media (max-width: 992px) {
+        .project-header-section {
+            grid-template-columns: 1fr;
+            gap: 30px;
+        }
+    }
+
+    .project-cover-large {
+        height: 300px;
+        border-radius: 8px;
+        overflow: hidden;
+        background: linear-gradient(135deg, var(--gray-100) 0%, var(--gray-200) 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .project-cover-large img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .cover-placeholder {
+        text-align: center;
+        color: var(--text-tertiary);
+    }
+
+    .cover-placeholder i {
+        font-size: 64px;
+        margin-bottom: 16px;
+    }
+
+    .project-info-card {
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
+    }
+
+    .project-meta-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+    }
+
+    @media (max-width: 768px) {
+        .project-meta-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    .meta-item {
+        background: var(--background-secondary);
+        padding: 16px;
+        border-radius: 8px;
+    }
+
+    .meta-label {
+        font-size: 12px;
+        color: var(--text-secondary);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 4px;
+    }
+
+    .meta-value {
+        font-size: 16px;
+        font-weight: 500;
+        color: var(--text-primary);
+    }
+
+    .status-badge {
+        display: inline-block;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .status-badge[data-status="draft"] {
+        background-color: var(--warning-light);
+        color: var(--warning);
+    }
+
+    .status-badge[data-status="active"] {
+        background-color: var(--success-light);
+        color: var(--success);
+    }
+
+    .status-badge[data-status="completed"] {
+        background-color: var(--primary-light);
+        color: var(--primary);
+    }
+
+    .status-badge[data-status="archived"] {
+        background-color: var(--gray-200);
+        color: var(--text-secondary);
+    }
+
+    .project-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .tag {
+        background: var(--primary-light);
+        color: var(--primary);
+        padding: 4px 12px;
+        border-radius: 16px;
+        font-size: 14px;
+    }
+
+    .project-description-section {
+        margin-top: 20px;
+    }
+
+    .section-title {
+        font-size: 18px;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-bottom: 12px;
+    }
+
+    .project-description-content {
+        line-height: 1.6;
+        color: var(--text-secondary);
+        padding: 16px;
+        background: var(--background-secondary);
+        border-radius: 8px;
+        white-space: pre-wrap;
+    }
+
+    .project-tabs {
+        margin: 40px 0 24px;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .tabs-container {
+        display: flex;
+        gap: 8px;
+    }
+
+    .tab-btn {
+        padding: 12px 24px;
+        background: none;
+        border: none;
+        border-bottom: 3px solid transparent;
+        color: var(--text-secondary);
+        font-size: 16px;
+        font-weight: 500;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.3s ease;
+    }
+
+    .tab-btn:hover {
+        color: var(--primary);
+    }
+
+    .tab-btn.active {
+        color: var(--primary);
+        border-bottom-color: var(--primary);
+    }
+
+    .tab-content {
+        position: relative;
+        width: 100%;
+        height: 60vh; /* 使用视口高度 */
+        min-height: 400px;
+        overflow: hidden; /* 包含子元素 */
+    }
+
+    .tab-content-title {
+        font-size: 24px;
+        font-weight: 600;
+        color: var(--text-primary);
+    }
+
+    .episodes-header,
+    .characters-header,
+    .settings-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-shrink: 0;
+    }
+
+    /* 选项卡内容区域 */
+    /* 项目详情页的选项卡面板 - 使用更具体的选择器 */
+    .project-detail-container #episodesTab,
+    .project-detail-container #charactersTab,
+    .project-detail-container #settingsTab {
+        display: none !important;
+        width: 100%;
+        height: 100%;
+    }
+
+    .project-detail-container #episodesTab.active,
+    .project-detail-container #charactersTab.active,
+    .project-detail-container #settingsTab.active {
+        display: block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        height: 100% !important;
+        width: 100% !important;
+        animation: fadeIn 0.3s ease;
+        overflow: auto !important; /* 添加滚动条 */
+    }
+
+
+    /* 分集和角色列表容器 */
+    /* 移除冲突的display规则，使用flex布局 */
+
+    /* 网格布局 - 移除了内部滚动，使用外层滚动 */
+    .episodes-grid,
+    .characters-grid {
+        display: grid !important;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)) !important;
+        gap: 24px !important;
+        width: 100% !important;
+        min-height: 300px !important; /* 最小高度确保可见 */
+        background: transparent !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        overflow: visible !important; /* 移除内部滚动 */
+        padding: 10px !important;
+        grid-auto-rows: minmax(200px, auto) !important; /* 确保网格行有足够高度 */
+    }
+
+    /* 设置表单容器 - 移除了内部滚动，使用外层滚动 */
+    .settings-form {
+        height: auto !important;
+        overflow: visible !important; /* 移除内部滚动 */
+        padding: 10px !important;
+    }
+
+    /* 自定义滚动条 - 仅外层 tab-pane */
+    .tab-pane::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    .tab-pane::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 4px;
+    }
+
+    .tab-pane::-webkit-scrollbar-thumb {
+        background: #c1c1c1;
+        border-radius: 4px;
+    }
+
+    .tab-pane::-webkit-scrollbar-thumb:hover {
+        background: #a8a8a8;
+    }
+
+
+
+    .episode-card,
+    .character-card {
+        background: white !important;
+        border-radius: 8px !important;
+        padding: 20px !important;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06) !important;
+        transition: all 0.3s ease;
+        min-height: 150px !important;
+        width: 100% !important; /* 填充网格单元格 */
+        height: auto !important; /* 自动高度 */
+        display: flex !important;
+        flex-direction: column !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        position: relative !important;
+        z-index: 1 !important;
+        overflow: visible !important;
+        box-sizing: border-box !important; /* 边框和内边距包含在尺寸内 */
+    }
+
+    .episode-card:hover,
+    .character-card:hover {
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+        transform: translateY(-2px);
+    }
+
+    .episode-header,
+    .character-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 12px;
+    }
+
+    .episode-number {
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--primary);
+        background: var(--primary-light);
+        padding: 4px 12px;
+        border-radius: 16px;
+    }
+
+    .episode-title,
+    .character-name {
+        font-size: 18px;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-bottom: 8px;
+    }
+
+    .episode-content,
+    .character-description {
+        color: var(--text-secondary);
+        font-size: 14px;
+        line-height: 1.5;
+        margin-bottom: 16px;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .episode-meta,
+    .character-meta {
+        display: flex;
+        gap: 16px;
+        font-size: 12px;
+        color: var(--text-tertiary);
+    }
+
+    .episode-video-section {
+        margin: 16px 0;
+        min-height: 120px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 4px;
+        background: var(--background-light);
+        border: 1px dashed var(--border-color);
+        overflow: hidden;
+    }
+    
+    .video-preview {
+        width: 100%;
+    }
+    
+    .video-preview video {
+        width: 100%;
+        max-height: 180px;
+        border-radius: 4px;
+        object-fit: contain;
+        background: #000;
+    }
+    
+    .video-placeholder {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        color: var(--text-tertiary);
+    }
+    
+    .video-placeholder i {
+        font-size: 48px;
+        margin-bottom: 8px;
+        color: #ccc;
+    }
+
+    .loading-placeholder {
+        text-align: center;
+        padding: 60px 20px;
+        color: var(--text-tertiary);
+    }
+
+    .loading-placeholder i {
+        font-size: 32px;
+        margin-bottom: 16px;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        color: var(--text-secondary);
+    }
+
+    .empty-state i {
+        font-size: 48px;
+        margin-bottom: 16px;
+        color: var(--text-tertiary);
+    }
+
+    /* ========== 项目设置页面样式 ========== */
+    .settings-form .form-section {
+        background: white;
+        border-radius: 12px;
+        padding: 24px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    }
+
+    .settings-form .form-section-title {
+        font-size: 18px;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .settings-form .form-section-title i {
+        color: var(--primary);
+    }
+
+    /* 可见性设置 */
+    .visibility-settings {
+        display: flex;
+        align-items: flex-start;
+        gap: 16px;
+        padding: 16px 20px;
+        background: linear-gradient(135deg, #f8f9ff 0%, #fff 100%);
+        border: 2px solid #e5e7eb;
+        border-radius: 12px;
+        transition: all 0.3s ease;
+    }
+
+    .visibility-settings:hover {
+        border-color: #a5b4fc;
+        box-shadow: 0 4px 12px rgba(99, 102, 241, 0.1);
+    }
+
+    .visibility-settings input[type="checkbox"] {
+        width: 20px;
+        height: 20px;
+        accent-color: #4f46e5;
+        margin-top: 2px;
+    }
+
+    .visibility-settings-content {
+        flex: 1;
+    }
+
+    .visibility-settings-title {
+        font-weight: 600;
+        color: #1f2937;
+        margin-bottom: 4px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .visibility-settings-title i {
+        color: #4f46e5;
+    }
+
+    .visibility-settings-desc {
+        font-size: 14px;
+        color: #6b7280;
+    }
+
+    /* 危险区域 */
+    .danger-zone {
+        background: linear-gradient(135deg, #fef2f2 0%, #fff 100%);
+        border: 2px solid #fecaca;
+        border-radius: 12px;
+        padding: 20px;
+    }
+
+    .danger-zone-header {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 12px;
+    }
+
+    .danger-zone-header i {
+        color: #ef4444;
+        font-size: 20px;
+    }
+
+    .danger-zone-title {
+        font-weight: 600;
+        color: #991b1b;
+        font-size: 16px;
+    }
+
+    .danger-zone-description {
+        font-size: 14px;
+        color: #7f1d1d;
+        margin-bottom: 16px;
+        line-height: 1.6;
+    }
+
+    .danger-zone .btn-danger {
+        background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+        border: none;
+        padding: 12px 24px;
+        font-weight: 500;
+        border-radius: 8px;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+        transition: all 0.3s ease;
+    }
+
+    .danger-zone .btn-danger:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(239, 68, 68, 0.4);
+    }
+
+    /* 表单操作按钮 */
+    .settings-form .form-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 12px;
+        padding-top: 20px;
+        border-top: 1px solid #e5e7eb;
+        margin-top: 20px;
+    }
+
+    .settings-form .btn-outline {
+        border: 2px solid #e5e7eb;
+        padding: 12px 24px;
+        font-weight: 500;
+        border-radius: 8px;
+        color: #6b7280;
+        transition: all 0.3s ease;
+    }
+
+    .settings-form .btn-outline:hover {
+        border-color: #4f46e5;
+        color: #4f46e5;
+    }
+
+    .settings-form .btn-primary {
+        background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%);
+        border: none;
+        padding: 12px 32px;
+        font-weight: 500;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+        transition: all 0.3s ease;
+    }
+
+    .settings-form .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(79, 70, 229, 0.4);
+    }
+
+</style>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    let currentProjectId = null;
+    let currentTab = 'episodes';
+    const BACKEND_API_URL = '{{ api_host|default("http://localhost:5001") }}';
+    console.log('后端API地址:', BACKEND_API_URL);
+    
+    // 获取当前用户信息
+    let currentUsername = '{{ current_user.username }}';
+    let currentUserId = '{{ current_user.id }}';
+    console.log('currentUsername from template:', currentUsername, 'currentUserId:', currentUserId);
+    if (!currentUsername || currentUsername === 'None' || currentUsername === '') {
+        // 如果用户名为空，使用用户ID
+        currentUsername = currentUserId || 'default';
+        console.log('Using user ID as username:', currentUsername);
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('DOMContentLoaded - 开始初始化，当前选项卡:', currentTab);
+        
+        // 从URL获取项目ID
+        const pathSegments = window.location.pathname.split('/');
+        currentProjectId = pathSegments[pathSegments.length - 1];
+
+        if (!currentProjectId || isNaN(currentProjectId)) {
+            showNotification('项目ID无效', 'error');
+            setTimeout(() => location.href = '/projects', 2000);
+            return;
+        }
+
+        // 确保DOM完全加载后再初始化
+        setTimeout(() => {
+            console.log('开始初始化选项卡...');
+            // 初始化选项卡 - 必须先初始化再加载内容
+            initTabs();
+            
+            console.log('选项卡初始化完成，当前选项卡:', currentTab);
+            console.log('激活的选项卡按钮:', document.querySelector('.tab-btn.active')?.dataset.tab);
+            console.log('激活的选项卡内容:', document.querySelector('.tab-pane.active')?.id);
+
+            // 加载项目详情
+            loadProjectDetails();
+        }, 100);
+
+        // 绑定按钮事件
+        document.getElementById('editProjectBtn')?.addEventListener('click', function() {
+            window.location.href = `/projects/${currentProjectId}/edit`;
+        });
+
+        document.getElementById('createEpisodeBtn')?.addEventListener('click', function() {
+            window.location.href = `/episodes/create?project_id=${currentProjectId}`;
+        });
+
+        document.getElementById('addEpisodeBtn')?.addEventListener('click', function() {
+            window.location.href = `/episodes/create?project_id=${currentProjectId}`;
+        });
+
+        document.getElementById('addCharacterBtn')?.addEventListener('click', function() {
+            window.location.href = `/characters/create?project_id=${currentProjectId}`;
+        });
+    });
+
+     function initTabs() {
+        console.log('初始化选项卡...');
+        console.log('初始化前 - 当前选项卡:', currentTab);
+        console.log('初始化前 - 激活的选项卡按钮:', document.querySelector('.tab-btn.active')?.dataset.tab);
+        console.log('初始化前 - 激活的选项卡内容:', document.querySelector('.tab-pane.active')?.id);
+
+        // 重置当前选项卡为分集
+        currentTab = 'episodes';
+        console.log('重置当前选项卡为:', currentTab);
+
+        // 先隐藏所有选项卡内容
+        document.querySelectorAll('.tab-pane').forEach(pane => {
+            pane.classList.remove('active');
+            pane.style.display = 'none';
+        });
+
+        // 显示默认的选项卡
+        const defaultPane = document.getElementById('episodesTab');
+        if (defaultPane) {
+            defaultPane.classList.add('active');
+            // 强制设置内联样式
+            defaultPane.style.display = 'block';
+            defaultPane.style.visibility = 'visible';
+            defaultPane.style.opacity = '1';
+            defaultPane.style.height = '100%';
+            console.log('已激活默认选项卡:', defaultPane.id);
+        }
+
+        // 移除所有按钮的active类
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        
+        // 激活第一个选项卡按钮
+        const firstTabBtn = document.querySelector('.tab-btn[data-tab="episodes"]');
+        if (firstTabBtn) {
+            firstTabBtn.classList.add('active');
+            console.log('已激活默认选项卡按钮:', firstTabBtn.dataset.tab);
+        }
+
+        // 为选项卡按钮添加点击事件
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                const tabName = this.dataset.tab;
+                console.log('点击选项卡:', tabName);
+
+                // 移除所有按钮的active类
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+
+                // 隐藏所有选项卡内容
+                document.querySelectorAll('.tab-pane').forEach(pane => {
+                    pane.classList.remove('active');
+                    pane.style.display = 'none';
+                });
+
+                // 显示选中的选项卡内容
+                currentTab = tabName;
+                const targetPane = document.getElementById(`${currentTab}Tab`);
+                console.log('目标面板:', targetPane ? targetPane.id : '未找到');
+                
+                if (targetPane) {
+                    targetPane.classList.add('active');
+                    // 强制设置内联样式以确保显示
+                    targetPane.style.display = 'block';
+                    targetPane.style.visibility = 'visible';
+                    targetPane.style.opacity = '1';
+                    console.log('已激活面板:', targetPane.id);
+                    
+                    // 验证样式是否应用
+                    setTimeout(() => {
+                        const computedStyle = window.getComputedStyle(targetPane);
+                        console.log('面板样式验证:', {
+                            display: computedStyle.display,
+                            visibility: computedStyle.visibility,
+                            opacity: computedStyle.opacity
+                        });
+                    }, 100);
+
+                    // 加载选项卡内容
+                    try {
+                        switch(currentTab) {
+                            case 'episodes':
+                                loadEpisodes();
+                                break;
+                            case 'characters':
+                                loadCharacters();
+                                break;
+                            case 'settings':
+                                loadSettings();
+                                break;
+                        }
+                    } catch (err) {
+                        console.error('加载选项卡内容失败:', err);
+                    }
+                } else {
+                    console.error('未找到目标面板:', `${currentTab}Tab`);
+                }
+            });
+        });
+    }
+
+     async function loadProjectDetails() {
+        try {
+            console.log('加载项目详情，ID:', currentProjectId);
+
+            const response = await fetch(`/api/projects/${currentProjectId}`);
+            if (!response.ok) {
+                throw new Error('加载项目详情失败');
+            }
+
+            const data = await response.json();
+            const project = data.project;
+
+            // 更新页面标题
+            document.getElementById('projectTitle').textContent = project.title;
+            document.title = `${project.title} - 项目详情 - 灵犀剧能`;
+
+            // 更新分类
+            document.getElementById('projectCategory').textContent = project.category;
+
+            // 更新封面
+            const coverContainer = document.getElementById('projectCover');
+            if (project.cover_image) {
+                coverContainer.innerHTML = `
+                    <img src="/uploads/covers/${project.cover_image}" alt="${project.title}"
+                         onerror="this.onerror=null; this.parentElement.innerHTML=document.querySelector('.cover-placeholder').outerHTML;">
+                `;
+            }
+
+            // 更新状态
+            const statusBadge = document.getElementById('projectStatus');
+            statusBadge.textContent = getStatusText(project.status);
+            statusBadge.dataset.status = project.status;
+
+            // 更新可见性
+            document.getElementById('projectVisibility').textContent =
+                project.is_public ? '公开' : '私密';
+
+            // 更新时间
+            document.getElementById('projectCreatedAt').textContent = formatDate(project.created_at);
+            document.getElementById('projectUpdatedAt').textContent = formatDate(project.updated_at);
+
+            // 更新计数
+            document.getElementById('projectEpisodeCount').textContent = project.episode_count || 0;
+            document.getElementById('projectCharacterCount').textContent = project.character_count || 0;
+
+            // 更新标签
+            const tagsContainer = document.getElementById('projectTags');
+            if (project.tags && project.tags.length > 0) {
+                tagsContainer.innerHTML = project.tags.map(tag =>
+                    `<span class="tag">${tag}</span>`
+                ).join('');
+            } else {
+                tagsContainer.innerHTML = '<span class="text-muted">暂无标签</span>';
+            }
+
+            // 更新描述
+            document.getElementById('projectDescription').textContent =
+                project.description || '暂无描述';
+
+            // 加载当前激活选项卡的内容
+            setTimeout(() => {
+                console.log('项目详情加载完成，现在加载当前选项卡内容:', currentTab);
+                switch(currentTab) {
+                    case 'episodes':
+                        loadEpisodes();
+                        break;
+                    case 'characters':
+                        loadCharacters();
+                        break;
+                    case 'settings':
+                        loadSettings();
+                        break;
+                    default:
+                        loadEpisodes(); // 默认加载分集
+                }
+            }, 300);
+
+        } catch (error) {
+            console.error('加载项目详情失败:', error);
+            showNotification('加载项目详情失败', 'error');
+        }
+    }
+
+
+    async function loadEpisodes() {
+        console.log('开始加载分集...');
+
+        const grid = document.getElementById('episodesGrid');
+        if (!grid) {
+            console.error('episodesGrid element not found');
+            return;
+        }
+
+        grid.innerHTML = `
+            <div class="loading-placeholder">
+                <i class="fas fa-spinner fa-spin"></i>
+                <p>加载分集中...</p>
+            </div>
+        `;
+
+        console.log('请求分集API: /api/projects/' + currentProjectId + '/episodes');
+
+        try {
+            const response = await fetch(`/api/projects/${currentProjectId}/episodes`);
+            console.log('分集API响应状态:', response.status);
+
+            if (response.status === 404) {
+                // 如果API不存在，尝试使用备选API
+                console.log('主要API不可用，尝试备选API...');
+                const altResponse = await fetch(`/api/episodes/project/${currentProjectId}`);
+                if (altResponse.ok) {
+                    const altData = await altResponse.json();
+                    renderEpisodes(altData.episodes || []);
+                    return;
+                }
+            }
+
+            if (!response.ok) {
+                const errorText = await response.text();
+                console.error('分集API错误响应:', errorText);
+                throw new Error(`加载分集失败: ${response.status} ${errorText}`);
+            }
+
+            const data = await response.json();
+            console.log('成功加载分集数据:', data);
+            const episodes = data.episodes || [];
+
+            renderEpisodes(episodes);
+
+        } catch (error) {
+            console.error('加载分集失败:', error);
+            grid.innerHTML = `
+                <div class="error-state">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <p>加载分集失败: ${error.message}</p>
+                    <button class="btn btn-outline" onclick="loadEpisodes()">重试</button>
+                </div>
+            `;
+        }
+    }
+
+    function renderEpisodes(episodes) {
+        const grid = document.getElementById('episodesGrid');
+        
+        // 调试输出
+        console.log('=== renderEpisodes DEBUG ===');
+        console.log('Backend API URL:', BACKEND_API_URL);
+        console.log('Current Project ID:', currentProjectId);
+        console.log('Episodes data:', episodes);
+
+        if (episodes.length === 0) {
+            grid.innerHTML = `
+                <div class="empty-state">
+                    <i class="fas fa-film"></i>
+                    <h3>暂无分集</h3>
+                    <p>创建第一个分集开始您的创作之旅</p>
+                    <button class="btn btn-primary" onclick="location.href='/episodes/create?project_id=${currentProjectId}'">
+                        <i class="fas fa-plus"></i> 创建分集
+                    </button>
+                </div>
+            `;
+            return;
+        }
+
+        grid.innerHTML = episodes.map(episode => {
+            // 调试每个episode
+            console.log('Episode:', {
+                id: episode.id,
+                title: episode.title,
+                episode_number: episode.episode_number,
+                video_url: episode.video_url,
+                generation_status: episode.generation_status,
+                status: episode.status,
+                project_id: episode.project_id
+            });
+            
+            // 计算视频URL - 优先使用 episode.video_url，否则根据字段构建
+            let videoUrl = null;
+            let coverUrl = null;
+            const cacheBuster = Date.now();
+            
+            // 优先使用 video_url 字段（如果存在且不为空）
+            if (episode.video_url && episode.video_url.trim() !== '') {
+                videoUrl = episode.video_url + '&t=' + cacheBuster;
+                // 从 video_url 推断 cover_url
+                coverUrl = episode.video_url.replace('final_video.mp4', 'final_video_cover.png') + '&t=' + cacheBuster;
+                console.log(`Using episode.video_url for episode ${episode.id}: ${videoUrl}`);
+            } else if (episode.generation_status === 'completed') {
+                // 回退：根据字段构建URL
+                const projectId = episode.project_id || currentProjectId;
+                const episodeNumber = episode.episode_number;
+                const username = currentUsername || 'default';
+                if (projectId && episodeNumber) {
+                    videoUrl = `${BACKEND_API_URL}/api/v1/generate/file?work_dir=${encodeURIComponent(`${username}/${projectId}/${episodeNumber}`)}&path=final_video.mp4&t=${cacheBuster}`;
+                    coverUrl = `${BACKEND_API_URL}/api/v1/generate/file?work_dir=${encodeURIComponent(`${username}/${projectId}/${episodeNumber}`)}&path=final_video_cover.png&t=${cacheBuster}`;
+                    console.log(`Built video URL for episode ${episode.id}: ${videoUrl}`);
+                }
+            }
+            
+            return `
+            <div class="episode-card">
+                <div class="episode-header">
+                    <span class="episode-number">第 ${episode.episode_number || '?'} 集</span>
+                    <span class="status-badge" data-status="${episode.status}">${getEpisodeStatusText(episode.status)}</span>
+                </div>
+                <h3 class="episode-title">${escapeHtml(episode.title || '未命名分集')}</h3>
+                <div class="episode-content">${escapeHtml(episode.content || '暂无内容描述').substring(0, 100)}${episode.content && episode.content.length > 100 ? '...' : ''}</div>
+                <div class="episode-meta">
+                    <span><i class="fas fa-calendar"></i> ${formatDate(episode.created_at)}</span>
+                    <span><i class="fas fa-user-edit"></i> ${episode.author_name || '未知'}</span>
+                </div>
+                <div class="episode-video-section">
+                    ${videoUrl ? `
+                        <div class="video-preview">
+                            <video controls ${coverUrl ? `poster="${coverUrl}"` : ''}>
+                                <source src="${escapeHtml(videoUrl)}" type="video/mp4">
+                                您的浏览器不支持视频播放。
+                            </video>
+                        </div>
+                    ` : `
+                        <div class="video-placeholder">
+                            <i class="fas fa-video"></i>
+                            <span>视频未生成</span>
+                        </div>
+                    `}
+                </div>
+                <div class="episode-actions" style="margin-top: 12px;">
+                    <button class="btn btn-outline btn-sm" onclick="location.href='/episodes/${episode.id}/edit'">
+                        <i class="fas fa-edit"></i> 编辑
+                    </button>
+                    <button class="btn btn-primary btn-sm" onclick="location.href='/episodes/${episode.id}/generate'">
+                        <i class="fas fa-magic"></i> 生成
+                    </button>
+                    <button class="btn btn-success btn-sm" onclick="publishEpisode(${episode.id})" ${episode.status !== 'ready' ? 'disabled' : ''}>
+                        <i class="fas fa-paper-plane"></i> 发布
+                    </button>
+                </div>
+            </div>
+            `;
+        }).join('');
+
+        console.log('✅ 分集内容已渲染，数量:', episodes.length);
+    }
+
+    // 存储当前要发布的分集ID
+    let currentPublishEpisodeId = null;
+
+    function publishEpisode(episodeId) {
+        if (!episodeId) {
+            console.error('无效的分集ID');
+            showNotification('无效的分集ID', 'error');
+            return;
+        }
+
+        currentPublishEpisodeId = episodeId;
+        console.log('打开发布确认模态框，分集ID:', episodeId);
+
+        // 获取分集信息并显示在模态框中
+        fetch(`/api/episodes/${episodeId}`)
+            .then(response => response.json())
+            .then(data => {
+                const episode = data.episode || data;
+                const infoDiv = document.getElementById('publishEpisodeInfo');
+                if (infoDiv) {
+                    infoDiv.innerHTML = `
+                        <div class="mb-1"><strong>标题：</strong>${escapeHtml(episode.title || '未命名分集')}</div>
+                        <div class="mb-1"><strong>集数：</strong>第 ${episode.episode_number || '?'} 集</div>
+                        <div><strong>状态：</strong><span class="badge bg-success">${getEpisodeStatusText(episode.status)}</span></div>
+                    `;
+                }
+            })
+            .catch(error => {
+                console.error('获取分集信息失败:', error);
+                const infoDiv = document.getElementById('publishEpisodeInfo');
+                if (infoDiv) {
+                    infoDiv.innerHTML = '<small class="text-muted">无法加载分集信息</small>';
+                }
+            });
+
+        // 显示模态框
+        const modalEl = document.getElementById('publishConfirmModal');
+        if (modalEl) {
+            modalEl.classList.add('show');
+            modalEl.style.display = 'flex';
+        }
+    }
+
+    // 关闭模态框函数
+    function closePublishModal() {
+        const modalEl = document.getElementById('publishConfirmModal');
+        if (modalEl) {
+            modalEl.classList.remove('show');
+            modalEl.style.display = 'none';
+        }
+    }
+
+    // 关闭预览模态框函数
+    function closePreviewModal() {
+        const modalEl = document.getElementById('previewModal');
+        if (modalEl) {
+            modalEl.classList.remove('show');
+            modalEl.style.display = 'none';
+            
+            // 停止视频播放
+            const videoPlayer = document.getElementById('previewVideoPlayer');
+            if (videoPlayer) {
+                videoPlayer.pause();
+            }
+        }
+    }
+
+    // 显示图片预览
+    function showImagePreview(url, title) {
+        const modalEl = document.getElementById('imagePreviewModal');
+        const titleEl = document.getElementById('imagePreviewTitle');
+        const contentEl = document.getElementById('imagePreviewContent');
+        
+        if (modalEl && titleEl && contentEl) {
+            titleEl.textContent = title || '图片预览';
+            contentEl.innerHTML = `<img src="${url}" style="max-width: 100%; max-height: 70vh; object-fit: contain; border-radius: 8px;">`;
+            modalEl.style.display = 'flex';
+            modalEl.style.alignItems = 'center';
+            modalEl.style.justifyContent = 'center';
+            modalEl.style.position = 'fixed';
+            modalEl.style.top = '0';
+            modalEl.style.left = '0';
+            modalEl.style.width = '100%';
+            modalEl.style.height = '100%';
+            modalEl.style.background = 'rgba(0,0,0,0.7)';
+            modalEl.style.zIndex = '9999';
+        }
+    }
+
+    // 关闭图片预览
+    function closeImagePreview() {
+        const modalEl = document.getElementById('imagePreviewModal');
+        if (modalEl) {
+            modalEl.style.display = 'none';
+        }
+    }
+
+    // 点击模态框外部关闭
+    document.addEventListener('click', function(e) {
+        const modalEl = document.getElementById('imagePreviewModal');
+        if (modalEl && e.target === modalEl) {
+            closeImagePreview();
+        }
+    });
+
+    // 绑定确认发布按钮事件
+    document.addEventListener('DOMContentLoaded', function() {
+        const confirmBtn = document.getElementById('confirmPublishBtn');
+        if (confirmBtn) {
+            confirmBtn.addEventListener('click', function() {
+                if (!currentPublishEpisodeId) {
+                    showNotification('无效的分集ID', 'error');
+                    return;
+                }
+
+                // 禁用按钮防止重复点击
+                confirmBtn.disabled = true;
+                confirmBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>发布中...';
+
+                fetch(`/api/episodes/${currentPublishEpisodeId}/publish`, {
+                    method: 'POST'
+                })
+                .then(response => response.json())
+                .then(data => {
+                    // 关闭模态框
+                    closePublishModal();
+
+                    if (data.success) {
+                        showNotification('分集发布成功！视频将在发现页面展示', 'success');
+                        setTimeout(() => location.reload(), 1500);
+                    } else {
+                        showNotification(data.error || '发布失败', 'error');
+                        // 恢复按钮状态
+                        confirmBtn.disabled = false;
+                        confirmBtn.innerHTML = '<i class="fas fa-check me-2"></i>确认发布';
+                    }
+                })
+                .catch(error => {
+                    console.error('发布失败:', error);
+                    showNotification('发布失败，请重试', 'error');
+                    // 恢复按钮状态
+                    confirmBtn.disabled = false;
+                    confirmBtn.innerHTML = '<i class="fas fa-check me-2"></i>确认发布';
+                })
+                .finally(() => {
+                    // 重置当前发布的分集ID
+                    currentPublishEpisodeId = null;
+                });
+            });
+        }
+    });
+
+
+   async function loadCharacters() {
+        console.log('开始加载角色...');
+
+        const grid = document.getElementById('charactersGrid');
+        if (!grid) {
+            console.error('charactersGrid element not found');
+            return;
+        }
+
+        grid.innerHTML = `
+            <div class="loading-placeholder">
+                <i class="fas fa-spinner fa-spin"></i>
+                <p>加载角色中...</p>
+            </div>
+        `;
+
+        console.log('请求角色API: /api/projects/' + currentProjectId + '/characters');
+
+        try {
+            const response = await fetch(`/api/projects/${currentProjectId}/characters`);
+            console.log('角色API响应状态:', response.status);
+
+            if (response.status === 404) {
+                // 如果API不存在，尝试使用备选API
+                console.log('主要API不可用，尝试备选API...');
+                const altResponse = await fetch(`/api/characters/project/${currentProjectId}`);
+                if (altResponse.ok) {
+                    const altData = await altResponse.json();
+                    renderCharacters(altData.characters || []);
+                    return;
+                }
+            }
+
+            if (!response.ok) {
+                const errorText = await response.text();
+                console.error('角色API错误响应:', errorText);
+                throw new Error(`加载角色失败: ${response.status} ${errorText}`);
+            }
+
+            const data = await response.json();
+            console.log('成功加载角色数据:', data);
+            const characters = data.characters || [];
+
+            renderCharacters(characters);
+
+        } catch (error) {
+            console.error('加载角色失败:', error);
+            grid.innerHTML = `
+                <div class="error-state">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <p>加载角色失败: ${error.message}</p>
+                    <button class="btn btn-outline" onclick="loadCharacters()">重试</button>
+                </div>
+            `;
+        }
+    }
+
+    function renderCharacters(characters) {
+        const grid = document.getElementById('charactersGrid');
+
+        if (characters.length === 0) {
+            grid.innerHTML = `
+                <div class="empty-state">
+                    <i class="fas fa-users"></i>
+                    <h3>暂无角色</h3>
+                    <p>为您的项目添加角色</p>
+                    <button class="btn btn-primary" onclick="location.href='/characters/create?project_id=${currentProjectId}'">
+                        <i class="fas fa-plus"></i> 添加角色
+                    </button>
+                </div>
+            `;
+            return;
+        }
+
+        grid.innerHTML = characters.map(character => {
+            // 构建图片HTML
+            const projectId = character.project_id || currentProjectId;
+            const charId = character.id;
+            const frontImg = character.avatar_front || character.avatar;
+            const backImg = character.avatar_back;
+            const sideImg = character.avatar_side;
+            
+            // 判断图片路径是否来自后端生成目录
+            const isBackendImage = (path) => path && (path.includes('generation_shortvideo') || path.startsWith('http'));
+            
+            // 构建图片URL
+            const getImageUrl = (path, projectId, charId) => {
+                if (!path) return '';
+                if (isBackendImage(path)) {
+                    // 如果是完整的API URL，直接返回
+                    if (path.startsWith('http')) {
+                        return path;
+                    }
+                    // 从后端API获取图片
+                    const relativePath = path.replace(/^generation_shortvideo[/\\][^/\\]+[/\\][0-9]+[/\\][0-9]+[/\\]?/, '').replace(/\\/g, '/');
+                    const episodeNum = character.episode_number || 1;
+                    const workDir = `${currentUsername}/${projectId}/${episodeNum}`;
+                    return `${BACKEND_API_URL}/api/v1/generate/file?work_dir=${encodeURIComponent(workDir)}&path=${encodeURIComponent(relativePath)}`;
+                }
+                // 从uploads目录获取
+                return `/uploads/characters/${projectId}/${charId}/${path}`;
+            };
+            
+            const frontUrl = getImageUrl(frontImg, projectId, charId);
+            const backUrl = getImageUrl(backImg, projectId, charId);
+            const sideUrl = getImageUrl(sideImg, projectId, charId);
+            
+            const imagesHtml = (frontImg || backImg || sideImg) ? `
+                <div class="character-images" style="display: flex; gap: 8px; margin-top: 12px;">
+                    ${frontImg ? `<div style="flex: 1; aspect-ratio: 1; border-radius: 6px; overflow: hidden; background: #f3f4f6; cursor: pointer;" onclick="showImagePreview('${frontUrl}', '${escapeHtml(character.name)} - 正面')"><img src="${frontUrl}" alt="正面" style="width: 100%; height: 100%; object-fit: cover;"></div>` : ''}
+                    ${backImg ? `<div style="flex: 1; aspect-ratio: 1; border-radius: 6px; overflow: hidden; background: #f3f4f6; cursor: pointer;" onclick="showImagePreview('${backUrl}', '${escapeHtml(character.name)} - 背面')"><img src="${backUrl}" alt="背面" style="width: 100%; height: 100%; object-fit: cover;"></div>` : ''}
+                    ${sideImg ? `<div style="flex: 1; aspect-ratio: 1; border-radius: 6px; overflow: hidden; background: #f3f4f6; cursor: pointer;" onclick="showImagePreview('${sideUrl}', '${escapeHtml(character.name)} - 侧面')"><img src="${sideUrl}" alt="侧面" style="width: 100%; height: 100%; object-fit: cover;"></div>` : ''}
+                </div>
+            ` : '';
+
+            return `
+            <div class="character-card" style="position: relative;">
+                <input type="checkbox" class="character-checkbox" value="${character.id}" 
+                       style="position: absolute; top: 12px; left: 12px; width: 20px; height: 20px; cursor: pointer; z-index: 10;">
+                <div class="character-header" style="padding-left: 30px;">
+                    <h3 class="character-name">${escapeHtml(character.name)}</h3>
+                    <span class="role-badge" style="background: ${character.color || '#4F46E5'}; color: white; padding: 4px 12px; border-radius: 16px; font-size: 12px;">
+                        ${character.role || '未指定'}
+                    </span>
+                </div>
+                <div class="character-meta">
+                    ${character.gender ? `<span><i class="fas fa-venus-mars"></i> ${character.gender}</span>` : ''}
+                    ${character.age ? `<span><i class="fas fa-birthday-cake"></i> ${character.age}岁</span>` : ''}
+                </div>
+                <div class="character-description">${escapeHtml(character.description || '暂无角色描述').substring(0, 100)}${character.description && character.description.length > 100 ? '...' : ''}</div>
+                ${imagesHtml}
+                <div class="character-actions" style="margin-top: 12px;">
+                    <button class="btn btn-outline btn-sm" onclick="location.href='/characters/${character.id}/edit'">
+                        编辑
+                    </button>
+                    <button class="btn btn-danger btn-sm" onclick="deleteCharacter(${character.id}, '${escapeHtml(character.name)}')">
+                        删除
+                    </button>
+                </div>
+            </div>
+        `}).join('');
+
+        // 添加批量操作工具栏
+        console.log('✅ 角色内容已渲染，数量:', characters.length);
+        
+        // 显示/隐藏全部删除按钮
+        const deleteAllBtn = document.getElementById('deleteAllCharactersBtn');
+        if (deleteAllBtn) {
+            deleteAllBtn.style.display = characters.length > 0 ? 'flex' : 'none';
+        }
+    }
+
+    // 删除单个角色
+    async function deleteCharacter(characterId, characterName) {
+        if (!confirm(`确定要删除角色"${characterName}"吗？此操作不可恢复。`)) {
+            return;
+        }
+        
+        try {
+            const response = await fetch(`/api/characters/${characterId}`, {
+                method: 'DELETE'
+            });
+            
+            if (response.ok) {
+                showNotification('角色删除成功', 'success');
+                loadCharacters(); // 重新加载角色列表
+            } else {
+                const data = await response.json();
+                showNotification(data.error || '删除失败', 'error');
+            }
+        } catch (error) {
+            console.error('删除角色失败:', error);
+            showNotification('删除失败', 'error');
+        }
+    }
+
+    // 全部删除角色
+    async function deleteAllCharacters() {
+        const characters = document.querySelectorAll('.character-checkbox');
+        const allIds = Array.from(characters).map(cb => parseInt(cb.value));
+        
+        if (allIds.length === 0) {
+            showNotification('没有角色可以删除', 'warning');
+            return;
+        }
+        
+        if (!confirm(`确定要删除全部 ${allIds.length} 个角色吗？此操作不可恢复。`)) {
+            return;
+        }
+        
+        try {
+            const response = await fetch(`/api/projects/${currentProjectId}/characters/batch-delete`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ character_ids: allIds })
+            });
+            
+            if (response.ok) {
+                const data = await response.json();
+                showNotification(`成功删除 ${data.deleted_count} 个角色`, 'success');
+                loadCharacters(); // 重新加载角色列表
+            } else {
+                const data = await response.json();
+                showNotification(data.error || '删除失败', 'error');
+            }
+        } catch (error) {
+            console.error('删除全部角色失败:', error);
+            showNotification('删除失败', 'error');
+        }
+    }
+
+    // 全选/取消全选
+    function toggleSelectAllCharacters() {
+        const selectAll = document.getElementById('selectAllCharacters');
+        const checkboxes = document.querySelectorAll('.character-checkbox');
+        checkboxes.forEach(cb => {
+            cb.checked = selectAll.checked;
+        });
+    }
+
+    // 批量删除角色
+    async function batchDeleteCharacters() {
+        const checkboxes = document.querySelectorAll('.character-checkbox:checked');
+        const selectedIds = Array.from(checkboxes).map(cb => parseInt(cb.value));
+        
+        if (selectedIds.length === 0) {
+            showNotification('请选择要删除的角色', 'warning');
+            return;
+        }
+        
+        if (!confirm(`确定要删除选中的 ${selectedIds.length} 个角色吗？此操作不可恢复。`)) {
+            return;
+        }
+        
+        try {
+            const response = await fetch(`/api/projects/${currentProjectId}/characters/batch-delete`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ character_ids: selectedIds })
+            });
+            
+            if (response.ok) {
+                const data = await response.json();
+                showNotification(`成功删除 ${data.deleted_count} 个角色`, 'success');
+                loadCharacters(); // 重新加载角色列表
+            } else {
+                const data = await response.json();
+                showNotification(data.error || '批量删除失败', 'error');
+            }
+        } catch (error) {
+            console.error('批量删除角色失败:', error);
+            showNotification('批量删除失败', 'error');
+        }
+    }
+
+        // 辅助函数：HTML转义
+    function escapeHtml(text) {
+        if (!text) return '';
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+
+
+    async function loadSettings() {
+        const form = document.getElementById('projectSettingsForm');
+        if (!form) {
+            console.error('projectSettingsForm element not found');
+            return;
+        }
+
+        form.innerHTML = `
+            <div class="loading-placeholder">
+                <i class="fas fa-spinner fa-spin"></i>
+                <p>加载设置中...</p>
+            </div>
+        `;
+
+        console.log('Loading settings for project:', currentProjectId);
+
+        try {
+            const response = await fetch(`/api/projects/${currentProjectId}`);
+            console.log('Settings response status:', response.status);
+
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({}));
+                throw new Error(errorData.error || `加载项目设置失败: ${response.status}`);
+            }
+
+            const data = await response.json();
+            console.log('Loaded project settings');
+            const project = data.project;
+
+            form.innerHTML = `
+                <form id="settingsForm" class="settings-form-content">
+                    <div class="form-section">
+                        <h3 class="form-section-title">基本信息</h3>
+
+                        <div class="form-group">
+                            <label for="settingsTitle" class="form-label">项目标题</label>
+                            <input type="text" id="settingsTitle" name="title" class="form-control"
+                                   value="${project.title}" required minlength="3">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="settingsDescription" class="form-label">项目描述</label>
+                            <textarea id="settingsDescription" name="description" class="form-control"
+                                      rows="4">${project.description || ''}</textarea>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group half-width">
+                                <label for="settingsCategory" class="form-label">分类</label>
+                                <select id="settingsCategory" name="category" class="form-control">
+                                    <option value="其他" ${project.category === '其他' ? 'selected' : ''}>其他</option>
+                                    <option value="喜剧" ${project.category === '喜剧' ? 'selected' : ''}>喜剧</option>
+                                    <option value="爱情" ${project.category === '爱情' ? 'selected' : ''}>爱情</option>
+                                    <option value="悬疑" ${project.category === '悬疑' ? 'selected' : ''}>悬疑</option>
+                                    <option value="科幻" ${project.category === '科幻' ? 'selected' : ''}>科幻</option>
+                                    <option value="恐怖" ${project.category === '恐怖' ? 'selected' : ''}>恐怖</option>
+                                    <option value="动作" ${project.category === '动作' ? 'selected' : ''}>动作</option>
+                                    <option value="剧情" ${project.category === '剧情' ? 'selected' : ''}>剧情</option>
+                                    <option value="动画" ${project.category === '动画' ? 'selected' : ''}>动画</option>
+                                    <option value="教育" ${project.category === '教育' ? 'selected' : ''}>教育</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group half-width">
+                                <label for="settingsStatus" class="form-label">状态</label>
+                                <select id="settingsStatus" name="status" class="form-control">
+                                    <option value="draft" ${project.status === 'draft' ? 'selected' : ''}>草稿</option>
+                                    <option value="active" ${project.status === 'active' ? 'selected' : ''}>进行中</option>
+                                    <option value="completed" ${project.status === 'completed' ? 'selected' : ''}>已完成</option>
+                                    <option value="archived" ${project.status === 'archived' ? 'selected' : ''}>已归档</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h3 class="form-section-title">
+                            <i class="fas fa-eye"></i> 可见性设置
+                        </h3>
+
+                        <div class="visibility-settings">
+                            <input type="checkbox" id="settingsIsPublic" name="is_public"
+                                   ${project.is_public ? 'checked' : ''}>
+                            <div class="visibility-settings-content">
+                                <div class="visibility-settings-title">
+                                    <i class="fas fa-globe"></i> 公开项目
+                                </div>
+                                <div class="visibility-settings-desc">公开项目可以被其他用户查看</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h3 class="form-section-title">
+                            <i class="fas fa-exclamation-triangle"></i> 危险操作
+                        </h3>
+
+                        <div class="danger-zone">
+                            <div class="danger-zone-header">
+                                <i class="fas fa-trash-alt"></i>
+                                <span class="danger-zone-title">删除项目</span>
+                            </div>
+                            <p class="danger-zone-description">删除项目将永久删除所有相关数据，包括分集、角色等。此操作不可撤销。</p>
+                            <button type="button" class="btn btn-danger" onclick="deleteProject()">
+                                <i class="fas fa-trash"></i> 删除项目
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-outline" onclick="location.reload()">
+                            取消
+                        </button>
+                        <button type="submit" class="btn btn-primary">
+                            保存设置
+                        </button>
+                    </div>
+                </form>
+            `;
+
+            // 绑定表单提交事件
+            document.getElementById('settingsForm').addEventListener('submit', async function(e) {
+                e.preventDefault();
+
+                const submitBtn = this.querySelector('button[type="submit"]');
+                const originalText = submitBtn.innerHTML;
+
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<span class="spinner"></span> 保存中...';
+
+                try {
+                    const formData = new FormData(this);
+                    const data = Object.fromEntries(formData.entries());
+
+                    // 处理复选框
+                    data.is_public = document.getElementById('settingsIsPublic').checked;
+
+                    const response = await fetch(`/api/projects/${currentProjectId}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(data)
+                    });
+
+                    if (response.ok) {
+                        showNotification('设置保存成功', 'success');
+                        // 重新加载项目详情
+                        setTimeout(() => location.reload(), 1500);
+                    } else {
+                        const result = await response.json();
+                        showNotification(result.error || '保存失败', 'error');
+                    }
+                } catch (error) {
+                    console.error('保存设置失败:', error);
+                    showNotification('保存失败，请重试', 'error');
+                } finally {
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = originalText;
+                }
+            });
+
+        } catch (error) {
+            console.error('加载项目设置失败:', error);
+            form.innerHTML = `
+                <div class="error-state">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <p>加载设置失败</p>
+                    <button class="btn btn-outline" onclick="loadSettings()">重试</button>
+                </div>
+            `;
+        }
+    }
+
+    function getStatusText(status) {
+        const statusMap = {
+            'draft': '草稿',
+            'active': '进行中',
+            'completed': '已完成',
+            'archived': '已归档'
+        };
+        return statusMap[status] || status;
+    }
+
+    function formatDate(dateString) {
+        if (!dateString) return '--';
+        const date = new Date(dateString);
+        return date.toLocaleDateString('zh-CN') + ' ' + date.toLocaleTimeString('zh-CN', {
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+    }
+
+    async function deleteProject() {
+        if (!confirm('确定要删除这个项目吗？此操作不可撤销，所有相关数据将被永久删除。')) {
+            return;
+        }
+
+        try {
+            const response = await fetch(`/api/projects/${currentProjectId}`, {
+                method: 'DELETE'
+            });
+
+            if (response.ok) {
+                showNotification('项目删除成功', 'success');
+                setTimeout(() => location.href = '/projects', 1500);
+            } else {
+                const result = await response.json();
+                showNotification(result.error || '删除失败', 'error');
+            }
+        } catch (error) {
+            console.error('删除项目失败:', error);
+            showNotification('删除失败，请重试', 'error');
+        }
+    }
+
+    function playEpisode(episodeId) {
+        // 这里可以添加播放分集的逻辑
+        showNotification('播放功能开发中', 'info');
+    }
+
+    // 页面加载完成后初始化
+    window.addEventListener('load', function() {
+        console.log('项目详情页加载完成');
+        
+        // 检查选项卡按钮
+        document.querySelectorAll('.tab-btn').forEach((btn, index) => {
+            console.log(`选项卡按钮 ${index}: data-tab=${btn.dataset.tab}`);
+        });
+        
+        // 添加全局调试函数
+        window.debugTabs = function() {
+            console.log('%c 选项卡调试信息 ', 'background: #4F46E5; color: white; padding: 4px 8px; border-radius: 4px;');
+            
+            // 检查所有tab-pane
+            document.querySelectorAll('.tab-pane').forEach((pane, index) => {
+                const style = window.getComputedStyle(pane);
+                console.log(`面板 ${pane.id}:`);
+                console.log('  - active类:', pane.classList.contains('active'));
+                console.log('  - display:', style.display);
+                console.log('  - visibility:', style.visibility);
+                console.log('  - opacity:', style.opacity);
+                console.log('  - height:', style.height);
+                console.log('  - width:', style.width);
+            });
+            
+            // 检查当前激活的按钮
+            const activeBtn = document.querySelector('.tab-btn.active');
+            console.log('当前激活按钮:', activeBtn ? activeBtn.dataset.tab : '无');
+        };
+    });
+
+
+    let previewVideoPlayer = null;
+    let currentPreviewEpisode = null;
+    let isVideoPlaying = false;
+
+    // 预览分集函数
+    function previewEpisode(episodeId) {
+        console.log('预览分集:', episodeId);
+
+        if (!episodeId) {
+            console.error('无效的分集ID');
+            showNotification('无效的分集ID', 'error');
+            return;
+        }
+
+        // 重置模态框状态
+        if (typeof resetPreviewModal === 'function') {
+            resetPreviewModal();
+        }
+
+        // 显示加载状态
+        if (typeof showLoadingState === 'function') {
+            showLoadingState();
+        } else {
+            document.getElementById('videoLoading').style.display = 'block';
+            document.getElementById('videoWrapper').style.display = 'none';
+            document.getElementById('noVideoMessage').style.display = 'none';
+        }
+
+        // 获取分集详情
+        fetch(`/api/episodes/${episodeId}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('获取分集详情失败');
+                }
+                return response.json();
+            })
+            .then(data => {
+                const episode = data.episode || data;
+                console.log('分集详情:', episode);
+
+                // 保存当前分集
+                currentPreviewEpisode = episode;
+
+                // 更新模态框内容
+                if (typeof updateEpisodeInfo === 'function') {
+                    updateEpisodeInfo(episode);
+                }
+
+                // 设置视频
+                if (typeof setupVideoPlayer === 'function') {
+                    setupVideoPlayer(episode);
+                } else {
+                    // 简单的视频设置
+                    const videoPlayer = document.getElementById('previewVideoPlayer');
+                    if (episode.video_url) {
+                        videoPlayer.src = episode.video_url;
+                        document.getElementById('videoWrapper').style.display = 'flex';
+                        document.getElementById('noVideoMessage').style.display = 'none';
+                        document.getElementById('customControls').style.display = 'flex';
+                        document.getElementById('downloadBtn').style.display = 'inline-block';
+                    } else {
+                        document.getElementById('videoWrapper').style.display = 'none';
+                        document.getElementById('noVideoMessage').style.display = 'block';
+                        document.getElementById('customControls').style.display = 'none';
+                        document.getElementById('downloadBtn').style.display = 'none';
+                    }
+                }
+
+                // 显示模态框
+                const modalEl = document.getElementById('previewModal');
+                if (modalEl) {
+                    modalEl.classList.add('show');
+                    modalEl.style.display = 'flex';
+                }
+
+                // 绑定按钮事件
+                if (typeof setupButtonActions === 'function') {
+                    setupButtonActions(episode);
+                }
+            })
+            .catch(error => {
+                console.error('预览分集失败:', error);
+                showNotification('加载分集详情失败: ' + error.message, 'error');
+                hideLoadingState();
+            });
+    }
+
+    // 重置模态框状态
+    function resetPreviewModal() {
+        // 停止并重置视频
+        if (previewVideoPlayer) {
+            previewVideoPlayer.pause();
+            previewVideoPlayer.currentTime = 0;
+        }
+
+        // 重置显示状态
+        hideVideoPlayer();
+        hideCustomControls();
+        hideDownloadButton();
+
+        // 重置信息
+        document.getElementById('episodeTitle').textContent = '';
+        document.getElementById('episodeNumber').textContent = '';
+        document.getElementById('episodeDuration').textContent = '';
+        document.getElementById('episodeCreatedAt').textContent = '--';
+        document.getElementById('episodeViews').textContent = '0';
+        document.getElementById('episodeLikes').textContent = '0';
+        document.getElementById('episodeComments').textContent = '0';
+        document.getElementById('episodeDescription').innerHTML = '<p class="text-muted">暂无描述</p>';
+        document.getElementById('episodeContent').innerHTML = '<p class="text-muted">暂无内容</p>';
+        document.getElementById('episodeStatusBadge').textContent = '';
+
+        // 重置按钮状态
+        const publishBtn = document.getElementById('publishEpisodeBtn');
+        if (publishBtn) {
+            publishBtn.disabled = true;
+            publishBtn.textContent = '发布分集';
+        }
+    }
+
+    // 显示加载状态
+    function showLoadingState() {
+        document.getElementById('videoLoading').style.display = 'block';
+        document.getElementById('videoWrapper').style.display = 'none';
+        document.getElementById('noVideoMessage').style.display = 'none';
+    }
+
+    // 隐藏加载状态
+    function hideLoadingState() {
+        document.getElementById('videoLoading').style.display = 'none';
+    }
+
+    // 显示视频播放器
+    function showVideoPlayer() {
+        document.getElementById('videoWrapper').style.display = 'flex';
+        document.getElementById('customControls').style.display = 'flex';
+        document.getElementById('downloadBtn').style.display = 'inline-block';
+    }
+
+    // 隐藏视频播放器
+    function hideVideoPlayer() {
+        document.getElementById('videoWrapper').style.display = 'none';
+    }
+
+    // 显示自定义控制条
+    function showCustomControls() {
+        document.getElementById('customControls').style.display = 'flex';
+    }
+
+    // 隐藏自定义控制条
+    function hideCustomControls() {
+        document.getElementById('customControls').style.display = 'none';
+    }
+
+    // 显示下载按钮
+    function showDownloadButton() {
+        document.getElementById('downloadBtn').style.display = 'inline-block';
+    }
+
+    // 隐藏下载按钮
+    function hideDownloadButton() {
+        document.getElementById('downloadBtn').style.display = 'none';
+    }
+
+    // 更新分集信息
+    function updateEpisodeInfo(episode) {
+        // 标题和编号
+        document.getElementById('episodeTitle').textContent = episode.title || '未命名分集';
+        document.getElementById('episodeNumber').textContent = `第 ${episode.episode_number || '?'} 集`;
+
+        // 状态标签
+        const statusText = getEpisodeStatusText(episode.status);
+        document.getElementById('episodeStatusBadge').textContent = statusText;
+
+        // 格式化时长
+        if (episode.duration) {
+            const minutes = Math.floor(episode.duration / 60);
+            const seconds = episode.duration % 60;
+            document.getElementById('episodeDuration').textContent = `时长: ${minutes}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        // 创建时间
+        if (episode.created_at) {
+            const date = new Date(episode.created_at);
+            document.getElementById('episodeCreatedAt').textContent =
+                date.toLocaleDateString('zh-CN');
+        }
+
+        // 统计数据
+        if (episode.views !== undefined) {
+            document.getElementById('episodeViews').textContent = formatNumber(episode.views);
+        }
+        if (episode.likes !== undefined) {
+            document.getElementById('episodeLikes').textContent = formatNumber(episode.likes);
+        }
+        if (episode.comments !== undefined) {
+            document.getElementById('episodeComments').textContent = formatNumber(episode.comments);
+        }
+
+        // 描述
+        const descriptionElem = document.getElementById('episodeDescription');
+        if (episode.description && episode.description.trim()) {
+            descriptionElem.innerHTML = `<p>${escapeHtml(episode.description)}</p>`;
+        }
+
+        // 内容
+        const contentElem = document.getElementById('episodeContent');
+        if (episode.content && episode.content.trim()) {
+            const contentPreview = escapeHtml(episode.content);
+            contentElem.innerHTML = `<div>${contentPreview}</div>`;
+        }
+    }
+
+    // 设置视频播放器
+    function setupVideoPlayer(episode) {
+        const videoPlayerElem = document.getElementById('previewVideoPlayer');
+
+        // 检查是否有视频
+        if (!episode.video_url || episode.video_url.trim() === '') {
+            hideLoadingState();
+            document.getElementById('noVideoMessage').style.display = 'block';
+            hideCustomControls();
+            hideDownloadButton();
+            return;
+        }
+
+        // 设置视频源
+        const videoUrl = `/uploads/videos/${episode.video_url}`;
+        videoPlayerElem.src = videoUrl;
+
+        // 监听视频事件
+        videoPlayerElem.addEventListener('loadedmetadata', () => {
+            hideLoadingState();
+            showVideoPlayer();
+            updateDurationDisplay();
+        });
+
+        videoPlayerElem.addEventListener('timeupdate', updateTimeDisplay);
+        videoPlayerElem.addEventListener('play', () => {
+            isVideoPlaying = true;
+            updatePlayPauseButton();
+        });
+        videoPlayerElem.addEventListener('pause', () => {
+            isVideoPlaying = false;
+            updatePlayPauseButton();
+        });
+        videoPlayerElem.addEventListener('ended', () => {
+            isVideoPlaying = false;
+            updatePlayPauseButton();
+        });
+        videoPlayerElem.addEventListener('volumechange', updateVolumeControls);
+
+        // 错误处理
+        videoPlayerElem.addEventListener('error', (e) => {
+            console.error('视频加载错误:', e);
+            hideLoadingState();
+            document.getElementById('noVideoMessage').style.display = 'block';
+            showNotification('视频加载失败，请检查视频文件', 'error');
+        });
+
+        // 保存视频播放器引用
+        previewVideoPlayer = videoPlayerElem;
+    }
+
+    // 设置按钮动作
+    function setupButtonActions(episode) {
+        // 编辑按钮
+        const editBtn = document.getElementById('editEpisodeBtn');
+        if (editBtn) {
+            editBtn.onclick = () => {
+                window.location.href = `/episodes/${episode.id}/edit`;
+            };
+        }
+
+        // 生成按钮
+        const generateBtn = document.getElementById('generateEpisodeBtn');
+        if (generateBtn) {
+            generateBtn.onclick = () => {
+                window.location.href = `/episodes/${episode.id}/generate`;
+            };
+        }
+
+        // 发布按钮
+        const publishBtn = document.getElementById('publishEpisodeBtn');
+        if (publishBtn) {
+            publishBtn.disabled = episode.status !== 'ready';
+            publishBtn.onclick = () => {
+                publishEpisode(episode.id);
+            };
+        }
+
+        // 前往编辑按钮（无视频时显示）
+        const goToEditBtn = document.getElementById('goToEditBtn');
+        if (goToEditBtn) {
+            goToEditBtn.onclick = () => {
+                window.location.href = `/episodes/${episode.id}/edit`;
+            };
+        }
+    }
+
+    // 播放/暂停控制
+    function togglePlayPause() {
+        if (!previewVideoPlayer) return;
+
+        if (previewVideoPlayer.paused) {
+            previewVideoPlayer.play();
+        } else {
+            previewVideoPlayer.pause();
+        }
+    }
+
+    // 更新播放/暂停按钮
+    function updatePlayPauseButton() {
+        const playPauseBtn = document.getElementById('playPauseBtn');
+        if (!playPauseBtn) return;
+
+        if (isVideoPlaying) {
+            playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
+        } else {
+            playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
+        }
+    }
+
+    // 静音控制
+    function toggleMute() {
+        if (!previewVideoPlayer) return;
+
+        previewVideoPlayer.muted = !previewVideoPlayer.muted;
+        updateMuteButton();
+    }
+
+    // 更新静音按钮
+    function updateMuteButton() {
+        const muteBtn = document.getElementById('muteBtn');
+        if (!muteBtn) return;
+
+        if (previewVideoPlayer.muted) {
+            muteBtn.innerHTML = '<i class="fas fa-volume-mute"></i>';
+        } else {
+            muteBtn.innerHTML = '<i class="fas fa-volume-up"></i>';
+        }
+    }
+
+    // 更新音量控制
+    function updateVolumeControls() {
+        if (!previewVideoPlayer) return;
+
+        const volumeSlider = document.getElementById('volumeSlider');
+        if (volumeSlider) {
+            volumeSlider.value = previewVideoPlayer.volume * 100;
+        }
+
+        updateMuteButton();
+    }
+
+    // 音量滑块事件
+    document.getElementById('volumeSlider')?.addEventListener('input', function(e) {
+        if (previewVideoPlayer) {
+            previewVideoPlayer.volume = e.target.value / 100;
+        }
+    });
+
+    // 全屏切换
+    function toggleFullscreen() {
+        const videoContainer = document.getElementById('videoContainer');
+        if (!videoContainer) return;
+
+        if (!document.fullscreenElement) {
+            if (videoContainer.requestFullscreen) {
+                videoContainer.requestFullscreen();
+            } else if (videoContainer.webkitRequestFullscreen) {
+                videoContainer.webkitRequestFullscreen();
+            } else if (videoContainer.msRequestFullscreen) {
+                videoContainer.msRequestFullscreen();
+            }
+        } else {
+            if (document.exitFullscreen) {
+                document.exitFullscreen();
+            } else if (document.webkitExitFullscreen) {
+                document.webkitExitFullscreen();
+            } else if (document.msExitFullscreen) {
+                document.msExitFullscreen();
+            }
+        }
+    }
+
+    // 更新时长显示
+    function updateDurationDisplay() {
+        if (!previewVideoPlayer) return;
+
+        const duration = previewVideoPlayer.duration;
+        if (duration && !isNaN(duration)) {
+            const minutes = Math.floor(duration / 60);
+            const seconds = Math.floor(duration % 60);
+            document.getElementById('durationTime').textContent =
+                `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+    }
+
+    // 更新时间显示
+    function updateTimeDisplay() {
+        if (!previewVideoPlayer) return;
+
+        const currentTime = previewVideoPlayer.currentTime;
+        const minutes = Math.floor(currentTime / 60);
+        const seconds = Math.floor(currentTime % 60);
+        document.getElementById('currentTime').textContent =
+            `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    }
+
+    // 下载视频
+    function downloadVideo() {
+        if (!currentPreviewEpisode || !currentPreviewEpisode.video_url) {
+            showNotification('无法下载视频，视频文件不存在', 'error');
+            return;
+        }
+
+        const videoUrl = `/uploads/videos/${currentPreviewEpisode.video_url}`;
+        const link = document.createElement('a');
+        link.href = videoUrl;
+        link.download = `${currentPreviewEpisode.title || '分集'}_${currentPreviewEpisode.episode_number || '1'}.mp4`;
+        link.style.display = 'none';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
+        showNotification('开始下载视频', 'success');
+    }
+
+    // 辅助函数
+    function getEpisodeStatusText(status) {
+        const statusMap = {
+            'draft': '草稿',
+            'processing': '处理中',
+            'ready': '已就绪',
+            'published': '已发布',
+            'archived': '已归档'
+        };
+        return statusMap[status] || status;
+    }
+
+    function formatNumber(num) {
+        if (num >= 1000000) {
+            return (num / 1000000).toFixed(1) + 'M';
+        } else if (num >= 1000) {
+            return (num / 1000).toFixed(1) + 'K';
+        }
+        return num.toString();
+    }
+
+    function escapeHtml(text) {
+        if (!text) return '';
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+
+    // 模态框关闭时的清理
+    document.getElementById('previewModal')?.addEventListener('hidden.bs.modal', function () {
+        if (previewVideoPlayer) {
+            previewVideoPlayer.pause();
+            previewVideoPlayer.currentTime = 0;
+        }
+        currentPreviewEpisode = null;
+        isVideoPlaying = false;
+    });
+
+    // 初始化音量控制
+    document.addEventListener('DOMContentLoaded', function() {
+        const volumeSlider = document.getElementById('volumeSlider');
+        if (volumeSlider) {
+            volumeSlider.addEventListener('input', function(e) {
+                if (previewVideoPlayer) {
+                    previewVideoPlayer.volume = e.target.value / 100;
+                }
+            });
+        }
+    });
+
+
+</script>
+{% endblock %}

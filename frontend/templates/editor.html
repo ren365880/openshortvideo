@@ -1,0 +1,1628 @@
+<!-- templates/editor.html -->
+{% extends "layout.html" %}
+
+{% block title %}编辑器 - 灵犀剧能{% endblock %}
+
+{% block content %}
+<div class="editor-container">
+    <!-- 编辑器顶部栏 -->
+    <div class="editor-topbar">
+        <div class="topbar-left">
+            <button class="btn btn-outline" onclick="history.back()">
+                <i class="fas fa-arrow-left"></i> 返回
+            </button>
+            <div class="project-info">
+                <h2 class="project-title" id="projectTitle">项目标题</h2>
+                <div class="project-status" id="projectStatus">草稿</div>
+            </div>
+        </div>
+        <div class="topbar-center">
+            <div class="episode-selector">
+                <button class="btn btn-outline btn-sm" id="prevEpisode">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+                <select id="episodeSelect" class="episode-select">
+                    <!-- 分集将通过JavaScript动态加载 -->
+                </select>
+                <button class="btn btn-outline btn-sm" id="nextEpisode">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+            </div>
+        </div>
+        <div class="topbar-right">
+            <button class="btn btn-outline" id="saveDraftBtn">
+                <i class="fas fa-save"></i> 保存草稿
+            </button>
+            <button class="btn btn-primary" id="publishBtn">
+                <i class="fas fa-paper-plane"></i> 发布
+            </button>
+        </div>
+    </div>
+
+    <!-- 编辑器主体 -->
+    <div class="editor-main">
+        <!-- 左侧工具栏 -->
+        <div class="editor-sidebar">
+            <div class="sidebar-section">
+                <h3 class="sidebar-title">元素库</h3>
+                <div class="element-list">
+                    <button class="element-btn" data-type="text">
+                        <i class="fas fa-font"></i>
+                        <span>文本</span>
+                    </button>
+                    <button class="element-btn" data-type="image">
+                        <i class="fas fa-image"></i>
+                        <span>图片</span>
+                    </button>
+                    <button class="element-btn" data-type="video">
+                        <i class="fas fa-video"></i>
+                        <span>视频</span>
+                    </button>
+                    <button class="element-btn" data-type="audio">
+                        <i class="fas fa-music"></i>
+                        <span>音频</span>
+                    </button>
+                    <button class="element-btn" data-type="transition">
+                        <i class="fas fa-exchange-alt"></i>
+                        <span>转场</span>
+                    </button>
+                    <button class="element-btn" data-type="effect">
+                        <i class="fas fa-magic"></i>
+                        <span>特效</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="sidebar-section">
+                <h3 class="sidebar-title">时间轴</h3>
+                <div class="timeline-container">
+                    <div class="timeline-header">
+                        <span>时间线</span>
+                        <div class="timeline-zoom">
+                            <button class="zoom-btn" data-action="zoom-out">-</button>
+                            <span class="zoom-level">100%</span>
+                            <button class="zoom-btn" data-action="zoom-in">+</button>
+                        </div>
+                    </div>
+                    <div class="timeline-track" id="timelineTrack">
+                        <!-- 时间轴元素将通过JavaScript动态生成 -->
+                    </div>
+                </div>
+            </div>
+
+            <div class="sidebar-section">
+                <h3 class="sidebar-title">素材库</h3>
+                <div class="asset-library">
+                    <div class="asset-tabs">
+                        <button class="asset-tab active" data-tab="local">本地素材</button>
+                        <button class="asset-tab" data-tab="cloud">云素材</button>
+                        <button class="asset-tab" data-tab="template">模板</button>
+                    </div>
+                    <div class="asset-content">
+                        <div class="asset-upload">
+                            <button class="btn btn-outline btn-full" id="uploadAssetBtn">
+                                <i class="fas fa-cloud-upload-alt"></i> 上传素材
+                            </button>
+                        </div>
+                        <div class="asset-list" id="assetList">
+                            <!-- 素材将通过JavaScript动态加载 -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 中央预览区 -->
+        <div class="editor-preview">
+            <div class="preview-container">
+                <div class="preview-toolbar">
+                    <div class="preview-controls">
+                        <button class="preview-btn" id="playBtn">
+                            <i class="fas fa-play"></i>
+                        </button>
+                        <div class="preview-time">
+                            <span id="currentTime">00:00</span> / <span id="totalTime">00:00</span>
+                        </div>
+                        <div class="preview-slider">
+                            <input type="range" id="timelineSlider" min="0" max="100" value="0" class="slider">
+                        </div>
+                        <button class="preview-btn" id="fullscreenBtn">
+                            <i class="fas fa-expand"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="preview-canvas" id="previewCanvas">
+                    <!-- 预览画布 -->
+                    <canvas id="editorCanvas"></canvas>
+                </div>
+                <div class="preview-info">
+                    <div class="resolution-selector">
+                        <select id="resolutionSelect" class="resolution-select">
+                            <option value="9:16">9:16 (竖版)</option>
+                            <option value="16:9" selected>16:9 (横版)</option>
+                            <option value="1:1">1:1 (方形)</option>
+                            <option value="4:5">4:5 (Instagram)</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 右侧属性面板 -->
+        <div class="editor-properties">
+            <div class="properties-header">
+                <h3 class="properties-title">属性面板</h3>
+                <button class="properties-close" id="closePropertiesBtn">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <div class="properties-content" id="propertiesContent">
+                <!-- 属性内容将根据选中元素动态变化 -->
+                <div class="empty-properties">
+                    <i class="fas fa-mouse-pointer"></i>
+                    <p>选择一个元素开始编辑</p>
+                </div>
+            </div>
+
+            <div class="properties-section" id="textProperties" style="display: none;">
+                <h4 class="properties-section-title">文本属性</h4>
+                <div class="properties-group">
+                    <label class="properties-label">内容</label>
+                    <textarea id="textContent" class="properties-textarea" rows="4"></textarea>
+                </div>
+                <div class="properties-group">
+                    <label class="properties-label">字体</label>
+                    <select id="textFont" class="properties-select">
+                        <option value="Arial">Arial</option>
+                        <option value="Helvetica">Helvetica</option>
+                        <option value="Times New Roman">Times New Roman</option>
+                        <option value="Microsoft YaHei">微软雅黑</option>
+                        <option value="SimSun">宋体</option>
+                    </select>
+                </div>
+                <div class="properties-group">
+                    <label class="properties-label">字号</label>
+                    <input type="range" id="textSize" min="12" max="72" value="24" class="properties-slider">
+                    <span class="slider-value" id="textSizeValue">24</span>
+                </div>
+                <div class="properties-group">
+                    <label class="properties-label">颜色</label>
+                    <input type="color" id="textColor" value="#000000" class="properties-color">
+                </div>
+            </div>
+
+            <div class="properties-section" id="imageProperties" style="display: none;">
+                <h4 class="properties-section-title">图片属性</h4>
+                <div class="properties-group">
+                    <label class="properties-label">图片文件</label>
+                    <div class="image-preview" id="imagePreview"></div>
+                    <button class="btn btn-outline btn-full" id="changeImageBtn">更换图片</button>
+                </div>
+                <div class="properties-group">
+                    <label class="properties-label">缩放</label>
+                    <input type="range" id="imageScale" min="10" max="200" value="100" class="properties-slider">
+                    <span class="slider-value" id="imageScaleValue">100%</span>
+                </div>
+                <div class="properties-group">
+                    <label class="properties-label">透明度</label>
+                    <input type="range" id="imageOpacity" min="0" max="100" value="100" class="properties-slider">
+                    <span class="slider-value" id="imageOpacityValue">100%</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 底部状态栏 -->
+    <div class="editor-statusbar">
+        <div class="statusbar-left">
+            <span class="status-item">
+                <i class="fas fa-save"></i>
+                <span id="lastSaved">未保存</span>
+            </span>
+            <span class="status-item">
+                <i class="fas fa-clock"></i>
+                <span id="episodeDuration">0:00</span>
+            </span>
+        </div>
+        <div class="statusbar-right">
+            <span class="status-item">
+                <i class="fas fa-database"></i>
+                <span id="storageUsage">存储使用: 65%</span>
+            </span>
+            <button class="status-btn" id="autoSaveToggle">
+                <i class="fas fa-check-circle"></i>
+                <span>自动保存: 开启</span>
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- 上传素材模态框 -->
+<div class="modal" id="uploadModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 class="modal-title">上传素材</h3>
+            <button class="modal-close">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="upload-area" id="uploadArea">
+                <i class="fas fa-cloud-upload-alt"></i>
+                <p>拖放文件到这里，或点击选择文件</p>
+                <p class="upload-hint">支持图片、视频、音频文件</p>
+                <input type="file" id="fileInput" multiple style="display: none;">
+                <button class="btn btn-primary" id="selectFileBtn">选择文件</button>
+            </div>
+            <div class="upload-progress" id="uploadProgress" style="display: none;">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+                <div class="progress-info">
+                    <span id="progressText">正在上传...</span>
+                    <span id="progressPercentage">0%</span>
+                </div>
+            </div>
+            <div class="upload-list" id="uploadList"></div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-outline modal-cancel">取消</button>
+            <button class="btn btn-primary" id="startUploadBtn" disabled>开始上传</button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block styles %}
+<style>
+    .editor-container {
+        display: flex;
+        flex-direction: column;
+        height: calc(100vh - 70px);
+        background-color: var(--gray-900);
+        color: var(--gray-300);
+    }
+
+    .editor-topbar {
+        background-color: var(--gray-800);
+        border-bottom: 1px solid var(--gray-700);
+        padding: var(--spacing-md) var(--spacing-lg);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-shrink: 0;
+    }
+
+    .topbar-left,
+    .topbar-center,
+    .topbar-right {
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-lg);
+    }
+
+    .project-info {
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-md);
+    }
+
+    .project-title {
+        font-size: var(--font-size-lg);
+        font-weight: 600;
+        color: white;
+        margin: 0;
+    }
+
+    .project-status {
+        background-color: var(--gray-700);
+        color: var(--gray-300);
+        padding: var(--spacing-xs) var(--spacing-sm);
+        border-radius: var(--border-radius-sm);
+        font-size: var(--font-size-xs);
+        font-weight: 500;
+    }
+
+    .episode-selector {
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-sm);
+    }
+
+    .episode-select {
+        background-color: var(--gray-700);
+        color: white;
+        border: 1px solid var(--gray-600);
+        border-radius: var(--border-radius);
+        padding: var(--spacing-sm) var(--spacing-lg);
+        font-size: var(--font-size-sm);
+        min-width: 150px;
+        cursor: pointer;
+    }
+
+    .editor-main {
+        display: flex;
+        flex: 1;
+        overflow: hidden;
+    }
+
+    .editor-sidebar {
+        width: 280px;
+        background-color: var(--gray-800);
+        border-right: 1px solid var(--gray-700);
+        padding: var(--spacing-lg);
+        overflow-y: auto;
+        flex-shrink: 0;
+    }
+
+    .sidebar-section {
+        margin-bottom: var(--spacing-xl);
+    }
+
+    .sidebar-title {
+        font-size: var(--font-size-sm);
+        font-weight: 600;
+        color: var(--gray-400);
+        margin-bottom: var(--spacing-md);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .element-list {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--spacing-sm);
+    }
+
+    .element-btn {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: var(--spacing-xs);
+        padding: var(--spacing-md);
+        background-color: var(--gray-700);
+        border: 1px solid var(--gray-600);
+        border-radius: var(--border-radius);
+        color: var(--gray-300);
+        cursor: pointer;
+        transition: all var(--transition-base);
+    }
+
+    .element-btn:hover {
+        background-color: var(--gray-600);
+        border-color: var(--primary);
+        color: white;
+    }
+
+    .element-btn i {
+        font-size: var(--font-size-xl);
+    }
+
+    .element-btn span {
+        font-size: var(--font-size-xs);
+    }
+
+    .timeline-container {
+        background-color: var(--gray-900);
+        border-radius: var(--border-radius);
+        padding: var(--spacing-md);
+    }
+
+    .timeline-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: var(--spacing-md);
+    }
+
+    .timeline-zoom {
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-sm);
+    }
+
+    .zoom-btn {
+        width: 24px;
+        height: 24px;
+        background-color: var(--gray-700);
+        border: none;
+        border-radius: var(--border-radius-sm);
+        color: var(--gray-300);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: var(--font-size-sm);
+    }
+
+    .zoom-btn:hover {
+        background-color: var(--gray-600);
+    }
+
+    .zoom-level {
+        font-size: var(--font-size-xs);
+        min-width: 40px;
+        text-align: center;
+    }
+
+    .timeline-track {
+        height: 80px;
+        background-color: var(--gray-900);
+        border: 1px solid var(--gray-700);
+        border-radius: var(--border-radius-sm);
+        position: relative;
+        overflow-x: auto;
+        overflow-y: hidden;
+    }
+
+    .asset-library {
+        background-color: var(--gray-900);
+        border-radius: var(--border-radius);
+        overflow: hidden;
+    }
+
+    .asset-tabs {
+        display: flex;
+        background-color: var(--gray-700);
+    }
+
+    .asset-tab {
+        flex: 1;
+        padding: var(--spacing-sm);
+        background: none;
+        border: none;
+        color: var(--gray-400);
+        font-size: var(--font-size-xs);
+        cursor: pointer;
+        transition: all var(--transition-base);
+    }
+
+    .asset-tab:hover {
+        background-color: var(--gray-600);
+        color: white;
+    }
+
+    .asset-tab.active {
+        background-color: var(--gray-900);
+        color: white;
+    }
+
+    .asset-content {
+        padding: var(--spacing-md);
+    }
+
+    .asset-list {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--spacing-sm);
+        max-height: 200px;
+        overflow-y: auto;
+        margin-top: var(--spacing-md);
+    }
+
+    .asset-item {
+        aspect-ratio: 1;
+        background-color: var(--gray-700);
+        border-radius: var(--border-radius-sm);
+        overflow: hidden;
+        position: relative;
+        cursor: pointer;
+    }
+
+    .asset-item img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .editor-preview {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: var(--gray-900);
+        padding: var(--spacing-lg);
+    }
+
+    .preview-container {
+        width: 100%;
+        max-width: 900px;
+        background-color: var(--gray-800);
+        border-radius: var(--border-radius);
+        overflow: hidden;
+    }
+
+    .preview-toolbar {
+        background-color: var(--gray-700);
+        padding: var(--spacing-md);
+    }
+
+    .preview-controls {
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-lg);
+    }
+
+    .preview-btn {
+        width: 40px;
+        height: 40px;
+        background-color: var(--gray-600);
+        border: none;
+        border-radius: 50%;
+        color: white;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all var(--transition-base);
+    }
+
+    .preview-btn:hover {
+        background-color: var(--primary);
+        transform: scale(1.1);
+    }
+
+    .preview-time {
+        font-family: monospace;
+        font-size: var(--font-size-sm);
+        color: var(--gray-300);
+        min-width: 80px;
+    }
+
+    .preview-slider {
+        flex: 1;
+    }
+
+    .slider {
+        width: 100%;
+        height: 4px;
+        background-color: var(--gray-600);
+        border-radius: 2px;
+        outline: none;
+        -webkit-appearance: none;
+    }
+
+    .slider::-webkit-slider-thumb {
+        width: 16px;
+        height: 16px;
+        background-color: var(--primary);
+        border-radius: 50%;
+        cursor: pointer;
+        -webkit-appearance: none;
+    }
+
+    .preview-canvas {
+        aspect-ratio: 16/9;
+        background-color: var(--gray-900);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+    }
+
+    #editorCanvas {
+        max-width: 100%;
+        max-height: 100%;
+        background-color: black;
+    }
+
+    .preview-info {
+        background-color: var(--gray-700);
+        padding: var(--spacing-md);
+        text-align: center;
+    }
+
+    .resolution-select {
+        background-color: var(--gray-600);
+        color: white;
+        border: 1px solid var(--gray-500);
+        border-radius: var(--border-radius);
+        padding: var(--spacing-sm) var(--spacing-md);
+        font-size: var(--font-size-sm);
+        cursor: pointer;
+    }
+
+    .editor-properties {
+        width: 320px;
+        background-color: var(--gray-800);
+        border-left: 1px solid var(--gray-700);
+        display: flex;
+        flex-direction: column;
+        flex-shrink: 0;
+    }
+
+    .properties-header {
+        padding: var(--spacing-lg);
+        border-bottom: 1px solid var(--gray-700);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .properties-title {
+        font-size: var(--font-size-base);
+        font-weight: 600;
+        color: white;
+        margin: 0;
+    }
+
+    .properties-close {
+        background: none;
+        border: none;
+        color: var(--gray-400);
+        font-size: var(--font-size-lg);
+        cursor: pointer;
+        padding: var(--spacing-xs);
+        line-height: 1;
+    }
+
+    .properties-close:hover {
+        color: white;
+    }
+
+    .properties-content {
+        flex: 1;
+        padding: var(--spacing-lg);
+        overflow-y: auto;
+    }
+
+    .empty-properties {
+        text-align: center;
+        padding: var(--spacing-xl);
+        color: var(--gray-500);
+    }
+
+    .empty-properties i {
+        font-size: var(--font-size-3xl);
+        margin-bottom: var(--spacing-md);
+        display: block;
+    }
+
+    .properties-section {
+        animation: fadeIn var(--transition-base);
+    }
+
+    .properties-section-title {
+        font-size: var(--font-size-base);
+        font-weight: 600;
+        color: white;
+        margin-bottom: var(--spacing-lg);
+        padding-bottom: var(--spacing-sm);
+        border-bottom: 1px solid var(--gray-700);
+    }
+
+    .properties-group {
+        margin-bottom: var(--spacing-lg);
+    }
+
+    .properties-label {
+        display: block;
+        font-size: var(--font-size-sm);
+        color: var(--gray-400);
+        margin-bottom: var(--spacing-sm);
+    }
+
+    .properties-textarea,
+    .properties-select,
+    .properties-color {
+        width: 100%;
+        padding: var(--spacing-sm) var(--spacing-md);
+        background-color: var(--gray-700);
+        border: 1px solid var(--gray-600);
+        border-radius: var(--border-radius);
+        color: white;
+        font-size: var(--font-size-sm);
+        font-family: var(--font-family);
+    }
+
+    .properties-textarea:focus,
+    .properties-select:focus,
+    .properties-color:focus {
+        outline: none;
+        border-color: var(--primary);
+    }
+
+    .properties-slider {
+        width: 100%;
+        height: 4px;
+        background-color: var(--gray-600);
+        border-radius: 2px;
+        outline: none;
+        -webkit-appearance: none;
+        margin-bottom: var(--spacing-sm);
+    }
+
+    .slider-value {
+        display: inline-block;
+        font-size: var(--font-size-xs);
+        color: var(--gray-400);
+        margin-left: var(--spacing-sm);
+    }
+
+    .image-preview {
+        width: 100%;
+        height: 120px;
+        background-color: var(--gray-700);
+        border-radius: var(--border-radius);
+        margin-bottom: var(--spacing-md);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+    }
+
+    .image-preview img {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+    }
+
+    .editor-statusbar {
+        background-color: var(--gray-800);
+        border-top: 1px solid var(--gray-700);
+        padding: var(--spacing-sm) var(--spacing-lg);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-shrink: 0;
+    }
+
+    .statusbar-left,
+    .statusbar-right {
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-xl);
+    }
+
+    .status-item {
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-sm);
+        font-size: var(--font-size-sm);
+        color: var(--gray-400);
+    }
+
+    .status-btn {
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-sm);
+        background: none;
+        border: none;
+        color: var(--gray-400);
+        font-size: var(--font-size-sm);
+        cursor: pointer;
+        padding: var(--spacing-xs) var(--spacing-sm);
+        border-radius: var(--border-radius);
+        transition: all var(--transition-base);
+    }
+
+    .status-btn:hover {
+        background-color: var(--gray-700);
+        color: white;
+    }
+
+    /* 上传模态框样式 */
+    .upload-area {
+        border: 2px dashed var(--gray-600);
+        border-radius: var(--border-radius);
+        padding: var(--spacing-2xl);
+        text-align: center;
+        margin-bottom: var(--spacing-lg);
+        transition: all var(--transition-base);
+        cursor: pointer;
+    }
+
+    .upload-area:hover,
+    .upload-area.dragover {
+        border-color: var(--primary);
+        background-color: rgba(79, 70, 229, 0.05);
+    }
+
+    .upload-area i {
+        font-size: var(--font-size-4xl);
+        color: var(--gray-500);
+        margin-bottom: var(--spacing-md);
+    }
+
+    .upload-hint {
+        font-size: var(--font-size-xs);
+        color: var(--gray-500);
+        margin-top: var(--spacing-xs);
+    }
+
+    .upload-progress {
+        margin-bottom: var(--spacing-lg);
+    }
+
+    .progress-bar {
+        height: 8px;
+        background-color: var(--gray-200);
+        border-radius: 4px;
+        overflow: hidden;
+        margin-bottom: var(--spacing-sm);
+    }
+
+    .progress-fill {
+        height: 100%;
+        background-color: var(--primary);
+        width: 0%;
+        transition: width 0.3s ease;
+    }
+
+    .progress-info {
+        display: flex;
+        justify-content: space-between;
+        font-size: var(--font-size-sm);
+        color: var(--text-secondary);
+    }
+
+    .upload-list {
+        max-height: 200px;
+        overflow-y: auto;
+    }
+
+    .upload-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: var(--spacing-sm);
+        background-color: var(--gray-100);
+        border-radius: var(--border-radius);
+        margin-bottom: var(--spacing-sm);
+    }
+
+    .upload-item:last-child {
+        margin-bottom: 0;
+    }
+
+    @media (max-width: 1200px) {
+        .editor-sidebar {
+            width: 240px;
+        }
+
+        .editor-properties {
+            width: 280px;
+        }
+    }
+
+    @media (max-width: 1024px) {
+        .editor-main {
+            flex-direction: column;
+        }
+
+        .editor-sidebar {
+            width: 100%;
+            border-right: none;
+            border-bottom: 1px solid var(--gray-700);
+            max-height: 200px;
+        }
+
+        .editor-properties {
+            width: 100%;
+            border-left: none;
+            border-top: 1px solid var(--gray-700);
+            max-height: 300px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    class VideoEditor {
+        constructor() {
+            this.projectId = new URLSearchParams(window.location.search).get('id');
+            this.currentEpisode = null;
+            this.canvas = document.getElementById('editorCanvas');
+            this.ctx = this.canvas.getContext('2d');
+            this.selectedElement = null;
+            this.elements = [];
+            this.isPlaying = false;
+            this.currentTime = 0;
+            this.duration = 60; // 默认60秒
+            this.animationFrame = null;
+            this.autoSave = true;
+            this.autoSaveInterval = null;
+
+            this.init();
+        }
+
+        init() {
+            this.setupCanvas();
+            this.loadProject();
+            this.setupEventListeners();
+            this.setupAutoSave();
+            this.updateCanvas();
+        }
+
+        setupCanvas() {
+            // 设置画布尺寸为16:9
+            const container = document.querySelector('.preview-canvas');
+            const width = container.clientWidth;
+            const height = (width * 9) / 16;
+
+            this.canvas.width = width;
+            this.canvas.height = height;
+
+            // 响应式调整
+            window.addEventListener('resize', () => {
+                const container = document.querySelector('.preview-canvas');
+                const width = container.clientWidth;
+                const height = (width * 9) / 16;
+
+                this.canvas.width = width;
+                this.canvas.height = height;
+                this.updateCanvas();
+            });
+        }
+
+        async loadProject() {
+            if (!this.projectId) {
+                console.warn('未指定项目ID');
+                return;
+            }
+
+            try {
+                // 加载项目信息
+                const projectResponse = await fetch(`/api/projects/${this.projectId}`);
+                if (projectResponse.ok) {
+                    const project = await projectResponse.json();
+                    document.getElementById('projectTitle').textContent = project.title;
+                    document.getElementById('projectStatus').textContent = project.status;
+                }
+
+                // 加载分集列表
+                await this.loadEpisodes();
+
+                // 加载项目元素
+                await this.loadProjectElements();
+
+            } catch (error) {
+                console.error('加载项目失败:', error);
+                showNotification('加载项目失败', 'error');
+            }
+        }
+
+        async loadEpisodes() {
+            try {
+                const response = await fetch(`/api/projects/${this.projectId}/episodes`);
+                if (response.ok) {
+                    const data = await response.json();
+                    this.updateEpisodeSelect(data.episodes);
+
+                    if (data.episodes.length > 0) {
+                        this.currentEpisode = data.episodes[0];
+                        this.loadEpisode(this.currentEpisode.id);
+                    }
+                }
+            } catch (error) {
+                console.error('加载分集失败:', error);
+            }
+        }
+
+        updateEpisodeSelect(episodes) {
+            const select = document.getElementById('episodeSelect');
+            select.innerHTML = episodes.map(ep =>
+                `<option value="${ep.id}">第${ep.episode_number}集: ${ep.title}</option>`
+            ).join('');
+
+            // 添加新分集选项
+            select.innerHTML += '<option value="new">+ 新建分集</option>';
+
+            // 绑定事件
+            select.addEventListener('change', async (e) => {
+                if (e.target.value === 'new') {
+                    this.createNewEpisode();
+                } else {
+                    await this.loadEpisode(e.target.value);
+                }
+            });
+        }
+
+        async loadEpisode(episodeId) {
+            try {
+                const response = await fetch(`/api/episodes/${episodeId}`);
+                if (response.ok) {
+                    const episode = await response.json();
+                    this.currentEpisode = episode;
+                    this.elements = episode.elements || [];
+                    this.duration = episode.duration || 60;
+
+                    // 更新UI
+                    document.getElementById('episodeDuration').textContent =
+                        this.formatTime(this.duration);
+                    document.getElementById('totalTime').textContent =
+                        this.formatTime(this.duration);
+
+                    this.updateCanvas();
+                    this.updateTimeline();
+                }
+            } catch (error) {
+                console.error('加载分集失败:', error);
+            }
+        }
+
+        async createNewEpisode() {
+            const title = prompt('请输入新分集标题:', `第${document.querySelectorAll('#episodeSelect option').length}集`);
+            if (!title) return;
+
+            try {
+                const response = await fetch(`/api/projects/${this.projectId}/episodes`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        title: title,
+                        episode_number: document.querySelectorAll('#episodeSelect option').length
+                    })
+                });
+
+                if (response.ok) {
+                    const episode = await response.json();
+                    showNotification('分集创建成功', 'success');
+                    await this.loadEpisodes();
+                }
+            } catch (error) {
+                console.error('创建分集失败:', error);
+                showNotification('创建分集失败', 'error');
+            }
+        }
+
+        async loadProjectElements() {
+            // 这里可以加载项目的素材库
+            const assetList = document.getElementById('assetList');
+            assetList.innerHTML = `
+                <div class="asset-item">
+                    <div class="asset-placeholder">
+                        <i class="fas fa-image"></i>
+                    </div>
+                </div>
+                <div class="asset-item">
+                    <div class="asset-placeholder">
+                        <i class="fas fa-video"></i>
+                    </div>
+                </div>
+                <div class="asset-item">
+                    <div class="asset-placeholder">
+                        <i class="fas fa-music"></i>
+                    </div>
+                </div>
+            `;
+        }
+
+        setupEventListeners() {
+            // 播放控制
+            document.getElementById('playBtn').addEventListener('click', () => {
+                this.togglePlay();
+            });
+
+            // 时间轴滑块
+            document.getElementById('timelineSlider').addEventListener('input', (e) => {
+                this.currentTime = (e.target.value / 100) * this.duration;
+                this.updateCanvas();
+            });
+
+            // 元素按钮
+            document.querySelectorAll('.element-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    this.addElement(btn.dataset.type);
+                });
+            });
+
+            // 保存草稿
+            document.getElementById('saveDraftBtn').addEventListener('click', () => {
+                this.saveDraft();
+            });
+
+            // 发布
+            document.getElementById('publishBtn').addEventListener('click', () => {
+                this.publish();
+            });
+
+            // 属性控制
+            document.querySelectorAll('.properties-slider').forEach(slider => {
+                slider.addEventListener('input', (e) => {
+                    const valueElement = document.getElementById(`${slider.id}Value`);
+                    if (valueElement) {
+                        if (slider.id.includes('Scale') || slider.id.includes('Opacity')) {
+                            valueElement.textContent = `${e.target.value}%`;
+                        } else {
+                            valueElement.textContent = e.target.value;
+                        }
+                    }
+                    this.updateElementProperty(slider.id.replace('text', '').replace('image', ''), e.target.value);
+                });
+            });
+
+            // 画布点击选择元素
+            this.canvas.addEventListener('click', (e) => {
+                const rect = this.canvas.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+
+                this.selectElementAt(x, y);
+            });
+        }
+
+        setupAutoSave() {
+            if (this.autoSave) {
+                this.autoSaveInterval = setInterval(() => {
+                    if (this.currentEpisode) {
+                        this.saveDraft(true); // 静默保存
+                    }
+                }, 30000); // 每30秒自动保存
+
+                document.getElementById('lastSaved').textContent =
+                    `最近保存: ${new Date().toLocaleTimeString()}`;
+            }
+        }
+
+        addElement(type) {
+            const element = {
+                id: Date.now(),
+                type: type,
+                x: this.canvas.width / 2 - 100,
+                y: this.canvas.height / 2 - 50,
+                width: type === 'text' ? 200 : 150,
+                height: type === 'text' ? 50 : 100,
+                content: type === 'text' ? '新文本' : '',
+                properties: this.getDefaultProperties(type)
+            };
+
+            this.elements.push(element);
+            this.selectedElement = element;
+            this.updateCanvas();
+            this.updatePropertiesPanel();
+            this.updateTimeline();
+        }
+
+        getDefaultProperties(type) {
+            switch(type) {
+                case 'text':
+                    return {
+                        font: 'Microsoft YaHei',
+                        size: 24,
+                        color: '#000000',
+                        bold: false,
+                        italic: false
+                    };
+                case 'image':
+                    return {
+                        src: '',
+                        scale: 100,
+                        opacity: 100,
+                        rotation: 0
+                    };
+                default:
+                    return {};
+            }
+        }
+
+        selectElementAt(x, y) {
+            // 从后往前检查，这样最后添加的元素在最上面
+            for (let i = this.elements.length - 1; i >= 0; i--) {
+                const element = this.elements[i];
+                if (x >= element.x && x <= element.x + element.width &&
+                    y >= element.y && y <= element.y + element.height) {
+                    this.selectedElement = element;
+                    this.updatePropertiesPanel();
+                    this.updateCanvas();
+                    return;
+                }
+            }
+
+            // 如果没有点击到任何元素，取消选择
+            this.selectedElement = null;
+            this.updatePropertiesPanel();
+        }
+
+        updateElementProperty(property, value) {
+            if (!this.selectedElement) return;
+
+            if (this.selectedElement.type === 'text') {
+                this.selectedElement.properties[property] = value;
+            } else if (this.selectedElement.type === 'image') {
+                this.selectedElement.properties[property] = value;
+            }
+
+            this.updateCanvas();
+        }
+
+        updatePropertiesPanel() {
+            const content = document.getElementById('propertiesContent');
+            const textProps = document.getElementById('textProperties');
+            const imageProps = document.getElementById('imageProperties');
+
+            // 隐藏所有属性面板
+            textProps.style.display = 'none';
+            imageProps.style.display = 'none';
+
+            if (!this.selectedElement) {
+                content.innerHTML = `
+                    <div class="empty-properties">
+                        <i class="fas fa-mouse-pointer"></i>
+                        <p>选择一个元素开始编辑</p>
+                    </div>
+                `;
+                return;
+            }
+
+            // 根据元素类型显示对应的属性面板
+            switch(this.selectedElement.type) {
+                case 'text':
+                    textProps.style.display = 'block';
+                    document.getElementById('textContent').value = this.selectedElement.content;
+                    document.getElementById('textFont').value = this.selectedElement.properties.font;
+                    document.getElementById('textSize').value = this.selectedElement.properties.size;
+                    document.getElementById('textSizeValue').textContent = this.selectedElement.properties.size;
+                    document.getElementById('textColor').value = this.selectedElement.properties.color;
+                    break;
+
+                case 'image':
+                    imageProps.style.display = 'block';
+                    document.getElementById('imageScale').value = this.selectedElement.properties.scale;
+                    document.getElementById('imageScaleValue').textContent = `${this.selectedElement.properties.scale}%`;
+                    document.getElementById('imageOpacity').value = this.selectedElement.properties.opacity;
+                    document.getElementById('imageOpacityValue').textContent = `${this.selectedElement.properties.opacity}%`;
+                    break;
+            }
+        }
+
+        updateCanvas() {
+            // 清空画布
+            this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+            // 绘制背景
+            this.ctx.fillStyle = '#000000';
+            this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+
+            // 绘制所有元素
+            this.elements.forEach(element => {
+                this.drawElement(element);
+            });
+
+            // 绘制选中框
+            if (this.selectedElement) {
+                this.drawSelectionBox(this.selectedElement);
+            }
+
+            // 绘制时间线指示器
+            this.drawTimeIndicator();
+        }
+
+        drawElement(element) {
+            this.ctx.save();
+
+            switch(element.type) {
+                case 'text':
+                    this.ctx.font = `${element.properties.size}px "${element.properties.font}"`;
+                    this.ctx.fillStyle = element.properties.color;
+                    this.ctx.textBaseline = 'top';
+                    this.ctx.fillText(element.content, element.x, element.y);
+                    break;
+
+                case 'image':
+                    // 这里应该绘制图片
+                    this.ctx.fillStyle = '#3498db';
+                    this.ctx.globalAlpha = element.properties.opacity / 100;
+                    this.ctx.fillRect(element.x, element.y, element.width, element.height);
+                    break;
+            }
+
+            this.ctx.restore();
+        }
+
+        drawSelectionBox(element) {
+            this.ctx.save();
+            this.ctx.strokeStyle = '#4F46E5';
+            this.ctx.lineWidth = 2;
+            this.ctx.setLineDash([5, 3]);
+            this.ctx.strokeRect(
+                element.x - 2,
+                element.y - 2,
+                element.width + 4,
+                element.height + 4
+            );
+            this.ctx.restore();
+        }
+
+        drawTimeIndicator() {
+            const progress = this.currentTime / this.duration;
+            const x = progress * this.canvas.width;
+
+            this.ctx.save();
+            this.ctx.strokeStyle = '#EF4444';
+            this.ctx.lineWidth = 2;
+            this.ctx.beginPath();
+            this.ctx.moveTo(x, 0);
+            this.ctx.lineTo(x, this.canvas.height);
+            this.ctx.stroke();
+            this.ctx.restore();
+        }
+
+        updateTimeline() {
+            const track = document.getElementById('timelineTrack');
+            track.innerHTML = '';
+
+            // 创建时间轴刻度
+            for (let i = 0; i <= this.duration; i += 5) {
+                const tick = document.createElement('div');
+                tick.className = 'timeline-tick';
+                tick.style.left = `${(i / this.duration) * 100}%`;
+                track.appendChild(tick);
+            }
+
+            // 添加元素到时间轴
+            this.elements.forEach((element, index) => {
+                const elementTrack = document.createElement('div');
+                elementTrack.className = 'timeline-element';
+                elementTrack.style.left = '10%';
+                elementTrack.style.width = '20%';
+                elementTrack.textContent = `${element.type} ${index + 1}`;
+                elementTrack.addEventListener('click', () => {
+                    this.selectedElement = element;
+                    this.updatePropertiesPanel();
+                    this.updateCanvas();
+                });
+                track.appendChild(elementTrack);
+            });
+        }
+
+        togglePlay() {
+            this.isPlaying = !this.isPlaying;
+            const playBtn = document.getElementById('playBtn');
+
+            if (this.isPlaying) {
+                playBtn.innerHTML = '<i class="fas fa-pause"></i>';
+                this.startPlayback();
+            } else {
+                playBtn.innerHTML = '<i class="fas fa-play"></i>';
+                this.stopPlayback();
+            }
+        }
+
+        startPlayback() {
+            const startTime = Date.now() - (this.currentTime * 1000);
+
+            const updateTime = () => {
+                if (!this.isPlaying) return;
+
+                this.currentTime = (Date.now() - startTime) / 1000;
+
+                if (this.currentTime >= this.duration) {
+                    this.currentTime = this.duration;
+                    this.isPlaying = false;
+                    document.getElementById('playBtn').innerHTML = '<i class="fas fa-play"></i>';
+                }
+
+                // 更新UI
+                document.getElementById('currentTime').textContent =
+                    this.formatTime(this.currentTime);
+                document.getElementById('timelineSlider').value =
+                    (this.currentTime / this.duration) * 100;
+
+                // 更新画布
+                this.updateCanvas();
+
+                // 继续动画
+                this.animationFrame = requestAnimationFrame(updateTime);
+            };
+
+            this.animationFrame = requestAnimationFrame(updateTime);
+        }
+
+        stopPlayback() {
+            if (this.animationFrame) {
+                cancelAnimationFrame(this.animationFrame);
+                this.animationFrame = null;
+            }
+        }
+
+        async saveDraft(silent = false) {
+            if (!this.currentEpisode) return;
+
+            try {
+                const response = await fetch(`/api/episodes/${this.currentEpisode.id}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        duration: this.duration,
+                        elements: this.elements,
+                        status: 'draft'
+                    })
+                });
+
+                if (response.ok) {
+                    if (!silent) {
+                        showNotification('保存成功', 'success');
+                    }
+
+                    const now = new Date();
+                    document.getElementById('lastSaved').textContent =
+                        `最近保存: ${now.toLocaleTimeString()}`;
+                }
+            } catch (error) {
+                if (!silent) {
+                    showNotification('保存失败', 'error');
+                }
+                console.error('保存失败:', error);
+            }
+        }
+
+        async publish() {
+            if (!confirm('确定要发布这个分集吗？')) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/episodes/${this.currentEpisode.id}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        status: 'published'
+                    })
+                });
+
+                if (response.ok) {
+                    showNotification('发布成功', 'success');
+                    document.getElementById('projectStatus').textContent = '已发布';
+                }
+            } catch (error) {
+                showNotification('发布失败', 'error');
+                console.error('发布失败:', error);
+            }
+        }
+
+        formatTime(seconds) {
+            const mins = Math.floor(seconds / 60);
+            const secs = Math.floor(seconds % 60);
+            return `${mins}:${secs.toString().padStart(2, '0')}`;
+        }
+    }
+
+    // 初始化编辑器
+    document.addEventListener('DOMContentLoaded', () => {
+        window.editor = new VideoEditor();
+
+        // 上传功能
+        const uploadModal = document.getElementById('uploadModal');
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('fileInput');
+        const selectFileBtn = document.getElementById('selectFileBtn');
+        const startUploadBtn = document.getElementById('startUploadBtn');
+
+        let selectedFiles = [];
+
+        // 打开上传模态框
+        document.getElementById('uploadAssetBtn').addEventListener('click', () => {
+            uploadModal.classList.add('show');
+        });
+
+        // 选择文件
+        selectFileBtn.addEventListener('click', () => {
+            fileInput.click();
+        });
+
+        // 文件选择变化
+        fileInput.addEventListener('change', (e) => {
+            selectedFiles = Array.from(e.target.files);
+            updateFileList();
+        });
+
+        // 拖放功能
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        });
+
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('dragover');
+        });
+
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            selectedFiles = Array.from(e.dataTransfer.files);
+            updateFileList();
+        });
+
+        // 点击上传区域选择文件
+        uploadArea.addEventListener('click', () => {
+            fileInput.click();
+        });
+
+        // 更新文件列表
+        function updateFileList() {
+            const list = document.getElementById('uploadList');
+
+            if (selectedFiles.length === 0) {
+                list.innerHTML = '';
+                startUploadBtn.disabled = true;
+                return;
+            }
+
+            list.innerHTML = selectedFiles.map(file => `
+                <div class="upload-item">
+                    <span>${file.name}</span>
+                    <span>${formatFileSize(file.size)}</span>
+                </div>
+            `).join('');
+
+            startUploadBtn.disabled = false;
+        }
+
+        // 开始上传
+        startUploadBtn.addEventListener('click', async () => {
+            const progressBar = document.getElementById('uploadProgress');
+            const progressFill = document.getElementById('progressFill');
+            const progressText = document.getElementById('progressText');
+            const progressPercentage = document.getElementById('progressPercentage');
+
+            progressBar.style.display = 'block';
+
+            for (let i = 0; i < selectedFiles.length; i++) {
+                const file = selectedFiles[i];
+                const formData = new FormData();
+                formData.append('file', file);
+
+                try {
+                    const xhr = new XMLHttpRequest();
+
+                    xhr.upload.addEventListener('progress', (e) => {
+                        if (e.lengthComputable) {
+                            const percent = Math.round((e.loaded / e.total) * 100);
+                            progressFill.style.width = `${percent}%`;
+                            progressPercentage.textContent = `${percent}%`;
+                            progressText.textContent = `正在上传 ${file.name}...`;
+                        }
+                    });
+
+                    xhr.addEventListener('load', () => {
+                        if (xhr.status === 200) {
+                            // 上传成功
+                            if (i === selectedFiles.length - 1) {
+                                showNotification('所有文件上传成功', 'success');
+                                setTimeout(() => {
+                                    uploadModal.classList.remove('show');
+                                    progressBar.style.display = 'none';
+                                    selectedFiles = [];
+                                    updateFileList();
+                                }, 1000);
+                            }
+                        } else {
+                            showNotification(`上传失败: ${file.name}`, 'error');
+                        }
+                    });
+
+                    xhr.open('POST', '/api/upload');
+                    xhr.send(formData);
+
+                } catch (error) {
+                    console.error('上传失败:', error);
+                    showNotification(`上传失败: ${file.name}`, 'error');
+                }
+            }
+        });
+
+        // 格式化文件大小
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        // 关闭模态框
+        document.querySelectorAll('.modal-close, .modal-cancel').forEach(btn => {
+            btn.addEventListener('click', () => {
+                uploadModal.classList.remove('show');
+            });
+        });
+    });
+</script>
+{% endblock %}
