@@ -209,12 +209,6 @@ ViMax/
 
 本项目基于 [HKUDS/ViMax](https://github.com/HKUDS/ViMax) 进行改进，采用了 DeepSeek、Qwen3-VL-32B-Instruct 和 Sora2 等模型对项目进行了扩展，并使用 Flask 框架搭建 Web UI。
 
-## 💬 联系与支持
-
-- 技术交流群：1029629549
-- 飞书群组：[点击加入](./Communication.md)
-- 微信群组：[点击加入](./Communication.md)
-
 ---
 
 **如果这个项目对您有帮助，请给我们一个 Star！⭐**
