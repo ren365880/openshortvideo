@@ -3,6 +3,7 @@
 ## 📖 项目概述
 
 **OpenShortVideo** 是一个基于AI的短视频智能制作平台，集成了剧本创作、角色管理、场景生成、镜头制作等完整的工作流，帮助创作者快速生成高质量的短视频内容。
+## 项目后端是由 https://github.com/HKUDS/ViMax 改进而来。
 ## demo
 ![img5.png](assert/img5.png)
 
