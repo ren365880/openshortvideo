@@ -1,0 +1,45 @@
+name: Sync Upstream Repository
+
+on:
+  schedule:
+    # 定时任务，使用 Cron 表达式 (UTC 时间)
+    # 下面示例表示每天 UTC 0 点运行 (北京时间早上 8 点)
+    - cron: '0 0 * * *'
+  workflow_dispatch: # 允许手动触发
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Target Repo
+        uses: actions/checkout@v4
+        with:
+          ref: master # 替换为你要同步的分支名，通常是 main 或 master
+          fetch-depth: 0 # 获取所有历史以便合并
+
+      - name: Configure Git User
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Add Upstream Remote
+        run: |
+          # 将 <UPSTREAM_OWNER>/<UPSTREAM_REPO> 替换为原仓库的地址
+          git remote add upstream https://github.com/Shybert-AI/openshortvideo.git
+          git fetch upstream
+
+      - name: Merge Upstream Changes
+        run: |
+          # 尝试合并上游的 main 分支到当前分支
+          # 如果发生冲突，这一步会失败，你需要手动解决
+          git merge upstream/main --no-edit || echo "Merge conflict detected, skipping auto-merge."
+          
+          # 如果有更新则推送
+          if [ $(git rev-parse HEAD) != $(git rev-parse @{u}) ]; then
+            git push origin main
+            echo "Successfully synced!"
+          else
+            echo "Already up to date."
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
