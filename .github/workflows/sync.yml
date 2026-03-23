@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Target Repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           ref: master # 替换为你要同步的分支名，通常是 main 或 master
           fetch-depth: 0 # 获取所有历史以便合并
